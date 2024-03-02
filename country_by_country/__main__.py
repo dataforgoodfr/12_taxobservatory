@@ -19,3 +19,31 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
+
+# Standard imports
+import argparse
+import logging
+import sys
+import yaml
+
+# Local imports
+from country_by_country import pagefilter
+from country_by_country import processor
+
+
+def process_report(config, pdf_filepath):
+    proc = processor.ReportProcessor(config)
+    proc.process(pdf_filepath)
+
+
+if __name__ == "__main__":
+    logging.basicConfig(stream=sys.stdout, level=logging.INFO, format="%(message)s")
+
+    if len(sys.argv) != 3:
+        logging.error(f"Usage : {sys.argv[0]} config.yaml report.pdf")
+        sys.exit(-1)
+
+    logging.info("Loading {}".format(sys.argv[1]))
+    config = yaml.safe_load(open(sys.argv[1], "r"))
+
+    process_report(config, sys.argv[2])
