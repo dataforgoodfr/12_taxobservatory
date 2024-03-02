@@ -21,13 +21,12 @@
 # SOFTWARE.
 
 # Standard imports
-import argparse
 import logging
 import sys
+
 import yaml
 
 # Local imports
-from country_by_country import pagefilter
 from country_by_country import processor
 
 
@@ -43,7 +42,7 @@ if __name__ == "__main__":
         logging.error(f"Usage : {sys.argv[0]} config.yaml report.pdf")
         sys.exit(-1)
 
-    logging.info("Loading {}".format(sys.argv[1]))
-    config = yaml.safe_load(open(sys.argv[1], "r"))
+    logging.info(f"Loading {sys.argv[1]}")
+    config = yaml.safe_load(open(sys.argv[1]))
 
     process_report(config, sys.argv[2])
