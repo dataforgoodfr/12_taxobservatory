@@ -23,7 +23,7 @@
 from .camelot_extractor import Camelot
 
 
-def from_config(config):
+def from_config(config: dict):
     extractor_type = config["type"]
     extractor_params = config["params"]
     return eval(f"{extractor_type}(**extractor_params)")

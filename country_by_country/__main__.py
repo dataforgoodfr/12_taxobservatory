@@ -30,7 +30,7 @@ import yaml
 from country_by_country import processor
 
 
-def process_report(config, pdf_filepath):
+def process_report(config: dict, pdf_filepath: str) -> None:
     proc = processor.ReportProcessor(config)
     proc.process(pdf_filepath)
 

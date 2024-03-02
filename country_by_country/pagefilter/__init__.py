@@ -24,5 +24,5 @@ from .copy_as_is import CopyAsIs
 from .from_filename import FromFilename
 
 
-def from_config(config):
+def from_config(config: dict):
     return eval(f"{config['type']}()")
