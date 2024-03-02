@@ -21,26 +21,22 @@
 # SOFTWARE.
 
 # Standard imports
-import logging
-
-# Local imports
-from . import pagefilter
+import tempfile
+import shutil
 
 
-class ReportProcessor:
-    def __init__(self, config):
-        # Report filter
-        self.page_filter = pagefilter.from_config(config["pagefilter"])
+class CopyAsIs:
+    """
+    Dummy filter just copying the source pdf to a target
+    temporary file
+    """
 
-    def process(self, pdf_filepath):
-        logging.info(f"Processing {pdf_filepath}")
+    def __init__(self):
+        pass
 
-        assets = {}
+    def __call__(self, pdf_filepath: str, assets: dict = None):
+        filename = tempfile.NamedTemporaryFile(suffix=".pdf", delete=False).name
+        shutil.copy(pdf_filepath, filename)
 
-        # Filtering the pages
-        filtered_pdf = self.page_filter(pdf_filepath, assets)
-
-        # Process the selected pages to detect the tables and extract
-        # their contents
-
-        # Given the parsed content to the RAG for identifying the key numbers
+        if assets is not None:
+            assets["pagefilter"] = {"target_pdf": filename}

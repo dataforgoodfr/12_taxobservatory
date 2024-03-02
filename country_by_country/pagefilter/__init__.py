@@ -20,27 +20,9 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-# Standard imports
-import logging
-
-# Local imports
-from . import pagefilter
+from .copy_as_is import CopyAsIs
+from .from_filename import FromFilename
 
 
-class ReportProcessor:
-    def __init__(self, config):
-        # Report filter
-        self.page_filter = pagefilter.from_config(config["pagefilter"])
-
-    def process(self, pdf_filepath):
-        logging.info(f"Processing {pdf_filepath}")
-
-        assets = {}
-
-        # Filtering the pages
-        filtered_pdf = self.page_filter(pdf_filepath, assets)
-
-        # Process the selected pages to detect the tables and extract
-        # their contents
-
-        # Given the parsed content to the RAG for identifying the key numbers
+def from_config(config):
+    return eval(f"{config['type']}()")
