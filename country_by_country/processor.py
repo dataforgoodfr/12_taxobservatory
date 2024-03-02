@@ -59,5 +59,7 @@ class ReportProcessor:
 
         # Given the parsed content to the RAG for identifying the key numbers
         # TODO
+        # For now, just print the results
+        print(assets)
 
         return assets
