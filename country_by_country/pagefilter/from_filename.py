@@ -26,7 +26,7 @@ import tempfile
 from pathlib import Path
 
 # External imports
-import PyPDF2
+import pypdf
 
 
 class FromFilename:
@@ -82,8 +82,8 @@ class FromFilename:
             # If we keep all the page, just copy the pdf
             shutil.copy(pdf_filepath, filename)
         else:
-            reader = PyPDF2.PdfReader(pdf_filepath)
-            writer = PyPDF2.PdfWriter()
+            reader = pypdf.PdfReader(pdf_filepath)
+            writer = pypdf.PdfWriter()
             start_page = page_range[0]
             end_page = page_range[1]
             pages = reader.pages[start_page:end_page]
