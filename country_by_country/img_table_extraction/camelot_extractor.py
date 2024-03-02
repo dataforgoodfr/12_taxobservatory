@@ -44,7 +44,8 @@ class Camelot:
         key_assets = f"camelot_{self.flavor}"
         if key_assets in assets["text_table_extractors"]:
             logging.warning(
-                f">> The key {key_assets} already exists in the assets dictionary. I will overwrite its content",
+                f">> The key {key_assets} already exists"
+                f" in the assets dictionary. I will overwrite its content",
             )
 
         assets["text_table_extractors"][key_assets] = {
