@@ -21,9 +21,9 @@
 # SOFTWARE.
 
 # Standard imports
-import os
 import shutil
 import tempfile
+from pathlib import Path
 
 # External imports
 import PyPDF2
@@ -42,7 +42,7 @@ class FromFilename:
           #1-#2 is a page range
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         pass
 
     def __call__(self, pdf_filepath: str, assets: dict) -> None:
@@ -60,7 +60,7 @@ class FromFilename:
         filename = tempfile.NamedTemporaryFile(suffix=".pdf", delete=False).name
 
         # Get the page or page range from the filename
-        src_filename = os.path.basename(pdf_filepath)
+        src_filename = Path(pdf_filepath).name
 
         # We remove the extension, split on "_" and keep the last field
         pagefield = src_filename[:-4].split("_")[-1]

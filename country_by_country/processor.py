@@ -24,12 +24,11 @@
 import logging
 
 # Local imports
-from . import pagefilter
-from . import img_table_extraction
+from . import img_table_extraction, pagefilter
 
 
 class ReportProcessor:
-    def __init__(self, config):
+    def __init__(self, config: dict) -> None:
         # Report filter
         self.page_filter = pagefilter.from_config(config["pagefilter"])
 
@@ -39,7 +38,7 @@ class ReportProcessor:
             img_table_extraction.from_config(name) for name in img_table_extractors
         ]
 
-    def process(self, pdf_filepath):
+    def process(self, pdf_filepath: str) -> dict:
         logging.info(f"Processing {pdf_filepath}")
 
         assets = {
@@ -58,5 +57,7 @@ class ReportProcessor:
         for img_table_extractor in self.img_table_extractors:
             img_table_extractor(pdf_to_process, assets)
 
-        print(assets)
         # Given the parsed content to the RAG for identifying the key numbers
+        # TODO
+
+        return assets

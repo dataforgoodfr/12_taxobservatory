@@ -21,8 +21,8 @@
 # SOFTWARE.
 
 # Standard imports
-import tempfile
 import shutil
+import tempfile
 
 
 class CopyAsIs:
@@ -31,7 +31,7 @@ class CopyAsIs:
     temporary file
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         pass
 
     def __call__(self, pdf_filepath: str, assets: dict) -> None:

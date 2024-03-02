@@ -28,7 +28,7 @@ import camelot
 
 
 class Camelot:
-    def __init__(self, flavor: str):
+    def __init__(self, flavor: str) -> None:
         self.flavor = flavor
 
     def __call__(self, pdf_filepath: str, assets: dict) -> None:
@@ -43,8 +43,8 @@ class Camelot:
         tables_list = [t.df for t in tables]
         key_assets = f"camelot_{self.flavor}"
         if key_assets in assets["text_table_extractors"]:
-            logging.warn(
-                f">> The key {key_assets} already exists in the assets dictionary. I will overwrite its content"
+            logging.warning(
+                f">> The key {key_assets} already exists in the assets dictionary. I will overwrite its content",
             )
 
         assets["text_table_extractors"][key_assets] = {
