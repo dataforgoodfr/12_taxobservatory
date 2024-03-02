@@ -28,6 +28,8 @@ from pathlib import Path
 # External imports
 import pypdf
 
+NUM_PAGE_FIELDS = 2
+
 
 class FromFilename:
     """
@@ -69,7 +71,7 @@ class FromFilename:
         else:
             pagefields = pagefield.split("-")
             if (
-                len(pagefields) == 2
+                len(pagefields) == NUM_PAGE_FIELDS
                 and pagefields[0].isnumeric()
                 and pagefields[1].isnumeric()
             ):
