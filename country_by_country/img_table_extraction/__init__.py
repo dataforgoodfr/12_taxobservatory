@@ -26,4 +26,7 @@ from .camelot_extractor import Camelot
 def from_config(config: dict):
     extractor_type = config["type"]
     extractor_params = config["params"]
-    return eval(f"{extractor_type}(**extractor_params)")
+    # This one-liner is python valid but rejected by the pre-commit
+    if extractor_type == "Camelot":
+        return Camelot(**extractor_params)
+    return None

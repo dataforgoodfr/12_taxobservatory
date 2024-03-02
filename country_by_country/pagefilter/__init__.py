@@ -25,4 +25,9 @@ from .from_filename import FromFilename
 
 
 def from_config(config: dict):
-    return eval(f"{config['type']}()")
+    filter_type = config["type"]
+    # This one-liner is python valid but rejected by the pre-commit
+    if filter_type == "CopyAsIs":
+        return CopyAsIs()
+    elif filter_type == "FromFilename":
+        return FromFilename()
