@@ -1,2 +1,11 @@
 pagefilter:
   type: FromFilename
+
+table_extraction:
+  img:
+    - type: Camelot
+      params:
+        flavor: stream
+    - type: Camelot
+      params:
+        flavor: lattice

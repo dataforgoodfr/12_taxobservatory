@@ -23,40 +23,31 @@
 # Standard imports
 import logging
 
-# Local imports
-from . import pagefilter
-from . import img_table_extraction
+# External imports
+import camelot
 
 
-class ReportProcessor:
-    def __init__(self, config):
-        # Report filter
-        self.page_filter = pagefilter.from_config(config["pagefilter"])
+class Camelot:
+    def __init__(self, flavor: str):
+        self.flavor = flavor
 
-        # Table extraction from images
-        img_table_extractors = config["table_extraction"]["img"]
-        self.img_table_extractors = [
-            img_table_extraction.from_config(name) for name in img_table_extractors
-        ]
+    def __call__(self, pdf_filepath: str, assets: dict) -> None:
+        """
+        Writes assets:
+            ntables: the number of detected tables
+            tables: a list of pandas dataframe of the parsed tables
+        """
+        tables = camelot.read_pdf(pdf_filepath, flavor=self.flavor)
 
-    def process(self, pdf_filepath):
-        logging.info(f"Processing {pdf_filepath}")
+        # Write the parsed tables into the assets
+        tables_list = [t.df for t in tables]
+        key_assets = f"camelot_{self.flavor}"
+        if key_assets in assets["text_table_extractors"]:
+            logging.warn(
+                f">> The key {key_assets} already exists in the assets dictionary. I will overwrite its content"
+            )
 
-        assets = {
-            "pagefilter": {},
-            "text_table_extractors": {},
-            "img_table_extractors": {},
+        assets["text_table_extractors"][key_assets] = {
+            "ntables": len(tables_list),
+            "tables": tables_list,
         }
-
-        # Filtering the pages
-        self.page_filter(pdf_filepath, assets)
-
-        pdf_to_process = assets["pagefilter"]["target_pdf"]
-
-        # Process the selected pages to detect the tables and extract
-        # their contents
-        for img_table_extractor in self.img_table_extractors:
-            img_table_extractor(pdf_to_process, assets)
-
-        print(assets)
-        # Given the parsed content to the RAG for identifying the key numbers
