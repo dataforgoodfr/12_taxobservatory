@@ -22,7 +22,11 @@
 
 # Standard imports
 import os
+import shutil
 import tempfile
+
+# External imports
+import PyPDF2
 
 
 class FromFilename:
@@ -69,9 +73,23 @@ class FromFilename:
                 and pagefields[0].isnumeric()
                 and pagefields[1].isnumeric()
             ):
-                page_range = (int(pagefields[0]) - 1, int(pagefields[1]) - 1)
+                page_range = (int(pagefields[0]) - 1, int(pagefields[1]))
             else:
                 page_range = None
+
+        # Extract the selected pages
+        if page_range is None:
+            # If we keep all the page, just copy the pdf
+            shutil.copy(pdf_filepath, filename)
+        else:
+            reader = PyPDF2.PdfReader(pdf_filepath)
+            writer = PyPDF2.PdfWriter()
+            start_page = page_range[0]
+            end_page = page_range[1]
+            pages = reader.pages[start_page:end_page]
+            for p in pages:
+                writer.add_page(p)
+            writer.write(filename)
 
         if assets is not None:
             assets["pagefilter"] = {

@@ -34,9 +34,20 @@ class CopyAsIs:
     def __init__(self):
         pass
 
-    def __call__(self, pdf_filepath: str, assets: dict = None):
+    def __call__(self, pdf_filepath: str, assets: dict) -> None:
+        """
+        Basically copies the source pdf at a temporary location.
+        Writes assets:
+            src_pdf: the original pdf filepath
+            target_pdf: the temporary target pdf filepath
+            page_range : tuple or None
+        """
         filename = tempfile.NamedTemporaryFile(suffix=".pdf", delete=False).name
         shutil.copy(pdf_filepath, filename)
 
         if assets is not None:
-            assets["pagefilter"] = {"target_pdf": filename}
+            assets["pagefilter"] = {
+                "src_pdf": pdf_filepath,
+                "target_pdf": filename,
+                "page_range": None,
+            }

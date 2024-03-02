@@ -1,2 +1,2 @@
 pagefilter:
-  type: CopyAsIs
+  type: FromFilename

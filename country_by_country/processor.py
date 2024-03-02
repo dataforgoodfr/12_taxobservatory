@@ -38,7 +38,8 @@ class ReportProcessor:
         assets = {}
 
         # Filtering the pages
-        filtered_pdf = self.page_filter(pdf_filepath, assets)
+        self.page_filter(pdf_filepath, assets)
+        print(assets)
 
         # Process the selected pages to detect the tables and extract
         # their contents
