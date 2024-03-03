@@ -19,3 +19,35 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
+
+# Standard imports
+import shutil
+import tempfile
+
+
+class CopyAsIs:
+    """
+    Dummy filter just copying the source pdf to a target
+    temporary file
+    """
+
+    def __init__(self) -> None:
+        pass
+
+    def __call__(self, pdf_filepath: str, assets: dict) -> None:
+        """
+        Basically copies the source pdf at a temporary location.
+        Writes assets:
+            src_pdf: the original pdf filepath
+            target_pdf: the temporary target pdf filepath
+            page_range : tuple or None
+        """
+        filename = tempfile.NamedTemporaryFile(suffix=".pdf", delete=False).name
+        shutil.copy(pdf_filepath, filename)
+
+        if assets is not None:
+            assets["pagefilter"] = {
+                "src_pdf": pdf_filepath,
+                "target_pdf": filename,
+                "page_range": None,
+            }

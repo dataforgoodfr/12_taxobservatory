@@ -19,3 +19,15 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
+
+# Local imports
+from .camelot_extractor import Camelot
+
+
+def from_config(config: dict) -> Camelot:
+    extractor_type = config["type"]
+    extractor_params = config["params"]
+    # This one-liner is python valid but rejected by the pre-commit
+    if extractor_type == "Camelot":
+        return Camelot(**extractor_params)
+    return None
