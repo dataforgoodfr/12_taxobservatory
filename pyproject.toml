@@ -21,6 +21,13 @@ camelot-py = "^0.11.0"
 opencv-python-headless = "^4.9.0.80"
 ghostscript = "^0.7"
 pypdf = "^4.0.2"
+dash = "^2.16.0"
+dash-bootstrap-components = "^1.5.0"
+numpy = "^1.26.4"
+pandas = "^2.2.1"
+plotly = "^5.19.0"
+pypdfium2 = "^4.27.0"
+pillow = "^10.2.0"
 
 [tool.poetry.group.dev.dependencies]
 pre-commit = "^2.20.0"
