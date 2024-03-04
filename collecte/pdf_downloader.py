@@ -4,8 +4,8 @@ import pandas as pd
 
 
 keywords = "tax country by country reporting GRI 207-4"
-api_key = "AIzaSyC4y5w028I3-LOVLEzDV6fOWV3EsstmdKk"
-cx = "e3e7d6d29161d4932"
+api_key = ""
+cx = ""
 
 
 def cbcr_finder(company_name, keywords, api_key, cse_id):
