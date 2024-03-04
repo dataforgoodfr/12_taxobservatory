@@ -1,11 +1,16 @@
+"""
+support module for dash demo :
+ pre-processing methods and aggregation of processing methods
 
-# mocked module for processing methods
+@author: PascalRaux-EP
+"""
 import base64, json
 from copy import deepcopy
 from io import BytesIO
 import pypdfium2
 import numpy as np
 import pandas as pd
+from processor import ReportProcessor
 
 
 """
@@ -115,6 +120,16 @@ def method_3(data, parameters):
                                          dpi=parameters["dpi"]),
              }
 
+def use_report_processor(data, parameters):
+    """
+    TODO : adapt this function to call ReportProcessor correctly...
+    """
+    config = {} # content expected ?
+    proc = ReportProcessor.ReportProcessor(config)
+    proc.ReportProcessor(data["file"]) # currently a b64 compressed file..
+    # Work in progress...
+    raise NotImplementedError()
+
 def show_bounding_box(data, parameters):
     img = convert_pdf_to_image(data["file"],
                                 dpi=parameters["dpi"])
@@ -190,6 +205,7 @@ DICT_OF_METHODS = {
     "Method 1": method_example,
     "Method 2": method_2,
     "Method 3": method_3,
+    #"Report Processor": use_report_processor,
     "Show bounding_boxes in table": show_bounding_box,
     }
 DICT_OF_PARAMETERS = {

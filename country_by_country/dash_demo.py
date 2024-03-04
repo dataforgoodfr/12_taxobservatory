@@ -1,7 +1,12 @@
+"""
+Dash app demo for TaxObservatory
+
+@author: PascalRaux-EP
+
 # Run this app with `python %fileName.py` and
 # visit http://127.0.0.1:8050/ in your web browser.
 # (cf https://dash.plotly.com/layout )
-
+"""
 import base64, json
 from io import BytesIO
 from dash import Dash, html, dcc, dash_table, callback, callback_context, no_update
