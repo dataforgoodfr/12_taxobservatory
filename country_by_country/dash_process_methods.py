@@ -10,7 +10,7 @@ from io import BytesIO
 import pypdfium2
 import numpy as np
 import pandas as pd
-from processor import ReportProcessor
+from country_by_country.processor import ReportProcessor
 
 
 """

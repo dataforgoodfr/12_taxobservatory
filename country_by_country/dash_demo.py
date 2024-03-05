@@ -18,7 +18,7 @@ import plotly.graph_objects as go
 import numpy as np
 import pandas as pd
 from PIL import Image as PIL_Image
-from dash_process_methods import (
+from country_by_country.dash_process_methods import (
     DICT_OF_METHODS,
     DEFAULT_METHOD,
     DICT_OF_PARAMETERS,
