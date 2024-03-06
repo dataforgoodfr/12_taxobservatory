@@ -56,7 +56,7 @@ class FromFilename:
         Writes assets:
             src_pdf: the original pdf filepath
             target_pdf: the temporary target pdf filepath
-            page_range : tuple or None
+            selected_pages : list of selected pages
         """
 
         filename = tempfile.NamedTemporaryFile(suffix=".pdf", delete=False).name
@@ -66,8 +66,10 @@ class FromFilename:
 
         # We remove the extension, split on "_" and keep the last field
         pagefield = src_filename[:-4].split("_")[-1]
+        selected_pages = []
+
         if pagefield.isnumeric():
-            page_range = (int(pagefield) - 1, int(pagefield))
+            selected_pages = [int(pagefield) - 1]
         else:
             pagefields = pagefield.split("-")
             if (
@@ -75,27 +77,23 @@ class FromFilename:
                 and pagefields[0].isnumeric()
                 and pagefields[1].isnumeric()
             ):
-                page_range = (int(pagefields[0]) - 1, int(pagefields[1]))
-            else:
-                page_range = None
+                selected_pages = list(range(int(pagefields[0]) - 1, int(pagefields[1])))
 
         # Extract the selected pages
-        if page_range is None:
+        if len(selected_pages) == 0:
             # If we keep all the page, just copy the pdf
             shutil.copy(pdf_filepath, filename)
         else:
             reader = pypdf.PdfReader(pdf_filepath)
             writer = pypdf.PdfWriter()
-            start_page = page_range[0]
-            end_page = page_range[1]
-            pages = reader.pages[start_page:end_page]
-            for p in pages:
-                writer.add_page(p)
+
+            for pi in selected_pages:
+                writer.add_page(reader.pages[pi])
             writer.write(filename)
 
         if assets is not None:
             assets["pagefilter"] = {
                 "src_pdf": pdf_filepath,
                 "target_pdf": filename,
-                "page_range": page_range,
+                "selected_pages": selected_pages,
             }
