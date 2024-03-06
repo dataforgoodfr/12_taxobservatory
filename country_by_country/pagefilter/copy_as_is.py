@@ -24,6 +24,9 @@
 import shutil
 import tempfile
 
+# External imports
+import pypdf
+
 
 class CopyAsIs:
     """
@@ -40,14 +43,17 @@ class CopyAsIs:
         Writes assets:
             src_pdf: the original pdf filepath
             target_pdf: the temporary target pdf filepath
-            page_range : tuple or None
+            selected_pages : list of selected pages
         """
         filename = tempfile.NamedTemporaryFile(suffix=".pdf", delete=False).name
         shutil.copy(pdf_filepath, filename)
+
+        reader = pypdf.PdfReader(pdf_filepath)
+        n_pages = len(reader.pages)
 
         if assets is not None:
             assets["pagefilter"] = {
                 "src_pdf": pdf_filepath,
                 "target_pdf": filename,
-                "page_range": None,
+                "selected_pages": list(range(n_pages)),
             }
