@@ -1,5 +1,5 @@
 pagefilter:
-  type: FromFilename
+  type: RFClassifier
 
 table_extraction:
   img:
