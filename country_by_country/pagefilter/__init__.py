@@ -25,6 +25,7 @@
 # Local imports
 from .copy_as_is import CopyAsIs
 from .from_filename import FromFilename
+from .rf_classifier import RFClassifier
 
 
 def from_config(config: dict) -> CopyAsIs | FromFilename:
@@ -34,3 +35,5 @@ def from_config(config: dict) -> CopyAsIs | FromFilename:
         return CopyAsIs()
     elif filter_type == "FromFilename":
         return FromFilename()
+    elif filter_type == "RFClassifier":
+        return RFClassifier()
