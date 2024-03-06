@@ -21,11 +21,9 @@
 # SOFTWARE.
 
 # Standard import
-from pathlib import Path
 import pickle
 import pkgutil
 import tempfile
-from typing import List
 
 # External imports
 import joblib
@@ -39,7 +37,7 @@ class FeatureExtractor:
     classifier
     """
 
-    def __init__(self, keywords: List[str], all_country_names: List[str]):
+    def __init__(self, keywords: list[str], all_country_names: list[str]) -> None:
         """
         Arguments:
             keywords: the keywords to count from the page text content
@@ -61,7 +59,7 @@ class FeatureExtractor:
         """
         return text.count(keyword)
 
-    def __call__(self, text: str):
+    def __call__(self, text: str) -> np.array:
         """
         Extracts the feature vector from the text
         The features we extract are:
@@ -87,13 +85,14 @@ class RFClassifier:
     to detect a page where a CbCR table would be included as an image
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         # Access the model bundled in the package
         data = pkgutil.get_data(
-            "country_by_country", "models/random_forest_model_low_false_positive.joblib"
+            "country_by_country",
+            "models/random_forest_model_low_false_positive.joblib",
         )
         keywords = pickle.loads(
-            pkgutil.get_data("country_by_country", "models/random_forest_keywords.pkl")
+            pkgutil.get_data("country_by_country", "models/random_forest_keywords.pkl"),
         ).split(",")
         # TODO: Weird ? There seems to be lacking the last keyword as seen from
         # the notebook
@@ -101,8 +100,9 @@ class RFClassifier:
 
         all_country_names = pickle.loads(
             pkgutil.get_data(
-                "country_by_country", "models/random_forest_country_names.pkl"
-            )
+                "country_by_country",
+                "models/random_forest_country_names.pkl",
+            ),
         )
         self.feature_extractor = FeatureExtractor(keywords, all_country_names)
         # Unpack the data in a temporary file that joblib can then load
@@ -140,7 +140,8 @@ class RFClassifier:
         n_pages, n_features_per_page = page_features.shape
 
         # Concatenate the features of the previous page and the next page
-        # the random forest expects [features_page_{i-1}, features_page_{i}, features_pages_{i+1}]
+        # the random forest expects
+        # [features_page_{i-1}, features_page_{i}, features_pages_{i+1}]
         features = np.zeros((n_pages, 3 * n_features_per_page))
         features[1:, :n_features_per_page] = page_features[:-1]
         features[:, n_features_per_page:-n_features_per_page] = page_features
@@ -151,7 +152,7 @@ class RFClassifier:
 
         # And now we keep only the pages that have been selected
         selected_pages = []
-        for ip, (p, keep_p) in enumerate(zip(reader.pages, predictions)):
+        for ip, (p, keep_p) in enumerate(zip(reader.pages, predictions, strict=True)):
             if keep_p:
                 writer.add_page(p)
                 selected_pages.append(ip)
