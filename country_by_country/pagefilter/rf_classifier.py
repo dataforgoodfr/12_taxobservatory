@@ -120,11 +120,7 @@ class RFClassifier:
             selected_pages : List of int
         """
 
-        # Generate a temporary filename where to save the filtered pdf
-        filename = tempfile.NamedTemporaryFile(suffix=".pdf", delete=False).name
-
         reader = pypdf.PdfReader(pdf_filepath)
-        writer = pypdf.PdfWriter()
 
         # Extract the features from all the pages
         page_features = []
@@ -148,16 +144,10 @@ class RFClassifier:
         predictions = self.clf.predict(features)
 
         # And now we keep only the pages that have been selected
-        selected_pages = []
-        for ip, (p, keep_p) in enumerate(zip(reader.pages, predictions, strict=True)):
-            if keep_p:
-                writer.add_page(p)
-                selected_pages.append(ip)
-        writer.write(filename)
+        selected_pages = [ip for ip, keep_p in enumerate(predictions) if keep_p]
 
         if assets is not None:
             assets["pagefilter"] = {
                 "src_pdf": pdf_filepath,
-                "target_pdf": filename,
                 "selected_pages": selected_pages,
             }
