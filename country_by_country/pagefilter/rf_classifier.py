@@ -85,11 +85,11 @@ class RFClassifier:
     to detect a page where a CbCR table would be included as an image
     """
 
-    def __init__(self) -> None:
+    def __init__(self, modelfile: str) -> None:
         # Access the model bundled in the package
         data = pkgutil.get_data(
             "country_by_country",
-            "models/random_forest_model_low_false_positive.joblib",
+            f"models/{modelfile}",
         )
         keywords = pickle.loads(
             pkgutil.get_data("country_by_country", "models/random_forest_keywords.pkl"),
