@@ -94,9 +94,6 @@ class RFClassifier:
         keywords = pickle.loads(
             pkgutil.get_data("country_by_country", "models/random_forest_keywords.pkl"),
         ).split(",")
-        # TODO: Weird ? There seems to be lacking the last keyword as seen from
-        # the notebook
-        keywords = keywords[:-1]
 
         all_country_names = pickle.loads(
             pkgutil.get_data(
