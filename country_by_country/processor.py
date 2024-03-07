@@ -50,7 +50,12 @@ class ReportProcessor:
         # Filtering the pages
         self.page_filter(pdf_filepath, assets)
 
-        pdf_to_process = assets["pagefilter"]["target_pdf"]
+        # Now that we identified the pages to be extracted, we extract them
+        # Note, in a GUI, we could ask the user to the change the content of
+        # assets["pagefilter"]["selected_pages"] before selecting the pages
+        pdf_to_process = pagefilter.filter_pages(
+            pdf_filepath, assets["pagefilter"]["selected_pages"]
+        )
 
         # Process the selected pages to detect the tables and extract
         # their contents
