@@ -56,6 +56,6 @@ Deux modèles semblent concluants mais ne produisent pas les mêmes résultats.
 
 ### Détection de tableau avec Microsoft Table Transformer
 
-<a target="_blank" href="https://colab.research.google.com/github/dataforgoodfr/12_taxobservatory/blob/add-notebooks/notebooks/table_detection_table_transformer.ipynb">
+<a target="_blank" href="https://colab.research.google.com/github/dataforgoodfr/12_taxobservatory/blob/main/notebooks/table_detection_table_transformer.ipynb">
   <img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open In Colab"/>
 </a>
