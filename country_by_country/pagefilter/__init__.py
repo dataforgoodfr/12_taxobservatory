@@ -25,6 +25,7 @@
 # Local imports
 from .copy_as_is import CopyAsIs
 from .from_filename import FromFilename
+from .filter_pages import filter_pages
 
 
 def from_config(config: dict) -> CopyAsIs | FromFilename:
