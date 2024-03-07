@@ -21,37 +21,25 @@
 # SOFTWARE.
 
 # Standard imports
-import shutil
 import tempfile
 
 # External imports
 import pypdf
 
 
-class CopyAsIs:
+def filter_pages(pdf_filepath: str, selected_pages: list[int]) -> str:
     """
-    Dummy filter just copying the source pdf to a target
-    temporary file
+    Function to extract the selected pages from a source pdf
+    It returns the path to the PDF created by keeping only the
+    selected pages
     """
+    reader = pypdf.PdfReader(pdf_filepath)
+    writer = pypdf.PdfWriter()
 
-    def __init__(self) -> None:
-        pass
+    for pi in selected_pages:
+        writer.add_page(reader.pages[pi])
 
-    def __call__(self, pdf_filepath: str, assets: dict) -> None:
-        """
-        Basically keeps all the pages of the original document
-        Writes assets:
-            src_pdf: the original pdf filepath
-            selected_pages : list of selected pages
-        """
-        filename = tempfile.NamedTemporaryFile(suffix=".pdf", delete=False).name
-        shutil.copy(pdf_filepath, filename)
+    filename = tempfile.NamedTemporaryFile(suffix=".pdf", delete=False).name
+    writer.write(filename)
 
-        reader = pypdf.PdfReader(pdf_filepath)
-        n_pages = len(reader.pages)
-
-        if assets is not None:
-            assets["pagefilter"] = {
-                "src_pdf": pdf_filepath,
-                "selected_pages": list(range(n_pages)),
-            }
+    return filename

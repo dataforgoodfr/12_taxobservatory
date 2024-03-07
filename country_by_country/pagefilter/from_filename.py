@@ -21,12 +21,7 @@
 # SOFTWARE.
 
 # Standard imports
-import shutil
-import tempfile
 from pathlib import Path
-
-# External imports
-import pypdf
 
 NUM_PAGE_FIELDS = 2
 
@@ -59,8 +54,6 @@ class FromFilename:
             selected_pages : list of selected pages
         """
 
-        filename = tempfile.NamedTemporaryFile(suffix=".pdf", delete=False).name
-
         # Get the page or page range from the filename
         src_filename = Path(pdf_filepath).name
 
@@ -79,21 +72,8 @@ class FromFilename:
             ):
                 selected_pages = list(range(int(pagefields[0]) - 1, int(pagefields[1])))
 
-        # Extract the selected pages
-        if len(selected_pages) == 0:
-            # If we keep all the page, just copy the pdf
-            shutil.copy(pdf_filepath, filename)
-        else:
-            reader = pypdf.PdfReader(pdf_filepath)
-            writer = pypdf.PdfWriter()
-
-            for pi in selected_pages:
-                writer.add_page(reader.pages[pi])
-            writer.write(filename)
-
         if assets is not None:
             assets["pagefilter"] = {
                 "src_pdf": pdf_filepath,
-                "target_pdf": filename,
                 "selected_pages": selected_pages,
             }
