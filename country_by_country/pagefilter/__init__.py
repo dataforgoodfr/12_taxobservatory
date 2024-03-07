@@ -26,7 +26,6 @@
 from .copy_as_is import CopyAsIs
 from .from_filename import FromFilename
 from .rf_classifier import RFClassifier
-from .filter_pages import filter_pages
 
 
 def from_config(config: dict) -> CopyAsIs | FromFilename:
