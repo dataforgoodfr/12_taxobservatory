@@ -22,13 +22,12 @@
 
 # Standard imports
 import tempfile
-from typing import List
 
 # External imports
 import pypdf
 
 
-def filter_pages(pdf_filepath: str, selected_pages: List[int]):
+def filter_pages(pdf_filepath: str, selected_pages: list[int]) -> str:
     """
     Function to extract the selected pages from a source pdf
     It returns the path to the PDF created by keeping only the
