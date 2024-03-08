@@ -9,3 +9,15 @@ table_extraction:
     - type: Camelot
       params:
         flavor: lattice
+
+rag:
+  type: TapasQA
+  params:
+    # model_name: "google/tapas-large-finetuned-wtq"
+    model_name: "microsoft/tapex-large-finetuned-wtq"
+    questions:
+      - "When are the taxes paid ?"
+      - "What is the total number of taxes paid in Slovenia ?"
+      - "How much is the profit before tax in Montenegro ?"
+      - "How much tangible assets in Italy ?"
+      - "What is the currency unit for the tangible assets ?"
