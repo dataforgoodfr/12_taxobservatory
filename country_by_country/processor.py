@@ -24,7 +24,7 @@
 import logging
 
 # Local imports
-from . import img_table_extraction, pagefilter
+from . import img_table_extraction, pagefilter, rag
 from .pagefilter.filter_pages import filter_pages
 
 
@@ -38,6 +38,7 @@ class ReportProcessor:
         self.img_table_extractors = [
             img_table_extraction.from_config(name) for name in img_table_extractors
         ]
+        # self.rag = rag.from_config(config["rag"])
 
     def process(self, pdf_filepath: str) -> dict:
         logging.info(f"Processing {pdf_filepath}")
@@ -65,8 +66,8 @@ class ReportProcessor:
             img_table_extractor(pdf_to_process, assets)
 
         # Given the parsed content to the RAG for identifying the key numbers
-        # TODO
-        # For now, just print the results
-        print(assets)
+        table = assets["text_table_extractors"]["camelot_stream"]["tables"][0]
+        table.to_csv("table.csv")
+        self.rag(table)
 
         return assets
