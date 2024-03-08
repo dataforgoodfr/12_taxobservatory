@@ -25,7 +25,7 @@ from ExtractTable import ExtractTable
 
 
 class ExtractTableAPI:
-    def __init__(self, api_key: str):
+    def __init__(self, api_key: str) -> None:
         self.extract_table = ExtractTable(api_key)
         usage = self.extract_table.check_usage()
         print(usage)
@@ -37,7 +37,9 @@ class ExtractTableAPI:
             tables: a list of pandas dataframe of the parsed tables
         """
         table_data = self.extract_table.process_file(
-            filepath=pdf_filepath, pages="all", output_format="df"
+            filepath=pdf_filepath,
+            pages="all",
+            output_format="df",
         )
 
         assets["img_table_extractors"]["extracttable"] = {
