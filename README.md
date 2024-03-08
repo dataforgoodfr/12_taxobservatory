@@ -44,6 +44,16 @@ and check your browser !
 
 # Notebooks
 
+## Detection des pages contenant un tableau CbCR
+
+### Decision tree et random forest
+
+Le filtre `country_by_country/pagefilter/RFClassifier` utilise un arbre de décision ou des random forest entrainés par le notebook ci-dessous
+
+<a target="_blank" href="https://colab.research.google.com/github/dataforgoodfr/12_taxobservatory/blob/main/notebooks/page_filter_randomforest.ipynb">
+  <img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open In Colab"/>
+</a>
+
 ## Détection de Tableau
 
 Deux modèles semblent concluants mais ne produisent pas les mêmes résultats.
