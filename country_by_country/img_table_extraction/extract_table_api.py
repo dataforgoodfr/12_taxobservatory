@@ -20,16 +20,27 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-# Local imports
-from .camelot_extractor import Camelot
-from .extract_table_api import ExtractTableAPI
+# External imports
+from ExtractTable import ExtractTable
 
 
-def from_config(config: dict) -> Camelot | ExtractTableAPI:
-    extractor_type = config["type"]
-    extractor_params = config["params"]
-    # This one-liner is python valid but rejected by the pre-commit
-    if extractor_type == "Camelot":
-        return Camelot(**extractor_params)
-    elif extractor_type == "ExtractTableAPI":
-        return ExtractTableAPI(**extractor_params)
+class ExtractTableAPI:
+    def __init__(self, api_key: str):
+        self.extract_table = ExtractTable(api_key)
+        usage = self.extract_table.check_usage()
+        print(usage)
+
+    def __call__(self, pdf_filepath: str, assets: dict) -> None:
+        """
+        Writes assets:
+            ntables: the number of detected tables
+            tables: a list of pandas dataframe of the parsed tables
+        """
+        table_data = self.extract_table.process_file(
+            filepath=pdf_filepath, pages="all", output_format="df"
+        )
+
+        assets["img_table_extractors"]["extracttable"] = {
+            "ntables": len(table_data),
+            "tables": table_data,
+        }
