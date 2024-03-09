@@ -9,3 +9,4 @@ table_extraction:
     - type: Camelot
       params:
         flavor: lattice
+    - type: Unstructured
