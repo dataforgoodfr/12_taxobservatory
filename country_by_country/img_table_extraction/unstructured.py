@@ -21,20 +21,21 @@
 # SOFTWARE.
 
 # Standard imports
-import logging
 
 # External imports
-from unstructured.partition.pdf import partition_pdf
 import pandas as pd
+from unstructured.partition.pdf import partition_pdf
 
 
 class Unstructured:
-    def __init__(self):
+    def __init__(self) -> None:
         pass
 
     def __call__(self, pdf_filepath: str, assets: dict) -> None:
         elements = partition_pdf(
-            pdf_filepath, infer_table_structure=True, strategy="hi_res"
+            pdf_filepath,
+            infer_table_structure=True,
+            strategy="hi_res",
         )
         tables_list = [el for el in elements if el.category == "Table"]
         tables_list = [pd.read_html(t.metadata.text_as_html) for t in tables_list]
