@@ -21,6 +21,13 @@ camelot-py = "^0.11.0"
 opencv-python-headless = "^4.9.0.80"
 ghostscript = "^0.7"
 pypdf = "^4.0.2"
+unstructured = {version="^0.12.6", python =">=3.10,<3.12"}
+pdf2image = "^1.17.0"
+pillow-heif = "^0.15.0"
+unstructured-inference = "^0.7.24"
+pytesseract = "^0.3.10"
+pikepdf = "^8.13.0"
+unstructured-pytesseract = "^0.3.12"
 
 [tool.poetry.group.dev.dependencies]
 pre-commit = "^2.20.0"
