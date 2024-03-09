@@ -20,18 +20,26 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-# Local imports
-from .camelot_extractor import Camelot
-from .unstructured import Unstructured
+# Standard imports
+import logging
+
+# External imports
+from unstructured.partition.pdf import partition_pdf
+import pandas as pd
 
 
-def from_config(config: dict) -> Camelot:
-    extractor_type = config["type"]
-    if "params" in config:
-        extractor_params = config["params"]
-    # This one-liner is python valid but rejected by the pre-commit
-    if extractor_type == "Camelot":
-        return Camelot(**extractor_params)
-    elif extractor_type == "Unstructured":
-        return Unstructured()
-    return None
+class Unstructured:
+    def __init__(self):
+        pass
+
+    def __call__(self, pdf_filepath: str, assets: dict) -> None:
+        elements = partition_pdf(
+            pdf_filepath, infer_table_structure=True, strategy="hi_res"
+        )
+        tables_list = [el for el in elements if el.category == "Table"]
+        tables_list = [pd.read_html(t.metadata.text_as_html) for t in tables_list]
+
+        assets["img_table_extractors"]["unstructured"] = {
+            "ntables": len(tables_list),
+            "tables": tables_list,
+        }
