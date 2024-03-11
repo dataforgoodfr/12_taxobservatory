@@ -25,12 +25,17 @@
 # Local imports
 from .copy_as_is import CopyAsIs
 from .from_filename import FromFilename
+from .rf_classifier import RFClassifier
 
 
 def from_config(config: dict) -> CopyAsIs | FromFilename:
     filter_type = config["type"]
-    # This one-liner is python valid but rejected by the pre-commit
+    if "params" in config:
+        params = config["params"]
+
     if filter_type == "CopyAsIs":
         return CopyAsIs()
     elif filter_type == "FromFilename":
         return FromFilename()
+    elif filter_type == "RFClassifier":
+        return RFClassifier(**params)
