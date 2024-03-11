@@ -1,3 +1,4 @@
+import pandas as pd
 from operator import itemgetter
 
 from langchain.prompts import ChatPromptTemplate
@@ -6,6 +7,8 @@ from langchain.schema.output_parser import StrOutputParser
 from langchain.schema.runnable import RunnablePassthrough
 from langchain.prompts.prompt import PromptTemplate
 from langchain.schema import format_document
+
+from country_by_country.utils import pass_values, flatten_dict
 
 
 DEFAULT_DOCUMENT_PROMPT = PromptTemplate.from_template(template="{page_content}")
@@ -22,7 +25,7 @@ def _combine_documents(docs, document_prompt=DEFAULT_DOCUMENT_PROMPT, sep="\n\n"
 def make_rag_chain(retriever, llm):
     template = """
     You are an economical expert, with 20 years experience analyzing corporate financial reports.
-    You will answer the question based on the following tables extracted from a financial report:
+    You will answer the question based on the following table extracted from a financial report:
     ```
     {context}
     ```
@@ -77,3 +80,55 @@ def make_rag_chain(retriever, llm):
     chain = retrieved_documents | answer
 
     return chain
+
+class Extraction:
+    def __init__(self, retriever, llm, k=1, max_threads=5):
+        self.llm = llm
+        self.k = k
+        self.max_threads = max_threads
+        self.retriever = retriever
+        self.rag_chain = (
+            {
+                "rag": make_rag_chain(self.retriever, self.llm),
+            }
+            | RunnablePassthrough()
+            | flatten_dict
+        )
+        
+    def ask(self, question):
+        result = self.rag_chain.invoke({"question": question})
+        return result
+
+    def run(self, questions):
+        all_answers = []
+        validated_questions = []
+        remaining_questions = [x for x in questions if x not in validated_questions]
+
+        for question in remaining_questions:
+            try:
+                answer = self.ask(question)
+                all_answers.append(answer)
+                validated_questions.append(question)
+            except Exception as e:
+                print(e)
+        # Format the answers to a dataframe
+        all_answers_df = []
+        for answer in all_answers:
+            # answer = answer[0]
+            answer_dict = {
+                "question": answer["question"],
+                "answer": answer["answer"],
+            }
+            for i, x in enumerate(answer["docs"]):
+                # answer_dict[f"Doc {i+1}"] = os.path.basename(x.metadata["source"])
+                answer_dict[f"Doc {i+1} page"] = x.metadata["page"]
+                answer_dict[f"Doc {i+1} relevant content"] = x.page_content
+            all_answers_df.append(answer_dict)
+        all_answers_df = pd.DataFrame(all_answers_df)
+
+        # Merge questions and answers
+        # final_df = esrs_df.drop_duplicates(subset="question").merge(
+        #     all_answers_df.drop_duplicates(subset="question"), on="question"
+        # )
+
+        return all_answers_df
