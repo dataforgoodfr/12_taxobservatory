@@ -1,5 +1,7 @@
 pagefilter:
-  type: FromFilename
+  type: RFClassifier
+  params: 
+    modelfile: random_forest_model_low_false_positive.joblib
 
 table_extraction:
   img:

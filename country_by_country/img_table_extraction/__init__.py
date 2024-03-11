@@ -28,7 +28,7 @@ from .extract_table_api import ExtractTableAPI
 def from_config(config: dict) -> Camelot | ExtractTableAPI:
     extractor_type = config["type"]
     extractor_params = config["params"]
-    # This one-liner is python valid but rejected by the pre-commit
+
     if extractor_type == "Camelot":
         return Camelot(**extractor_params)
     elif extractor_type == "ExtractTableAPI":
