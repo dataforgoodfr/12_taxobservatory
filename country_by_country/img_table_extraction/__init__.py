@@ -29,7 +29,6 @@ def from_config(config: dict) -> Camelot:
     extractor_type = config["type"]
     if "params" in config:
         extractor_params = config["params"]
-    # This one-liner is python valid but rejected by the pre-commit
     if extractor_type == "Camelot":
         return Camelot(**extractor_params)
     elif extractor_type == "Unstructured":
