@@ -11,3 +11,7 @@ table_extraction:
     - type: Camelot
       params:
         flavor: lattice
+    - type: Unstructured
+      params:
+        pdf_image_dpi: 300
+        hi_res_model_name: "yolox"

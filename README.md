@@ -1,5 +1,55 @@
 # EU Tax Observatory
 
+# Usage
+
+## Installing
+
+To install the library in a dedicated virtual environnement :
+
+```
+python3 -m venv venv
+source venv/bin/activate
+python3 -m pip install git+https://github.com/dataforgoodfr/12_taxobservatory.git
+```
+
+## Running the pipeline from the command line
+
+To run the pipeline from the command line, once installed, you can invoke the
+`country_by_country` module on a pdf file as :
+
+```
+python3 -m country_by_country config.yaml report.pdf
+```
+
+The yaml file is describing the pipeline you want to execute. For now, you can
+specify the page filter and the table extraction algorithms. An example
+`config.yaml` file is given below :
+
+
+**config.yaml**
+```
+pagefilter:
+  type: RFClassifier
+  params: 
+    modelfile: random_forest_model_low_false_positive.joblib
+
+table_extraction:
+  img:
+    - type: Camelot
+      params:
+        flavor: stream
+    - type: Unstructured
+      params:
+        pdf_image_dpi: 300
+        hi_res_model_name: "yolox"
+```
+
+This config file uses:
+- a pretrained random forest for selecting the pages of the report that possibly
+  contain a CbCR table
+- camelot with its stream flavor and unstructured with yolox as the table
+  detector for locating and parsing the tables on the previously selected pages
+
 # Contributing
 
 ## Use a venv
