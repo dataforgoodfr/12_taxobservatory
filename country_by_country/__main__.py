@@ -42,7 +42,7 @@ if __name__ == "__main__":
     logging.basicConfig(stream=sys.stdout, level=logging.INFO, format="%(message)s")
 
     if len(sys.argv) != NUM_CLI_ARGS:
-        logging.error(f"Usage : {sys.argv[0]} config.yaml report.pdf")
+        logging.error("Usage : python -m country_by_country config.yaml report.pdf")
         sys.exit(-1)
 
     logging.info(f"Loading {sys.argv[1]}")
