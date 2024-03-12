@@ -2,6 +2,16 @@
 
 # Usage
 
+## Installing
+
+To install the library in a dedicated virtual environnement :
+
+```
+python3 -m venv venv
+source venv/bin/activate
+python3 -m pip install git+https://github.com/dataforgoodfr/12_taxobservatory.git
+```
+
 ## Running the pipeline from the command line
 
 To run the pipeline from the command line, once installed, you can invoke the
