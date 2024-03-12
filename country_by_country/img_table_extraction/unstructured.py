@@ -28,7 +28,7 @@ from unstructured.partition.pdf import partition_pdf
 
 
 class Unstructured:
-    def __init__(self, **kwargs) -> None:
+    def __init__(self, **kwargs: dict) -> None:
         """
         Builds a pdf page parser, looking for tables using
         the unstructured library.
@@ -40,7 +40,10 @@ class Unstructured:
 
     def __call__(self, pdf_filepath: str, assets: dict) -> None:
         elements = partition_pdf(
-            pdf_filepath, infer_table_structure=True, strategy="hi_res", **self.kwargs
+            pdf_filepath,
+            infer_table_structure=True,
+            strategy="hi_res",
+            **self.kwargs,
         )
         tables_list = [el for el in elements if el.category == "Table"]
         tables_list = [pd.read_html(t.metadata.text_as_html) for t in tables_list]
