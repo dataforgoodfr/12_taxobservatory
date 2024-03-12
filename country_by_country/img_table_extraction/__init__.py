@@ -32,5 +32,5 @@ def from_config(config: dict) -> Camelot:
     if extractor_type == "Camelot":
         return Camelot(**extractor_params)
     elif extractor_type == "Unstructured":
-        return Unstructured()
+        return Unstructured(**extractor_params)
     return None

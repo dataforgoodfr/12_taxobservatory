@@ -28,14 +28,19 @@ from unstructured.partition.pdf import partition_pdf
 
 
 class Unstructured:
-    def __init__(self) -> None:
-        pass
+    def __init__(self, **kwargs) -> None:
+        """
+        Builds a pdf page parser, looking for tables using
+        the unstructured library.
+        The kwargs given to the constructor are directly propagated
+        to the partition_pdf function.
+        You are free to define any parameter partition_pdf recognizes
+        """
+        self.kwargs = kwargs
 
     def __call__(self, pdf_filepath: str, assets: dict) -> None:
         elements = partition_pdf(
-            pdf_filepath,
-            infer_table_structure=True,
-            strategy="hi_res",
+            pdf_filepath, infer_table_structure=True, strategy="hi_res", **self.kwargs
         )
         tables_list = [el for el in elements if el.category == "Table"]
         tables_list = [pd.read_html(t.metadata.text_as_html) for t in tables_list]
