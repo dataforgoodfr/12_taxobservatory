@@ -20,10 +20,10 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-import country_by_country.pagefilter as pagefilter
+from country_by_country import pagefilter
 
 
-def test_copy_as_is():
+def test_copy_as_is() -> None:
     config = {"type": "CopyAsIs"}
     myfilter = pagefilter.from_config(config)
 
@@ -34,7 +34,7 @@ def test_copy_as_is():
     assert assets["pagefilter"]["selected_pages"] == [0]
 
 
-def test_filter_pages():
+def test_filter_pages() -> None:
     config = {"type": "FromFilename"}
     myfilter = pagefilter.from_config(config)
 
@@ -45,7 +45,7 @@ def test_filter_pages():
     assert assets["pagefilter"]["selected_pages"] == [0]
 
 
-def test_rf_classifier():
+def test_rf_classifier() -> None:
     config = {
         "type": "RFClassifier",
         "params": {"modelfile": "random_forest_model_low_false_positive.joblib"},
