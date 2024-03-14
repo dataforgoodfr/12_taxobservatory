@@ -33,6 +33,12 @@ def test_copy_as_is() -> None:
     assert assets["pagefilter"]["src_pdf"] == src_path
     assert assets["pagefilter"]["selected_pages"] == [0]
 
+    assets = {}
+    src_path = "./test/data/Allianz_2017_CbCR_7.pdf"
+    myfilter(src_path, assets)
+    assert assets["pagefilter"]["src_pdf"] == src_path
+    assert assets["pagefilter"]["selected_pages"] == list(range(11))
+
 
 def test_filter_pages() -> None:
     config = {"type": "FromFilename"}
@@ -43,6 +49,12 @@ def test_filter_pages() -> None:
     myfilter(src_path, assets)
     assert assets["pagefilter"]["src_pdf"] == src_path
     assert assets["pagefilter"]["selected_pages"] == [0]
+
+    assets = {}
+    src_path = "./test/data/Allianz_2017_CbCR_7.pdf"
+    myfilter(src_path, assets)
+    assert assets["pagefilter"]["src_pdf"] == src_path
+    assert assets["pagefilter"]["selected_pages"] == [6]
 
 
 def test_rf_classifier() -> None:
@@ -57,3 +69,9 @@ def test_rf_classifier() -> None:
     myfilter(src_path, assets)
     assert assets["pagefilter"]["src_pdf"] == src_path
     assert assets["pagefilter"]["selected_pages"] == [0]
+
+    assets = {}
+    src_path = "./test/data/Allianz_2017_CbCR_7.pdf"
+    myfilter(src_path, assets)
+    assert assets["pagefilter"]["src_pdf"] == src_path
+    assert assets["pagefilter"]["selected_pages"] == [6, 7]
