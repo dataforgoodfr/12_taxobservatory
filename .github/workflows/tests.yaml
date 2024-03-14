@@ -1,0 +1,22 @@
+name: tests
+
+on: [push]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python: ["3.10"]
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python }}
+      - name: Installs poetry
+        run: pip install poetry 
+      - name: Installs the country_by_country package
+        run: poetry install 
+      - name: Run tox
+        run: tox -e py
