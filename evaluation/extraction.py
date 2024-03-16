@@ -45,14 +45,34 @@ from typing import List
 # External imports
 import pandas as pd
 
+# Local imports
+import country_by_country.img_table_extraction as img_table_extraction
+
 
 def evaluate_single_report(
     pdf_filepath: pathlib.Path, tables: List[pd.DataFrame]
 ) -> None:
     logging.info(
-        f"Processing {pdf_filepath.name}, with {len(tables)} ground truth tables"
+        f"\nProcessing {pdf_filepath.name}, with {len(tables)} ground truth tables"
     )
-    # TODO
+
+    table_extractor = img_table_extraction.from_config(
+        {
+            "type": "Unstructured",
+            "params": {"pdf_image_dpi": 300, "hi_res_model_name": "yolox"},
+        }
+    )
+
+    extracted_assets = {
+        "text_table_extractors": {},
+        "img_table_extractors": {},
+    }
+    table_extractor(pdf_filepath, extracted_assets)
+    extracted_tables = extracted_assets["img_table_extractors"]["unstructured"][
+        "tables"
+    ]
+
+    print(f"===> Extracted {len(extracted_tables)}, expected {len(tables)}")
 
 
 def evaluate_table_extraction(datadir: pathlib.Path) -> None:
