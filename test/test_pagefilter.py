@@ -40,7 +40,7 @@ def test_copy_as_is() -> None:
     assert assets["pagefilter"]["selected_pages"] == list(range(11))
 
 
-def test_filter_pages() -> None:
+def test_from_filemane() -> None:
     config = {"type": "FromFilename"}
     myfilter = pagefilter.from_config(config)
 
