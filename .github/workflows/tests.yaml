@@ -16,6 +16,8 @@ jobs:
           python-version: ${{ matrix.python }}
       - name: Install poppler (required by pdf2image/unstructured)
         run: sudo apt install -y poppler-utils
+      - name: Install tesseract (required by unstructured)
+        run: sudo apt install -y tesseract
       - name: Install tox
         run: pip install tox
       - name: Run tox
