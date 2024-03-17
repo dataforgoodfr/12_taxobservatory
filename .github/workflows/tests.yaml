@@ -14,6 +14,10 @@ jobs:
         uses: actions/setup-python@v5
         with:
           python-version: ${{ matrix.python }}
+      - name: Install poppler (required by pdf2image/unstructured)
+        run: sudo apt install -y poppler-utils
+      - name: Install tesseract (required by unstructured)
+        run: sudo apt install -y tesseract-ocr
       - name: Install tox
         run: pip install tox
       - name: Run tox
