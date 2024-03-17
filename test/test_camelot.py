@@ -23,6 +23,8 @@
 # Local imports
 from country_by_country import img_table_extraction
 
+NTABLES_DETECTED_ACCIONA = 4
+
 
 def test_camelot() -> None:
     flavor = "stream"
@@ -37,13 +39,13 @@ def test_camelot() -> None:
     tables = assets["text_table_extractors"][f"camelot_{flavor}"]["tables"]
 
     # As of 03/2024, camelot detects 4 tables
-    assert ntables == 4
+    assert ntables == NTABLES_DETECTED_ACCIONA
 
     # To get the expected result :
     # python -m pytest -s
-    # cbcr_table = tables[1]
-    # column_idx = 3
-    # print(cbcr_table[column_idx].tolist())
+    # >>> cbcr_table = tables[1]
+    # >>> column_idx = 3
+    # >>> print(cbcr_table[column_idx].tolist())
 
     expected_c0 = [
         "",

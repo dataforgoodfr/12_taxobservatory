@@ -21,7 +21,6 @@
 # SOFTWARE.
 
 # External imports
-import numpy as np
 import pandas as pd
 
 # Local imports
@@ -50,10 +49,10 @@ def test_unstructured_yolox() -> None:
 
     # To get the expected result :
     # python -m pytest -s
-    # table.to_csv("/tmp/table.csv", index=False)
+    # >> table.to_csv("/tmp/table.csv", index=False)
 
     expected_table = pd.read_csv(
-        "./test/data/unstructured_yolox_Acciona_2020_CbCR_1.csv"
+        "./test/data/unstructured_yolox_Acciona_2020_CbCR_1.csv",
     )
 
     assert table == expected_table
