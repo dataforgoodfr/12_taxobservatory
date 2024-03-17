@@ -56,7 +56,4 @@ def test_unstructured_yolox() -> None:
         "./test/data/unstructured_yolox_Acciona_2020_CbCR_1.csv",
     )
 
-    print(table)
-    print(expected_table)
-
     assert_frame_equal(table, expected_table)
