@@ -22,6 +22,7 @@
 
 # External imports
 import pandas as pd
+from pandas.testing import assert_frame_equal
 
 # Local imports
 from country_by_country import img_table_extraction
@@ -55,4 +56,7 @@ def test_unstructured_yolox() -> None:
         "./test/data/unstructured_yolox_Acciona_2020_CbCR_1.csv",
     )
 
-    assert table == expected_table
+    print(table)
+    print(expected_table)
+
+    assert_frame_equal(table, expected_table)
