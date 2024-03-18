@@ -22,8 +22,9 @@
 
 # Local imports
 from .camelot_extractor import Camelot
-from .unstructured import Unstructured
 from .llama_parse_extractor import LlamaParseExtractor
+from .unstructured import Unstructured
+
 
 def from_config(config: dict) -> Camelot:
     extractor_type = config["type"]
@@ -35,5 +36,5 @@ def from_config(config: dict) -> Camelot:
     elif extractor_type == "Unstructured":
         return Unstructured(**extractor_params)
     elif extractor_type == "LLamaParse":
-        return LlamaParseExtractor(**extractor_params) 
+        return LlamaParseExtractor(**extractor_params)
     return None

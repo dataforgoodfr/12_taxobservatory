@@ -23,11 +23,11 @@
 # Standard imports
 
 # External imports
-import pandas as pd
-from llama_parse import LlamaParse
-import os
-from dotenv import load_dotenv
+
 import nest_asyncio
+import pandas as pd
+from dotenv import load_dotenv
+from llama_parse import LlamaParse
 
 
 class LlamaParseExtractor:
@@ -52,7 +52,7 @@ class LlamaParseExtractor:
         tables_list = []
         for page in json_objs[0]["pages"]:
             for item in page["items"]:
-                if item['type'] == 'table':
+                if item["type"] == "table":
                     df = pd.DataFrame(item["rows"][1:], columns=item["rows"][0])
                     tables_list.append(df)
 
