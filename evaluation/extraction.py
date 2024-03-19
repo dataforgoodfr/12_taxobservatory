@@ -76,6 +76,23 @@ def evaluate_single_report(
     report_fh.write(
         f"Parsed {len(extracted_tables)} tables, expected {len(tables)} tables"
     )
+
+    report_fh.write("<h1>Comparison between parsed and ground truth</h1>")
+    if len(extracted_tables) != len(tables):
+        report_fh.write(
+            "No comparison available, we do no have the same number of tables between the parsing and the ground truth"
+        )
+    else:
+        for expected_table, extracted_table in zip(tables, extracted_tables):
+            extracted_table = extracted_table[0]
+            try:
+                diff = extracted_table.compare(
+                    expected_table, keep_shape=True, keep_equal=True
+                )
+                report_fh.write(diff.to_html())
+            except ValueError as e:
+                print("Skipping comparison")
+
     report_fh.write("<h1>Parsed tables</h1>")
     for df in extracted_tables:
         df = df[0]  # For some reasons, this is a list ?
