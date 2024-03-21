@@ -94,6 +94,13 @@ and check your browser !
 
 # Notebooks
 
+## Démonstrateur du pipeline
+
+<a target="_blank" href="https://colab.research.google.com/github/dataforgoodfr/12_taxobservatory/blob/main/notebooks/demo_notebook_pipeline.ipynb">
+  <img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open In Colab"/>
+</a>
+
+
 ## Detection des pages contenant un tableau CbCR
 
 ### Decision tree et random forest
