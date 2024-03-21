@@ -60,15 +60,13 @@ class LLMCleaner:
         logging.info(f"Pulling {len(tables)} tables from extraction stage")
 
         # Convert tables to html to add to LLM prompt
-        [table.to_html() for table in tables]
+        html_tables = [table.to_html() for table in tables]
 
         # Define our LLM model
         model = ChatOpenAI(temperature=0, model="gpt-4-turbo-preview")
 
         # ---------- CHAIN 1/2 - Pull countries from each table ----------
-        logging.info(
-            "Setting up and starting chain 1/2: extracting country names from tables"
-        )
+        logging.info("Starting chain 1/2: extracting country names from tables")
 
         # Output should have this model (a list of country names)
         class CountryNames(BaseModel):
@@ -85,7 +83,7 @@ class LLMCleaner:
             template="Extract an exhaustive list of countries from the following table in html format:\n{table}\n{format_instructions}",
             input_variables=["table"],
             partial_variables={
-                "format_instructions": parser1.get_format_instructions()
+                "format_instructions": parser1.get_format_instructions(),
             },
         )
 
@@ -93,15 +91,13 @@ class LLMCleaner:
         chain1 = {"table": lambda x: x} | prompt1 | model | parser1
 
         # Run it
-        responses1 = chain1.batch(tables, {"max_concurrency": 4})
+        responses1 = chain1.batch(html_tables, {"max_concurrency": 4})
 
         # Extract country lists from responses
         country_lists = [resp["country_names"] for resp in responses1]
 
         # ---------- CHAIN 2/2 - Pull financial data for each country ----------
-        logging.info(
-            "Setting up and starting chain 2/2: extracting financial data from tables"
-        )
+        logging.info("Starting chain 2/2: extracting financial data from tables")
 
         # Define country data model
         class Country(BaseModel):
@@ -110,17 +106,20 @@ class LLMCleaner:
             jur_name: str = Field(..., description="Name of the country")
             total_revenues: float | None = Field(None, description="Total revenues")
             profit_before_tax: float | None = Field(
-                None, description="Amount of profit (or loss) before tax"
+                None,
+                description="Amount of profit (or loss) before tax",
             )
             tax_paid: float | None = Field(None, description="Income tax paid")
             tax_accrued: float | None = Field(None, description="Accrued tax")
             employees: float | None = Field(None, description="Number of employees")
             stated_capital: float | None = Field(None, description="Stated capital")
             accumulated_earnings: float | None = Field(
-                None, description="Accumulated earnings"
+                None,
+                description="Accumulated earnings",
             )
             tangible_assets: float | None = Field(
-                None, description="Tangible assets other than cash and cash equivalent"
+                None,
+                description="Tangible assets other than cash and cash equivalent",
             )
 
         # Output should have this model (a list of country objects)
@@ -142,7 +141,7 @@ class LLMCleaner:
         prompt = PromptTemplate.from_template(
             template,
             partial_variables={
-                "format_instructions": parser2.get_format_instructions()
+                "format_instructions": parser2.get_format_instructions(),
             },
         )
 
@@ -155,12 +154,13 @@ class LLMCleaner:
 
         # Run it
         responses2 = chain2.batch(
-            list(zip(tables, country_lists)), {"max_concurrency": 4}
+            list(zip(html_tables, country_lists)),
+            {"max_concurrency": 4},
         )
 
         # Merge the tables into one dataframe
         df = pd.concat(
-            [pd.json_normalize(resp.dict()["countries"]) for resp in responses2]
+            [pd.json_normalize(resp.dict()["countries"]) for resp in responses2],
         ).reset_index(drop=True)
 
         # Save the dataframe
