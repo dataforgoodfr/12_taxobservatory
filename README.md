@@ -96,7 +96,7 @@ and check your browser !
 
 ## Démonstrateur du pipeline
 
-<a target="_blank" href="https://colab.research.google.com/github/dataforgoodfr/12_taxobservatory/blob/demo_notebook/notebooks/demo_notebook_pipeline.ipynb">
+<a target="_blank" href="https://colab.research.google.com/github/dataforgoodfr/12_taxobservatory/blob/main/notebooks/demo_notebook_pipeline.ipynb">
   <img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open In Colab"/>
 </a>
 
