@@ -23,9 +23,10 @@
 # Standard imports
 
 # External imports
+from io import StringIO
+
 import pandas as pd
 from unstructured.partition.pdf import partition_pdf
-from io import StringIO
 
 
 class Unstructured:
@@ -47,7 +48,9 @@ class Unstructured:
             **self.kwargs,
         )
         tables_list = [el for el in elements if el.category == "Table"]
-        tables_list = [pd.read_html(StringIO(t.metadata.text_as_html))[0] for t in tables_list]
+        tables_list = [
+            pd.read_html(StringIO(t.metadata.text_as_html))[0] for t in tables_list
+        ]
 
         assets["img_table_extractors"]["unstructured"] = {
             "ntables": len(tables_list),

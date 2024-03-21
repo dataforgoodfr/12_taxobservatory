@@ -24,9 +24,8 @@
 import logging
 
 # Local imports
-from . import img_table_extraction, pagefilter
+from . import img_table_extraction, pagefilter, table_cleaning
 from .pagefilter.filter_pages import filter_pages
-from . import table_cleaning
 
 
 class ReportProcessor:
@@ -77,6 +76,5 @@ class ReportProcessor:
             table_cleaner(assets)
 
         # For now, just print the results
-        #print(assets)
 
         return assets

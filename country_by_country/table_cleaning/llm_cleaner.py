@@ -22,17 +22,18 @@
 
 # Standard imports
 import logging
-from ..utils import constants
+
+import pandas as pd
 
 # External imports
 from dotenv import load_dotenv
-import pandas as pd
-from typing import List, Optional
-from langchain_core.pydantic_v1 import BaseModel, Field
-from langchain_core.output_parsers import JsonOutputParser, PydanticOutputParser
-from langchain.prompts import PromptTemplate
-from langchain_openai import ChatOpenAI
 from IPython.display import display
+from langchain.prompts import PromptTemplate
+from langchain_core.output_parsers import JsonOutputParser, PydanticOutputParser
+from langchain_core.pydantic_v1 import BaseModel, Field
+from langchain_openai import ChatOpenAI
+
+from country_by_country.utils import constants
 
 
 class LLMCleaner:
@@ -49,7 +50,6 @@ class LLMCleaner:
         # Load OPENAI and LANGCHAIN API keys from .env file
         load_dotenv()
 
-
     def __call__(self, assets: dict) -> None:
         logging.info("Kicking off cleaning stage...")
 
@@ -60,17 +60,22 @@ class LLMCleaner:
         logging.info(f"Pulling {len(tables)} tables from extraction stage")
 
         # Convert tables to html to add to LLM prompt
-        tables_html = [table.to_html() for table in tables]
+        [table.to_html() for table in tables]
 
         # Define our LLM model
         model = ChatOpenAI(temperature=0, model="gpt-4-turbo-preview")
 
-        # ---------- CHAIN 1/2 - Pull countries from each table ---------- 
-        logging.info(f"Setting up and starting chain 1/2: extracting country names from tables")
+        # ---------- CHAIN 1/2 - Pull countries from each table ----------
+        logging.info(
+            "Setting up and starting chain 1/2: extracting country names from tables"
+        )
 
         # Output should have this model (a list of country names)
         class CountryNames(BaseModel):
-            country_names: List[str] = Field(description="Exhaustive list of countries with financial data in the table", enum=constants.COUNTRIES)
+            country_names: list[str] = Field(
+                description="Exhaustive list of countries with financial data in the table",
+                enum=constants.COUNTRIES,
+            )
 
         # Output should be a JSON with above schema
         parser1 = JsonOutputParser(pydantic_object=CountryNames)
@@ -79,7 +84,10 @@ class LLMCleaner:
         prompt1 = PromptTemplate(
             template="Extract an exhaustive list of countries from the following table in html format:\n{table}\n{format_instructions}",
             input_variables=["table"],
-            partial_variables={"format_instructions": parser1.get_format_instructions()},)
+            partial_variables={
+                "format_instructions": parser1.get_format_instructions()
+            },
+        )
 
         # Chain
         chain1 = {"table": lambda x: x} | prompt1 | model | parser1
@@ -91,25 +99,35 @@ class LLMCleaner:
         country_lists = [resp["country_names"] for resp in responses1]
 
         # ---------- CHAIN 2/2 - Pull financial data for each country ----------
-        logging.info(f"Setting up and starting chain 2/2: extracting financial data from tables")
+        logging.info(
+            "Setting up and starting chain 2/2: extracting financial data from tables"
+        )
 
         # Define country data model
         class Country(BaseModel):
             """Financial data about a country"""
+
             jur_name: str = Field(..., description="Name of the country")
-            total_revenues: Optional[float] = Field(None, description="Total revenues")
-            profit_before_tax: Optional[float] = Field(None, description="Amount of profit (or loss) before tax")
-            tax_paid: Optional[float] = Field(None, description="Income tax paid")
-            tax_accrued: Optional[float] = Field(None, description="Accrued tax")
-            employees: Optional[float] = Field(None, description="Number of employees")
-            stated_capital: Optional[float] = Field(None, description="Stated capital")
-            accumulated_earnings: Optional[float] = Field(None, description="Accumulated earnings")
-            tangible_assets: Optional[float] = Field(None, description="Tangible assets other than cash and cash equivalent")
+            total_revenues: float | None = Field(None, description="Total revenues")
+            profit_before_tax: float | None = Field(
+                None, description="Amount of profit (or loss) before tax"
+            )
+            tax_paid: float | None = Field(None, description="Income tax paid")
+            tax_accrued: float | None = Field(None, description="Accrued tax")
+            employees: float | None = Field(None, description="Number of employees")
+            stated_capital: float | None = Field(None, description="Stated capital")
+            accumulated_earnings: float | None = Field(
+                None, description="Accumulated earnings"
+            )
+            tangible_assets: float | None = Field(
+                None, description="Tangible assets other than cash and cash equivalent"
+            )
 
         # Output should have this model (a list of country objects)
         class Countries(BaseModel):
             """Extracting financial data for each country"""
-            countries: List[Country]
+
+            countries: list[Country]
 
         # Output should be a JSON with above schema
         parser2 = PydanticOutputParser(pydantic_object=Countries)
@@ -121,16 +139,29 @@ class LLMCleaner:
         """
 
         # Set up prompt
-        prompt = PromptTemplate.from_template(template, partial_variables={"format_instructions": parser2.get_format_instructions()})
+        prompt = PromptTemplate.from_template(
+            template,
+            partial_variables={
+                "format_instructions": parser2.get_format_instructions()
+            },
+        )
 
         # Chain
-        chain2 = {"table": lambda x: x[0], "country_list": lambda x: x[1]} | prompt | model.with_structured_output(Countries)
+        chain2 = (
+            {"table": lambda x: x[0], "country_list": lambda x: x[1]}
+            | prompt
+            | model.with_structured_output(Countries)
+        )
 
         # Run it
-        responses2 = chain2.batch(list(zip(tables,country_lists)), {"max_concurrency": 4})
+        responses2 = chain2.batch(
+            list(zip(tables, country_lists)), {"max_concurrency": 4}
+        )
 
         # Merge the tables into one dataframe
-        df = pd.concat([pd.json_normalize(resp.dict()["countries"]) for resp in responses2]).reset_index(drop=True)
+        df = pd.concat(
+            [pd.json_normalize(resp.dict()["countries"]) for resp in responses2]
+        ).reset_index(drop=True)
 
         # Save the dataframe
         assets["table_cleaners"]["LLM"] = {

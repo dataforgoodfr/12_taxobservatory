@@ -21,7 +21,6 @@
 # SOFTWARE.
 
 # Local imports
-import logging
 from .llm_cleaner import LLMCleaner
 
 
