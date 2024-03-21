@@ -26,6 +26,7 @@ import logging
 # Local imports
 from . import img_table_extraction, pagefilter
 from .pagefilter.filter_pages import filter_pages
+from . import table_cleaning
 
 
 class ReportProcessor:
@@ -39,6 +40,12 @@ class ReportProcessor:
             img_table_extraction.from_config(name) for name in img_table_extractors
         ]
 
+        # Table cleaning & reformatting
+        table_cleaners = config["table_cleaning"]
+        self.table_cleaners = [
+            table_cleaning.from_config(name) for name in table_cleaners
+        ]
+
     def process(self, pdf_filepath: str) -> dict:
         logging.info(f"Processing {pdf_filepath}")
 
@@ -46,6 +53,7 @@ class ReportProcessor:
             "pagefilter": {},
             "text_table_extractors": {},
             "img_table_extractors": {},
+            "table_cleaners": {},
         }
 
         # Filtering the pages
@@ -64,9 +72,11 @@ class ReportProcessor:
         for img_table_extractor in self.img_table_extractors:
             img_table_extractor(pdf_to_process, assets)
 
-        # Given the parsed content to the RAG for identifying the key numbers
-        # TODO
+        # Give the parsed content to the cleaner stage for getting organized data
+        for table_cleaner in self.table_cleaners:
+            table_cleaner(assets)
+
         # For now, just print the results
-        print(assets)
+        #print(assets)
 
         return assets
