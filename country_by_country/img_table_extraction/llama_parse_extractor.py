@@ -23,36 +23,40 @@
 # Standard imports
 
 # External imports
-from io import StringIO
 
+import nest_asyncio
 import pandas as pd
-from unstructured.partition.pdf import partition_pdf
+from dotenv import load_dotenv
+from llama_parse import LlamaParse
 
 
-class Unstructured:
+class LlamaParseExtractor:
     def __init__(self, **kwargs: dict) -> None:
         """
         Builds a pdf page parser, looking for tables using
-        the unstructured library.
+        the llama_parse library.
         The kwargs given to the constructor are directly propagated
-        to the partition_pdf function.
-        You are free to define any parameter partition_pdf recognizes
+        to the LlamaParse constructor.
+        You are free to define any parameter LlamaParse recognizes
         """
         self.kwargs = kwargs
 
-    def __call__(self, pdf_filepath: str, assets: dict) -> None:
-        elements = partition_pdf(
-            pdf_filepath,
-            infer_table_structure=True,
-            strategy="hi_res",
-            **self.kwargs,
-        )
-        tables_list = [el for el in elements if el.category == "Table"]
-        tables_list = [
-            pd.read_html(StringIO(t.metadata.text_as_html))[0] for t in tables_list
-        ]
+        # Load LLAMA_CLOUD_API_KEY from .env file
+        load_dotenv()
+        # llama-parse is async-first
+        nest_asyncio.apply()
 
-        assets["img_table_extractors"]["unstructured"] = {
+    def __call__(self, pdf_filepath: str, assets: dict) -> None:
+        json_objs = LlamaParse(**self.kwargs).get_json_result(pdf_filepath)
+
+        tables_list = []
+        for page in json_objs[0]["pages"]:
+            for item in page["items"]:
+                if item["type"] == "table":
+                    df = pd.DataFrame(item["rows"][1:], columns=item["rows"][0])
+                    tables_list.append(df)
+
+        assets["img_table_extractors"]["llama_parse"] = {
             "ntables": len(tables_list),
             "tables": tables_list,
         }

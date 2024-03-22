@@ -20,21 +20,40 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
+# External imports
+import pandas as pd
+from pandas.testing import assert_frame_equal
+
 # Local imports
-from .camelot_extractor import Camelot
-from .llama_parse_extractor import LlamaParseExtractor
-from .unstructured import Unstructured
+from country_by_country import img_table_extraction
 
 
-def from_config(config: dict) -> Camelot:
-    extractor_type = config["type"]
-    extractor_params = {}
-    if "params" in config:
-        extractor_params = config["params"]
-    if extractor_type == "Camelot":
-        return Camelot(**extractor_params)
-    elif extractor_type == "Unstructured":
-        return Unstructured(**extractor_params)
-    elif extractor_type == "LLamaParse":
-        return LlamaParseExtractor(**extractor_params)
-    return None
+def test_unstructured_yolox() -> None:
+    config = {
+        "type": "Unstructured",
+        "params": {"pdf_image_dpi": 300, "hi_res_model_name": "yolox"},
+    }
+    table_extractor = img_table_extraction.from_config(config)
+
+    src_path = "./test/data/Acciona_2020_CbCR_1.pdf"
+    assets = {"img_table_extractors": {}}
+    table_extractor(src_path, assets)
+
+    ntables = assets["img_table_extractors"]["unstructured"]["ntables"]
+    tables = assets["img_table_extractors"]["unstructured"]["tables"]
+
+    # As of 03/2024, unstructured yolox detects 1 table
+    assert ntables == 1
+
+    # The detection of the table is perfect
+    table = tables[0]
+
+    # To get the expected result :
+    # python -m pytest -s
+    # >> table.to_csv("/tmp/table.csv", index=False)
+
+    expected_table = pd.read_csv(
+        "./test/data/unstructured_yolox_Acciona_2020_CbCR_1.csv",
+    )
+
+    assert_frame_equal(table, expected_table)

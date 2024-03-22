@@ -20,7 +20,12 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
+# External imports
+import pypdf
+
+# Local imports
 from country_by_country import pagefilter
+from country_by_country.pagefilter.filter_pages import filter_pages
 
 
 def test_copy_as_is() -> None:
@@ -40,7 +45,7 @@ def test_copy_as_is() -> None:
     assert assets["pagefilter"]["selected_pages"] == list(range(11))
 
 
-def test_filter_pages() -> None:
+def test_from_filemane() -> None:
     config = {"type": "FromFilename"}
     myfilter = pagefilter.from_config(config)
 
@@ -75,3 +80,15 @@ def test_rf_classifier() -> None:
     myfilter(src_path, assets)
     assert assets["pagefilter"]["src_pdf"] == src_path
     assert assets["pagefilter"]["selected_pages"] == [6, 7]
+
+
+def test_filter_pages() -> None:
+    src_path = "./test/data/Acciona_2020_CbCR_1.pdf"
+    selected_pages = [0]
+    out_pdf = filter_pages(src_path, selected_pages)
+
+    # This test does not work even if we just copy
+    # all the pages from the source pdf
+
+    reader = pypdf.PdfReader(out_pdf)
+    assert len(reader.pages) == len(selected_pages)

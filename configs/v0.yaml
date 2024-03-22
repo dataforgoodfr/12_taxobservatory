@@ -15,3 +15,4 @@ table_extraction:
       params:
         pdf_image_dpi: 300
         hi_res_model_name: "yolox"
+#    - type: LLamaParse
