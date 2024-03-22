@@ -27,6 +27,8 @@ from .llm_cleaner import LLMCleaner
 def from_config(config: dict) -> LLMCleaner:
     extractor_type = config["type"]
     extractor_params = {}
+    if "params" in config:
+        extractor_params = config["params"]
     if extractor_type == "LLM":
         return LLMCleaner(**extractor_params)
     return None

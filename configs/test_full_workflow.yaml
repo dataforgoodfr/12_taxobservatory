@@ -13,3 +13,5 @@ table_extraction:
 
 table_cleaning:
   - type: LLM
+    params:
+      openai_model: "gpt-4-turbo-preview"

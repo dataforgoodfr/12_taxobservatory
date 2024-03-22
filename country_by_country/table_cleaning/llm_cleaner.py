@@ -47,6 +47,8 @@ class LLMCleaner:
         """
         self.kwargs = kwargs
 
+        self.openai_model = self.kwargs["openai_model"]
+
         # Load OPENAI and LANGCHAIN API keys from .env file
         load_dotenv()
 
@@ -63,7 +65,7 @@ class LLMCleaner:
         html_tables = [table.to_html() for table in tables]
 
         # Define our LLM model
-        model = ChatOpenAI(temperature=0, model="gpt-4-turbo-preview")
+        model = ChatOpenAI(temperature=0, model=self.openai_model)
 
         # ---------- CHAIN 1/2 - Pull countries from each table ----------
         logging.info("Starting chain 1/2: extracting country names from tables")
