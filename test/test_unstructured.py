@@ -46,7 +46,7 @@ def test_unstructured_yolox() -> None:
     assert ntables == 1
 
     # The detection of the table is perfect
-    table = tables[0][0]
+    table = tables[0]
 
     # To get the expected result :
     # python -m pytest -s

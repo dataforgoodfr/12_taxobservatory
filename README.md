@@ -50,6 +50,19 @@ This config file uses:
 - camelot with its stream flavor and unstructured with yolox as the table
   detector for locating and parsing the tables on the previously selected pages
 
+## Using the building blocks involving an API
+
+### OpenAI
+
+The data extraction may involve a block requiring an OpenAI API Key. To use it, you need to request for an API Key on the [OpenAI website](https://openai.com/blog/openai-api).
+
+### LangChain
+
+The data extraction may involve a block requiring a LangChain API Key. In
+particular, for tracing LLM, you need an API key for LangSmith. You need to
+login on the [LangSmith](https://smith.langchain.com) website and create an API
+Key. 
+
 # Contributing
 
 ## Use a venv
