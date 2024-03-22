@@ -1,4 +1,5 @@
-# List include united nation member countries and dependents as Jersey,list might need to be completed
+# List include united nation member countries and dependents as Jersey,
+# list might need to be completed
 COUNTRIES = [
     "Afghanistan",
     "Albania",

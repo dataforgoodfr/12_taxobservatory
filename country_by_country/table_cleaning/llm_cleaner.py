@@ -80,7 +80,8 @@ class LLMCleaner:
 
         # Prompt includes one extracted table and some JSON output formatting instructions
         prompt1 = PromptTemplate(
-            template="Extract an exhaustive list of countries from the following table in html format:\n{table}\n{format_instructions}",
+            template="Extract an exhaustive list of countries from the following table "
+            + "in html format:\n{table}\n{format_instructions}",
             input_variables=["table"],
             partial_variables={
                 "format_instructions": parser1.get_format_instructions(),
@@ -132,10 +133,13 @@ class LLMCleaner:
         parser2 = PydanticOutputParser(pydantic_object=Countries)
 
         # Prompt includes one extracted table and some JSON output formatting instructions
-        template = """You are an assistant tasked with extracting financial data about {country_list} from the following table in html format:\n
+        template = (
+            """You are an assistant tasked with extracting financial """
+            + """data about {country_list} from the following table in html format:\n
         {table}\n
         {format_instructions}
         """
+        )
 
         # Set up prompt
         prompt = PromptTemplate.from_template(
@@ -154,7 +158,7 @@ class LLMCleaner:
 
         # Run it
         responses2 = chain2.batch(
-            list(zip(html_tables, country_lists)),
+            list(zip(html_tables, country_lists, strict=True)),
             {"max_concurrency": 4},
         )
 

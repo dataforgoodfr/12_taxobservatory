@@ -50,6 +50,13 @@ This config file uses:
 - camelot with its stream flavor and unstructured with yolox as the table
   detector for locating and parsing the tables on the previously selected pages
 
+## Using the building blocks involving an API
+
+### OpenAI
+
+The data extraction may involve a block requiring an OpenAI API Key. To use it,
+you need to request for an API Key on the [OpenAI website](https://openai.com/blog/openai-api)
+
 # Contributing
 
 ## Use a venv
