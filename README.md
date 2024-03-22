@@ -1,4 +1,4 @@
-# EU Tax Observatory 
+# EU Tax Observatory
 
 # Usage
 
