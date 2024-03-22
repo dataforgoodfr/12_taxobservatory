@@ -27,8 +27,10 @@ def run() -> None:
         "contact",
         "GitHub",
     ]
-    parent_dir = os.path.dirname(os.path.abspath(__file__))
-    logo_path = os.path.join(parent_dir, "cubes.svg")
+
+    this_path = Path(__file__).resolve()
+    parent_dir = this_path.parent
+    logo_path = parent_dir / "cubes.svg"
     urls = {"GitHub": "https://github.com/pykoe/data4good-taxobservatory.git"}
     styles = {
         "nav": {
