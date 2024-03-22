@@ -22,9 +22,9 @@
 
 # Standard imports
 import logging
+import pickle
 import sys
 from pathlib import Path
-import pickle
 
 import yaml
 
@@ -53,8 +53,9 @@ if __name__ == "__main__":
     assets = process_report(config, sys.argv[2])
 
     # Save all the assets to disk
-    with open("assets.pkl", "wb") as fh:
+    with Path("assets.pkl").open("wb") as fh:
         pickle.dump(assets, fh)
     logging.info(
-        "Assets dumped in assets.pkl. You can read then using : pickle.load(open('assets.pkl', 'rb'))"
+        "Assets dumped in assets.pkl. You can read then using : \n"
+        + "pickle.load(open('assets.pkl', 'rb'))",
     )
