@@ -43,3 +43,16 @@ def filter_pages(pdf_filepath: str, selected_pages: list[int]) -> str:
     writer.write(filename)
 
     return filename
+
+def gather_tables(assets): # TODO : find a better way than hard coding. fix inconsistancy of camelot extractor (should be in img_table_extractor)
+    tables_by_name = {}
+    if len(assets["text_table_extractors"]["camelot_stream"]["tables"]) != 0:
+        tables_by_name["camelot_stream"] = assets["text_table_extractors"]["camelot_stream"]["tables"][0]
+    
+    if len(assets["text_table_extractors"]["camelot_lattice"]["tables"]) != 0:
+        tables_by_name["camelot_lattice"] =  assets["text_table_extractors"]["camelot_lattice"]["tables"][0]
+
+    if len(assets["img_table_extractors"]["unstructured"]["tables"]) != 0:
+        tables_by_name["unstructured"] = assets["img_table_extractors"]["unstructured"]["tables"][0]
+        
+    return tables_by_name

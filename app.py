@@ -3,7 +3,7 @@ import logging
 import sys
 import yaml
 from country_by_country.processor import ReportProcessor
-from country_by_country.pagefilter.filter_pages import filter_pages
+from country_by_country.utils.utils import filter_pages,gather_tables 
 
 from pathlib import Path
 import tempfile
@@ -12,20 +12,21 @@ from pathlib import Path
 from pypdf import PdfReader
 
 def show_pdf_selector(pdf_to_process, list_pages):
+	page_selected = st.selectbox(
+		'Which page of the following pdf contains the table you want to extract ?',
+		list_pages,
+		index=None,
+		placeholder="Select a page number")
+
+	st.markdown(get_pdf_iframe(pdf_to_process), unsafe_allow_html=True)
+	return page_selected
+
+def get_pdf_iframe(pdf_to_process):
 	base64_pdf = base64.b64encode(Path(pdf_to_process).read_bytes()).decode("utf-8")
 	pdf_display = f"""
 		<iframe src="data:application/pdf;base64,{base64_pdf}" width="800px" height="1000px" type="application/pdf"></iframe>
 	"""
-
-	page_selected = st.selectbox(
-		'Which page of the following pdf contains the table you want to extract ?',
-		list_pages,
-		placeholder="Select a page number")
-
-	st.markdown(pdf_display, unsafe_allow_html=True)
-	return page_selected
-
-
+	return pdf_display
 
 
 logging.basicConfig(stream=sys.stdout, level=logging.INFO, format="%(message)s")
@@ -34,11 +35,11 @@ st.subheader("This app will help you extract a table containing financial inform
 
 with st.sidebar:
 	pdf = st.file_uploader("Upload a pdf document")
-	config = st.file_uploader("Upload a config") #give the possibility to have a default config
+	config = st.file_uploader("Upload a config") 
+#give the possibility to have a default config 
 
 mytmpfile = tempfile.NamedTemporaryFile(suffix=".pdf", delete=False)
-
-
+page_selected = None
 
 if pdf is not None and config is not None:
 	mytmpfile.write(pdf.read())
@@ -60,20 +61,50 @@ if pdf is not None and config is not None:
 	}
 
 	# Filtering the pages
-	proc.page_filter(mytmpfile.name, assets)
+	proc.page_filter(mytmpfile.name, assets) # TODO : rename to avoid confusion with filter_pages
 
 	logging.info(f"Assets : {assets}")
     
-	pdf_to_process = filter_pages(  #TODO : should return the tmp file object, in order to close it + create utils
+	pdf_before_page_validation = filter_pages(  #TODO : should return the tmp file object, in order to close it + create utils
 		mytmpfile.name,
 		assets["pagefilter"]["selected_pages"],
     )
 
 	assets["pagefilter"]["selected_pages"].append("None")
-	page_selected = show_pdf_selector(pdf_to_process, assets)
+
+	logging.info(f"Assets : {assets}")
+
+	page_selected = show_pdf_selector(pdf_before_page_validation, assets["pagefilter"]["selected_pages"])
 
 	if page_selected == "None":
-		number_pgages = len(pdfreader.pages)
-		page_selected = show_pdf_selector(mytmpfile.name, range(0, number_pgages-1))
+		number_pages = len(pdfreader.pages)
+		page_selected = show_pdf_selector(mytmpfile.name, range(0, number_pages))
+	
+	assets["pagefilter"]["selected_pages"] = [page_selected]
+
+
+if page_selected is not None and page_selected != "None":
+	pdf_after_page_validation = filter_pages(  
+		pdf_before_page_validation,
+		assets["pagefilter"]["selected_pages"],
+    )
+	# TODO  : create a load icone ?
+	for img_table_extractor in proc.img_table_extractors:
+		img_table_extractor(pdf_after_page_validation, assets)
+
+	tables_extracted_by_name = gather_tables(assets)
+
+	logging.info(f"Table extracted : {tables_extracted_by_name}")
+
+	col1, col2 = st.columns(2)
+	with col1:
+		st.markdown(get_pdf_iframe(pdf_after_page_validation), unsafe_allow_html=True)
+	
+	with col2:
+		algorithm_name = st.selectbox(
+			'Choose the extracted table you to see',
+			list(tables_extracted_by_name.keys()))	
+		st.dataframe(tables_extracted_by_name[algorithm_name])
+
 
 	mytmpfile.close()

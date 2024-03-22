@@ -25,7 +25,7 @@ import logging
 
 # Local imports
 from . import img_table_extraction, pagefilter
-from .pagefilter.filter_pages import filter_pages
+from .utils.utils import filter_pages
 
 
 class ReportProcessor:
