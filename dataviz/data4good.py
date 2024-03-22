@@ -55,7 +55,7 @@ def run() -> None:
 
     page = st_navbar(
         pages,
-        logo_path=logo_path,
+        logo_path=str(logo_path),
         urls=urls,
         styles=styles,
         adjust=False,
