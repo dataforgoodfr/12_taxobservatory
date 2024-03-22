@@ -16,13 +16,12 @@ import matplotlib.pyplot as plt
 
 
 def show_all_viz():
-
     st.markdown("# Viz")
 
     data_root_path = "./data/"
 
     df = pd.read_csv(
-        data_root_path + "dataset_multi_years_cleaned_completed (1).tab", sep="\t"
+        data_root_path + "dataset_multi_years_cleaned_completed.tab", sep="\t"
     )
     df["year"] = df["year"].astype(int)
 
