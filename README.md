@@ -1,7 +1,7 @@
 # EU Tax Observatory
 
 # Usage
-
+Bonjour formation
 ## Installing
 
 To install the library in a dedicated virtual environnement :
