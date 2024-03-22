@@ -11,15 +11,13 @@ import plotly.express as px
 import plotly.graph_objects as go
 
 
-
-
 def show_methodology():
 
-    text = '''
+    text = """
     # Methodology   
     objectives : provide transparency over how the tracker was built and choices we made  
     e.g., https://www.carbonbombs.org/methodology
     
     
-    '''
+    """
     st.markdown(text)

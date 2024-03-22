@@ -11,11 +11,9 @@ import plotly.express as px
 import plotly.graph_objects as go
 
 
-
-
 def show_downlaod_data():
 
-    text = '''
+    text = """
     # Download data   
     objective : provide access to the raw data
     SELECT BOX “FISCAL YEAR” / “HQ COUNTRY” / “SECTOR” / “COMPANY”  
@@ -27,5 +25,5 @@ def show_downlaod_data():
     xx  (show snapshot)  
     xxx (show snapshot)  
 
-    '''
+    """
     st.markdown(text)

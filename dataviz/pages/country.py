@@ -1,8 +1,6 @@
-
-
 def showo_country():
 
-    text = '''
+    text = """
     Country explorer  (1 page) 
     objectives : analyze cbcr data from companies headquartered in a country   
     e.g., analywe data from French companies  
@@ -29,4 +27,4 @@ def showo_country():
     companies  
     countries  
 
-    '''
+    """

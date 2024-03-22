@@ -15,9 +15,10 @@ import pages as pg
 
 LOGGER = get_logger(__name__)
 
+
 def show_home():
 
-    text = '''
+    text = """
         # Home
         **objectives : introduce the tracker, its objective and added value + show snapshots of data to drive exploration** 
         
@@ -63,11 +64,5 @@ def show_home():
         - Link to download data  
         - Link to methodology  
 
-    '''
+    """
     st.markdown(text)
-
-
-
-
-
-        

@@ -1,18 +1,9 @@
-from datetime import datetime
-
-import pandas as pd
-import streamlit as st
-import altair as alt
-from numpy.lib.function_base import select
-from streamlit.logger import get_logger
-
-import numpy as np
-import plotly.express as px
-import plotly.graph_objects as go
-
-from streamlit_navigation_bar import st_navbar
-import pages as pg
 import os
+
+import pages as pg
+import streamlit as st
+from streamlit.logger import get_logger
+from streamlit_navigation_bar import st_navbar
 
 LOGGER = get_logger(__name__)
 
@@ -22,15 +13,21 @@ def run():
     st.set_page_config(
         page_title="Company explorer",
         page_icon="👋",
-        initial_sidebar_state="collapsed", # "auto", "expanded", "collapsed"
-        layout="wide"
+        initial_sidebar_state="collapsed",  # "auto", "expanded", "collapsed"
+        layout="wide",
     )
 
     pages = [
-        "Home", "viz", "publication trends explorer",
-         "intra-report data explorer",  "methodology",
-         "faq", "download data", "contact", "GitHub"
-     ]
+        "Home",
+        "viz",
+        "publication trends explorer",
+        "intra-report data explorer",
+        "methodology",
+        "faq",
+        "download data",
+        "contact",
+        "GitHub",
+    ]
     parent_dir = os.path.dirname(os.path.abspath(__file__))
     logo_path = os.path.join(parent_dir, "cubes.svg")
     urls = {"GitHub": "https://github.com/pykoe/data4good-taxobservatory.git"}
@@ -64,7 +61,7 @@ def run():
     )
 
     # Create a sidebar selection
-    selection = st.sidebar.radio(
+    st.sidebar.radio(
         "Test page hiding",
         ["Show all pages", "Hide pages 1 and 2", "Hide Other apps Section"],
     )
