@@ -8,8 +8,7 @@ from streamlit_navigation_bar import st_navbar
 LOGGER = get_logger(__name__)
 
 
-def run():
-
+def run() -> None:
     st.set_page_config(
         page_title="Company explorer",
         page_icon="👋",
