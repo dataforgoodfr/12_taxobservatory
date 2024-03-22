@@ -24,6 +24,7 @@
 import logging
 import sys
 from pathlib import Path
+import pickle
 
 import yaml
 
@@ -35,7 +36,7 @@ NUM_CLI_ARGS = 3
 
 def process_report(config: dict, pdf_filepath: str) -> None:
     proc = processor.ReportProcessor(config)
-    proc.process(pdf_filepath)
+    return proc.process(pdf_filepath)
 
 
 if __name__ == "__main__":
@@ -49,4 +50,11 @@ if __name__ == "__main__":
     with Path(sys.argv[1]).open() as fh:
         config = yaml.safe_load(fh)
 
-    process_report(config, sys.argv[2])
+    assets = process_report(config, sys.argv[2])
+
+    # Save all the assets to disk
+    with open("assets.pkl", "wb") as fh:
+        pickle.dump(assets, fh)
+    logging.info(
+        "Assets dumped in assets.pkl. You can read then using : pickle.load(open('assets.pkl', 'rb'))"
+    )

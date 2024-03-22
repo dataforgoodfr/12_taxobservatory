@@ -75,6 +75,4 @@ class ReportProcessor:
         for table_cleaner in self.table_cleaners:
             table_cleaner(assets)
 
-        # For now, just print the results
-
         return assets
