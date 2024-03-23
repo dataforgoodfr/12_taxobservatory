@@ -107,7 +107,8 @@ if page_selected is not None and page_selected != "None":
 			algorithm_name = st.selectbox(
 				'Choose the extracted table you to see',
 				list(st.session_state.tables.keys()))	
-			st.dataframe(st.session_state.tables[algorithm_name])
+			edited_df = st.data_editor(st.session_state.tables[algorithm_name], num_rows="dynamic")
+			st.session_state.tables[algorithm_name] = edited_df
 
 
 	mytmpfile.close()
