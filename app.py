@@ -84,18 +84,19 @@ if pdf is not None and config is not None and first_part is not False:
 
 if page_selected is not None and page_selected != "None":
 	placeholder.empty()
-	
+
 	pdf_after_page_validation = filter_pages(  
 		pdf_before_page_validation,
 		assets["pagefilter"]["selected_pages"],
     )
 
-	for img_table_extractor in proc.img_table_extractors:
-		img_table_extractor(pdf_after_page_validation, assets)
+	if 'tables' not in st.session_state:
+		for img_table_extractor in proc.img_table_extractors:
+			img_table_extractor(pdf_after_page_validation, assets)
+		tables_extracted_by_name = gather_tables(assets)
+		logging.info(f"Table extracted : {tables_extracted_by_name}")
 
-	tables_extracted_by_name = gather_tables(assets)
-
-	logging.info(f"Table extracted : {tables_extracted_by_name}")
+		st.session_state['tables'] = tables_extracted_by_name
 
 	with placeholder.container(): 
 		col1, col2 = st.columns(2)
@@ -105,8 +106,8 @@ if page_selected is not None and page_selected != "None":
 		with col2:
 			algorithm_name = st.selectbox(
 				'Choose the extracted table you to see',
-				list(tables_extracted_by_name.keys()))	
-			st.dataframe(tables_extracted_by_name[algorithm_name])
+				list(st.session_state.tables.keys()))	
+			st.dataframe(st.session_state.tables[algorithm_name])
 
 
 	mytmpfile.close()
