@@ -23,9 +23,10 @@
 # Standard imports
 import logging
 
+from . import img_table_extraction, pagefilter
+
 # Local imports
 from .utils.utils import filter_pages
-from . import img_table_extraction, pagefilter, table_cleaning
 
 
 class ReportProcessor:
@@ -40,10 +41,9 @@ class ReportProcessor:
         ]
 
         # Table cleaning & reformatting
-        table_cleaners = config["table_cleaning"]
-        self.table_cleaners = [
-            table_cleaning.from_config(name) for name in table_cleaners
-        ]
+        # TODO : uncomment
+        # self.table_cleaners = [
+        #    table_cleaning.from_config(name) for name in table_cleaners
 
     def process(self, pdf_filepath: str) -> dict:
         logging.info(f"Processing {pdf_filepath}")
