@@ -26,7 +26,7 @@ import logging
 from . import img_table_extraction, pagefilter
 
 # Local imports
-from .utils.utils import filter_pages
+from .utils.utils import keep_pages
 
 
 class ReportProcessor:
@@ -61,7 +61,7 @@ class ReportProcessor:
         # Now that we identified the pages to be extracted, we extract them
         # Note, in a GUI, we could ask the user to the change the content of
         # assets["pagefilter"]["selected_pages"] before selecting the pages
-        pdf_to_process = filter_pages(
+        pdf_to_process = keep_pages(
             pdf_filepath,
             assets["pagefilter"]["selected_pages"],
         )

@@ -9,7 +9,7 @@ import yaml
 from pypdf import PdfReader
 
 from country_by_country.processor import ReportProcessor
-from country_by_country.utils.utils import filter_pages, gather_tables
+from country_by_country.utils.utils import gather_tables, keep_pages
 
 
 def get_pdf_iframe(pdf_to_process: str) -> str:
@@ -60,12 +60,12 @@ if pdf is not None and config is not None and first_part is not False:
     proc.page_filter(
         mytmpfile.name,
         assets,
-    )  # TODO : rename to avoid confusion with filter_pages
+    )
 
     logging.info(f"Assets : {assets}")
 
     # TODO : should return the tmp file object, in order to close it + create utils
-    pdf_before_page_validation = filter_pages(
+    pdf_before_page_validation = keep_pages(
         mytmpfile.name,
         assets["pagefilter"]["selected_pages"],
     )
@@ -105,7 +105,7 @@ if pdf is not None and config is not None and first_part is not False:
 if page_selected is not None and page_selected != "None":
     placeholder.empty()
 
-    pdf_after_page_validation = filter_pages(
+    pdf_after_page_validation = keep_pages(
         pdf_before_page_validation,
         assets["pagefilter"]["selected_pages"],
     )
