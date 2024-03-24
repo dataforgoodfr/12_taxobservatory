@@ -48,22 +48,16 @@ def keep_pages(pdf_filepath: str, selected_pages: list[int]) -> str:
 def gather_tables(
     assets: dict,
 ) -> dict:
-    # TODO : find a better way than hard coding.
-    # fix inconsistancy of camelot extractor (should be in img_table_extractor)
+    # TODO fix inconsistancy of camelot extractor (should be in img_table_extractor)
     tables_by_name = {}
-    if len(assets["text_table_extractors"]["camelot_stream"]["tables"]) != 0:
-        tables_by_name["camelot_stream"] = assets["text_table_extractors"][
-            "camelot_stream"
-        ]["tables"][0]
+    for algo, algo_assets in assets["text_table_extractors"].items():
+        tables = algo_assets["tables"]
+        if len(tables) != 0:
+            tables_by_name[algo] = tables
 
-    if len(assets["text_table_extractors"]["camelot_lattice"]["tables"]) != 0:
-        tables_by_name["camelot_lattice"] = assets["text_table_extractors"][
-            "camelot_lattice"
-        ]["tables"][0]
-
-    if len(assets["img_table_extractors"]["unstructured"]["tables"]) != 0:
-        tables_by_name["unstructured"] = assets["img_table_extractors"]["unstructured"][
-            "tables"
-        ][0]
+    for algo, algo_assets in assets["img_table_extractors"].items():
+        tables = algo_assets["tables"]
+        if len(tables) != 0:
+            tables_by_name[algo] = tables
 
     return tables_by_name
