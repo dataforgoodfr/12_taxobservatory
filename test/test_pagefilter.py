@@ -25,7 +25,7 @@ import pypdf
 
 # Local imports
 from country_by_country import pagefilter
-from country_by_country.pagefilter.filter_pages import filter_pages
+from country_by_country.utils.utils import filter_pages
 
 
 def test_copy_as_is() -> None:
