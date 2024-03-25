@@ -21,6 +21,8 @@
 # SOFTWARE.
 
 # Standard imports
+import logging
+import uuid
 
 # External imports
 from io import StringIO
@@ -30,7 +32,7 @@ from unstructured.partition.pdf import partition_pdf
 
 
 class Unstructured:
-    def __init__(self, **kwargs: dict) -> None:
+    def __init__(self, **kwargs: dict) -> dict:
         """
         Builds a pdf page parser, looking for tables using
         the unstructured library.
@@ -39,8 +41,12 @@ class Unstructured:
         You are free to define any parameter partition_pdf recognizes
         """
         self.kwargs = kwargs
+        self.type = "unstructured"
 
-    def __call__(self, pdf_filepath: str, assets: dict) -> None:
+    def __call__(self, pdf_filepath: str) -> dict:
+        logging.info("\nKicking off extraction stage...")
+        logging.info(f"Extraction type: {self.type}, with params: {self.kwargs}")
+
         elements = partition_pdf(
             pdf_filepath,
             infer_table_structure=True,
@@ -52,7 +58,13 @@ class Unstructured:
             pd.read_html(StringIO(t.metadata.text_as_html))[0] for t in tables_list
         ]
 
-        assets["img_table_extractors"]["unstructured"] = {
+        # Create asset
+        new_asset = {
+            "id": uuid.uuid4(),
+            "type": "unstructured",
+            "params": self.kwargs,
             "ntables": len(tables_list),
             "tables": tables_list,
         }
+
+        return new_asset

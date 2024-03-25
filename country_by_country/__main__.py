@@ -46,7 +46,7 @@ if __name__ == "__main__":
         logging.error("Usage : python -m country_by_country config.yaml report.pdf")
         sys.exit(-1)
 
-    logging.info(f"Loading {sys.argv[1]}")
+    logging.info(f"\nLoading {sys.argv[1]}")
     with Path(sys.argv[1]).open() as fh:
         config = yaml.safe_load(fh)
 
