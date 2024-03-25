@@ -36,14 +36,12 @@ def test_unstructured_yolox() -> None:
     table_extractor = img_table_extraction.from_config(config)
 
     src_path = "./test/data/Acciona_2020_CbCR_1.pdf"
-    assets = {"img_table_extractors": {}}
-    table_extractor(src_path, assets)
+    asset = table_extractor(src_path)
 
-    ntables = assets["img_table_extractors"]["unstructured"]["ntables"]
-    tables = assets["img_table_extractors"]["unstructured"]["tables"]
+    tables = asset["tables"]
 
     # As of 03/2024, unstructured yolox detects 1 table
-    assert ntables == 1
+    assert len(tables) == 1
 
     # The detection of the table is perfect
     table = tables[0]

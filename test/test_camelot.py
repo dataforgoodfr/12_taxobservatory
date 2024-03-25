@@ -32,14 +32,12 @@ def test_camelot() -> None:
     table_extractor = img_table_extraction.from_config(config)
 
     src_path = "./test/data/Acciona_2020_CbCR_1.pdf"
-    assets = {"text_table_extractors": {}}
-    table_extractor(src_path, assets)
+    asset = table_extractor(src_path)
 
-    ntables = assets["text_table_extractors"][f"camelot_{flavor}"]["ntables"]
-    tables = assets["text_table_extractors"][f"camelot_{flavor}"]["tables"]
+    tables = asset["tables"]
 
     # As of 03/2024, camelot detects 4 tables
-    assert ntables == NTABLES_DETECTED_ACCIONA
+    assert len(tables) == NTABLES_DETECTED_ACCIONA
 
     # To get the expected result :
     # python -m pytest -s

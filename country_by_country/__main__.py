@@ -29,24 +29,30 @@ from pathlib import Path
 import yaml
 
 # Local imports
+from dotenv import load_dotenv
+
 from country_by_country import processor
 
 NUM_CLI_ARGS = 3
 
 
 def process_report(config: dict, pdf_filepath: str) -> None:
+    # Loading API keys from .env file
+    load_dotenv()
+
     proc = processor.ReportProcessor(config)
     return proc.process(pdf_filepath)
 
 
 if __name__ == "__main__":
+
     logging.basicConfig(stream=sys.stdout, level=logging.INFO, format="%(message)s")
 
     if len(sys.argv) != NUM_CLI_ARGS:
         logging.error("Usage : python -m country_by_country config.yaml report.pdf")
         sys.exit(-1)
 
-    logging.info(f"Loading {sys.argv[1]}")
+    logging.info(f"\nLoading {sys.argv[1]}")
     with Path(sys.argv[1]).open() as fh:
         config = yaml.safe_load(fh)
 

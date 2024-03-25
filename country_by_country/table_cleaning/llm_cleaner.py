@@ -22,11 +22,11 @@
 
 # Standard imports
 import logging
+import uuid
 
 import pandas as pd
 
 # External imports
-from dotenv import load_dotenv
 from IPython.display import display
 from langchain.prompts import PromptTemplate
 from langchain_core.output_parsers import JsonOutputParser, PydanticOutputParser
@@ -46,18 +46,18 @@ class LLMCleaner:
         You are free to define any parameter LLMCleaner recognizes.
         """
         self.kwargs = kwargs
-
+        self.type = "llm_cleaner"
         self.openai_model = self.kwargs["openai_model"]
 
-        # Load OPENAI and LANGCHAIN API keys from .env file
-        load_dotenv()
+    def __call__(self, asset: dict) -> dict:
+        logging.info("\nKicking off cleaning stage...")
+        logging.info(f"Cleaning type: {self.type}, with params: {self.kwargs}")
+        logging.info(
+            f"Input extraction type: {asset['type']}, with params: {asset['params']}",
+        )
 
-    def __call__(self, assets: dict) -> None:
-        logging.info("Kicking off cleaning stage...")
-
-        # TODO: CURRENTLY ONLY WORKS IF UNSTRUCTURED WAS USED IN PREVIOUS STAGE
         # Extract tables from previous stage
-        tables = assets["img_table_extractors"]["unstructured"]["tables"]
+        tables = asset["tables"]
 
         logging.info(f"Pulling {len(tables)} tables from extraction stage")
 
@@ -169,10 +169,15 @@ class LLMCleaner:
             [pd.json_normalize(resp.dict()["countries"]) for resp in responses2],
         ).reset_index(drop=True)
 
-        # Save the dataframe
-        assets["table_cleaners"]["LLM"] = {
+        # Display
+        display(df)
+
+        # Create asset
+        new_asset = {
+            "id": uuid.uuid4(),
+            "type": self.type,
+            "params": self.kwargs,
             "table": df,
         }
 
-        # Display
-        display(df)
+        return new_asset
