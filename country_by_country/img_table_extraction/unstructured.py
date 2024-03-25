@@ -63,7 +63,6 @@ class Unstructured:
             "id": uuid.uuid4(),
             "type": "unstructured",
             "params": self.kwargs,
-            "ntables": len(tables_list),
             "tables": tables_list,
         }
 

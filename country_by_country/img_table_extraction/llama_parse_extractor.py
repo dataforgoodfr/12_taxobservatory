@@ -63,7 +63,6 @@ class LlamaParseExtractor:
             "id": uuid.uuid4(),
             "type": self.type,
             "params": self.kwargs,
-            "ntables": len(tables_list),
             "tables": tables_list,
         }
 

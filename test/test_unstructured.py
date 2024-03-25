@@ -38,11 +38,10 @@ def test_unstructured_yolox() -> None:
     src_path = "./test/data/Acciona_2020_CbCR_1.pdf"
     asset = table_extractor(src_path)
 
-    ntables = asset["ntables"]
     tables = asset["tables"]
 
     # As of 03/2024, unstructured yolox detects 1 table
-    assert ntables == 1
+    assert len(tables) == 1
 
     # The detection of the table is perfect
     table = tables[0]

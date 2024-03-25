@@ -35,8 +35,7 @@ class Camelot:
 
     def __call__(self, pdf_filepath: str) -> dict:
         """
-        Writes assets:
-            ntables: the number of detected tables
+        Returns asset that contain:
             tables: a list of pandas dataframe of the parsed tables
         """
         logging.info("\nKicking off extraction stage...")
@@ -52,7 +51,6 @@ class Camelot:
             "id": uuid.uuid4(),
             "type": "camelot",
             "params": {"flavor": self.flavor},
-            "ntables": len(tables_list),
             "tables": tables_list,
         }
 
