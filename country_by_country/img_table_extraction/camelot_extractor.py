@@ -57,4 +57,3 @@ class Camelot:
         }
 
         return new_asset
-    

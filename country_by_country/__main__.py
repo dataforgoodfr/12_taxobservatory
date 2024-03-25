@@ -30,13 +30,14 @@ import yaml
 
 # Local imports
 from dotenv import load_dotenv
+
 from country_by_country import processor
 
 NUM_CLI_ARGS = 3
 
 
 def process_report(config: dict, pdf_filepath: str) -> None:
-     # Loading API keys from .env file
+    # Loading API keys from .env file
     load_dotenv()
 
     proc = processor.ReportProcessor(config)

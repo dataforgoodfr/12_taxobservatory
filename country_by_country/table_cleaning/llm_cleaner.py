@@ -53,7 +53,7 @@ class LLMCleaner:
         logging.info("\nKicking off cleaning stage...")
         logging.info(f"Cleaning type: {self.type}, with params: {self.kwargs}")
         logging.info(
-            f"Input extraction type: {asset['type']}, with params: {asset['params']}"
+            f"Input extraction type: {asset['type']}, with params: {asset['params']}",
         )
 
         # Extract tables from previous stage
