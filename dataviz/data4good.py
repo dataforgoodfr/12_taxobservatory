@@ -16,21 +16,26 @@ import os
 
 LOGGER = get_logger(__name__)
 
+if 'data_root_path' not in st.session_state:
+    st.session_state['data_root_path'] = 'data/'
+
+if 'dataset' not in st.session_state:
+    st.session_state['dataset'] = pd.DataFrame()
 
 def run():
 
     st.set_page_config(
         page_title="Company explorer",
         page_icon="👋",
-        initial_sidebar_state="collapsed", # "auto", "expanded", "collapsed"
+        initial_sidebar_state="collapsed",  # "auto", "expanded", "collapsed"
         layout="wide"
     )
 
     pages = [
         "Home", "viz", "publication trends explorer",
-         "intra-report data explorer",  "methodology",
-         "faq", "download data", "contact", "GitHub"
-     ]
+        "intra-report data explorer", "methodology",
+        "faq", "download data", "contact", "GitHub"
+    ]
     parent_dir = os.path.dirname(os.path.abspath(__file__))
     logo_path = os.path.join(parent_dir, "cubes.svg")
     urls = {"GitHub": "https://github.com/pykoe/data4good-taxobservatory.git"}
@@ -85,6 +90,14 @@ def run():
     go_to = functions.get(page)
     if go_to:
         go_to()
+
+    def load_dataset() -> pd.DataFrame:
+        dataset_file = 'dataset_multi_years_cleaned_completed (1).tab'
+        df = pd.read_csv(st.session_state.data_root_path + dataset_file, sep='\t')
+        df['year'] = df['year'].astype(int)
+        return df
+
+    st.session_state['dataset'] = load_dataset()
 
 
 if __name__ == "__main__":

@@ -18,11 +18,13 @@ def show_all_viz():
 
     st.markdown("# Viz")
 
-    data_root_path = './data/'
+    df = st.session_state.dataset
 
-    df = pd.read_csv(data_root_path + 'dataset_multi_years_cleaned_completed (1).tab',
-                     sep='\t')
-    df['year'] = df['year'].astype(int)
+    # data_root_path = './data/'
+    #
+    # df = pd.read_csv(data_root_path + 'dataset_multi_years_cleaned_completed (1).tab',
+    #                  sep='\t')
+    # df['year'] = df['year'].astype(int)
 
     company_list = list(df['mnc'].unique())[::-1]
     selected_company = st.selectbox('Select a company', company_list,
@@ -40,8 +42,7 @@ def show_all_viz():
                                     index=len(country_list) - 1)
     df_selected_country = df[df['jur_name'] == selected_country]
 
-
-    df_viz = pd.read_csv(data_root_path + 'vizs.csv')
+    df_viz = pd.read_csv(st.session_state.data_root_path + 'vizs.csv')
     st.table(df_viz)
 
 
