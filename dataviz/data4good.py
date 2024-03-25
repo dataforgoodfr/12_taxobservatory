@@ -5,6 +5,8 @@ import streamlit as st
 from streamlit.logger import get_logger
 from streamlit_navigation_bar import st_navbar
 
+import pandas as pd
+
 LOGGER = get_logger(__name__)
 
 if 'data_root_path' not in st.session_state:
@@ -35,8 +37,8 @@ def run() -> None:
 
     this_path = Path(__file__).resolve()
     parent_dir = this_path.parent
-    logo_path = os.path.join(parent_dir, "cubes.svg")
-    urls = {"GitHub": "https://github.com/pykoe/data4good-taxobservatory.git"}
+    logo_path = parent_dir / "cubes.svg"
+    urls = {"GitHub": "https://github.com/dataforgoodfr/12_taxobservatory.git"}
     styles = {
         "nav": {
             "background-color": "rgb(25, 25, 25)",
@@ -90,7 +92,7 @@ def run() -> None:
         go_to()
 
     def load_dataset() -> pd.DataFrame:
-        dataset_file = 'dataset_multi_years_cleaned_completed (1).tab'
+        dataset_file = 'dataset_multi_years_cleaned_completed.tab'
         df = pd.read_csv(st.session_state.data_root_path + dataset_file, sep='\t')
         df['year'] = df['year'].astype(int)
         return df
