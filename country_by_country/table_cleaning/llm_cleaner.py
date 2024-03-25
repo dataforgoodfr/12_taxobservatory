@@ -101,7 +101,7 @@ class LLMCleaner:
         responses1 = chain1.batch(html_tables, {"max_concurrency": 4})
 
         # Extract country lists from responses
-        country_lists = [resp["country_names"] + ["Others"] for resp in responses1]
+        country_lists = [resp["country_names"] for resp in responses1]
 
         # ---------- CHAIN 2/2 - Pull financial data for each country ----------
         logging.info("Starting chain 2/2: extracting financial data from tables")
