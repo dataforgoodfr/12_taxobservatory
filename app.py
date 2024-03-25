@@ -64,11 +64,11 @@ if pdf is not None and config is not None and first_part is not False:
 
     logging.info(f"Assets : {assets}")
 
-    # TODO : should return the tmp file object, in order to close it + create utils
     pdf_before_page_validation = keep_pages(
         mytmpfile.name,
         assets["pagefilter"]["selected_pages"],
     )
+    mytmpfile.close()
 
     assets["pagefilter"]["selected_pages"].append("None")
 
@@ -98,13 +98,13 @@ if pdf is not None and config is not None and first_part is not False:
                 unsafe_allow_html=True,
             )
 
-        assets["pagefilter"]["selected_pages"] = [page_selected]
         first_part = False
-
 
 if page_selected is not None and page_selected != "None":
     placeholder.empty()
+    logging.info(f"Page selected : {page_selected}")
 
+    assets["pagefilter"]["selected_pages"] = [page_selected]
     pdf_after_page_validation = keep_pages(
         pdf_before_page_validation,
         assets["pagefilter"]["selected_pages"],
@@ -136,5 +136,3 @@ if page_selected is not None and page_selected != "None":
                 num_rows="dynamic",
             )
             st.session_state.tables[algorithm_name] = edited_df
-
-    mytmpfile.close()
