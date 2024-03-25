@@ -10,9 +10,6 @@ import numpy as np
 import plotly.express as px
 import plotly.graph_objects as go
 
-from streamlit_navigation_bar import st_navbar
-import pages as pg
-
 LOGGER = get_logger(__name__)
 
 
