@@ -27,7 +27,6 @@ import uuid
 import pandas as pd
 
 # External imports
-from dotenv import load_dotenv
 from IPython.display import display
 from langchain.prompts import PromptTemplate
 from langchain_core.output_parsers import JsonOutputParser, PydanticOutputParser
@@ -49,9 +48,6 @@ class LLMCleaner:
         self.kwargs = kwargs
         self.type = "llm_cleaner"
         self.openai_model = self.kwargs["openai_model"]
-
-        # Load OPENAI and LANGCHAIN API keys from .env file
-        load_dotenv()
 
     def __call__(self, asset: dict) -> dict:
         logging.info("\nKicking off cleaning stage...")

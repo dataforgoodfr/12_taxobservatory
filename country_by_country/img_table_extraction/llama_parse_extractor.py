@@ -27,7 +27,6 @@ import uuid
 # External imports
 import nest_asyncio
 import pandas as pd
-from dotenv import load_dotenv
 from llama_parse import LlamaParse
 
 
@@ -43,8 +42,6 @@ class LlamaParseExtractor:
         self.kwargs = kwargs
         self.type = "llama_parse"
 
-        # Load LLAMA_CLOUD_API_KEY from .env file
-        load_dotenv()
         # llama-parse is async-first
         nest_asyncio.apply()
 
