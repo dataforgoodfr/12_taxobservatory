@@ -1,9 +1,6 @@
-
-
-
 def show_sector():
-    
-    text = '''
+
+    text = """
     # Sector explorer (1 page)
     objectives : analyze cbcr data from companies of a given sector    
     e.g., analywe data from Energy companies  
@@ -28,4 +25,4 @@ def show_sector():
     companies  
     countries  
 
-    '''
+    """

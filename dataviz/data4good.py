@@ -1,18 +1,9 @@
-from datetime import datetime
+from pathlib import Path
 
-import pandas as pd
-import streamlit as st
-import altair as alt
-from numpy.lib.function_base import select
-from streamlit.logger import get_logger
-
-import numpy as np
-import plotly.express as px
-import plotly.graph_objects as go
-
-from streamlit_navigation_bar import st_navbar
 import pages as pg
-import os
+import streamlit as st
+from streamlit.logger import get_logger
+from streamlit_navigation_bar import st_navbar
 
 LOGGER = get_logger(__name__)
 
@@ -22,21 +13,28 @@ if 'data_root_path' not in st.session_state:
 if 'dataset' not in st.session_state:
     st.session_state['dataset'] = pd.DataFrame()
 
-def run():
-
+def run() -> None:
     st.set_page_config(
         page_title="Company explorer",
         page_icon="👋",
         initial_sidebar_state="collapsed",  # "auto", "expanded", "collapsed"
-        layout="wide"
+        layout="wide",
     )
 
     pages = [
-        "Home", "viz", "publication trends explorer",
-        "intra-report data explorer", "methodology",
-        "faq", "download data", "contact", "GitHub"
+        "Home",
+        "viz",
+        "publication trends explorer",
+        "intra-report data explorer",
+        "methodology",
+        "faq",
+        "download data",
+        "contact",
+        "GitHub",
     ]
-    parent_dir = os.path.dirname(os.path.abspath(__file__))
+
+    this_path = Path(__file__).resolve()
+    parent_dir = this_path.parent
     logo_path = os.path.join(parent_dir, "cubes.svg")
     urls = {"GitHub": "https://github.com/pykoe/data4good-taxobservatory.git"}
     styles = {
@@ -62,14 +60,14 @@ def run():
 
     page = st_navbar(
         pages,
-        logo_path=logo_path,
+        logo_path=str(logo_path),
         urls=urls,
         styles=styles,
         adjust=False,
     )
 
     # Create a sidebar selection
-    selection = st.sidebar.radio(
+    st.sidebar.radio(
         "Test page hiding",
         ["Show all pages", "Hide pages 1 and 2", "Hide Other apps Section"],
     )

@@ -12,10 +12,10 @@ import plotly.graph_objects as go
 
 
 def show_contact():
-    text = '''
+    text = """
     # Contact   
     objective : provide a contact form  
     note : could be interesting to have a dedicated feature here for reports’ submissions (e.g., a researcher knows the existence of reports we missed… or a company) 
 
-    '''
+    """
     st.markdown(text)

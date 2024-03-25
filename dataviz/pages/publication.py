@@ -11,11 +11,9 @@ import plotly.express as px
 import plotly.graph_objects as go
 
 
-
-
 def show_publication():
 
-    text = '''
+    text = """
     # Publication trends explorer  (1 page)   
     **objectives : analyze quantitative and qualitative trends in CBCRs publication**  
     
@@ -39,5 +37,5 @@ def show_publication():
         - countries  
         - sectors  
     
-    '''
+    """
     st.markdown(text)
