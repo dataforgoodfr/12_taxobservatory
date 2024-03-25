@@ -35,15 +35,23 @@ class ReportProcessor:
         self.page_filter = pagefilter.from_config(config["pagefilter"])
 
         # Table extraction from images
-        img_table_extractors = config["table_extraction"]["img"]
-        self.img_table_extractors = [
-            img_table_extraction.from_config(name) for name in img_table_extractors
-        ]
+        self.img_table_extractors = []
+        self.table_cleaners = []
 
-        # Table cleaning & reformatting
-        # TODO : uncomment
-        # self.table_cleaners = [
-        #    table_cleaning.from_config(name) for name in table_cleaners
+        if "table_extraction" in config:
+            img_table_extractors = config["table_extraction"]["img"]
+            self.img_table_extractors = [
+                img_table_extraction.from_config(name) for name in img_table_extractors
+            ]
+
+            # Table cleaning & reformatting
+            # We can do this step only if we had table extraction algorithms
+            # otherwise, the assets will not be available
+            if "table_cleaning" in config:
+                table_cleaners = config["table_cleaning"]
+                self.table_cleaners = [
+                    self.table_cleaning.from_config(name) for name in table_cleaners
+                ]
 
     def process(self, pdf_filepath: str) -> dict:
         logging.info(f"Processing {pdf_filepath}")
