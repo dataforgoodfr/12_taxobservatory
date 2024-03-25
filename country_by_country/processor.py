@@ -50,12 +50,12 @@ class ReportProcessor:
 
         assets = {
             "pagefilter": {},
-            "text_table_extractors": {},
-            "img_table_extractors": {},
-            "table_cleaners": {},
+            "text_table_extractors": [],
+            "img_table_extractors": [],
+            "table_cleaners": [],
         }
 
-        # Filtering the pages
+        # Identifying the pages to extract
         self.page_filter(pdf_filepath, assets)
 
         # Now that we identified the pages to be extracted, we extract them
@@ -69,10 +69,13 @@ class ReportProcessor:
         # Process the selected pages to detect the tables and extract
         # their contents
         for img_table_extractor in self.img_table_extractors:
-            img_table_extractor(pdf_to_process, assets)
+            new_asset = img_table_extractor(pdf_to_process)
+            assets["img_table_extractors"].append(new_asset)
 
         # Give the parsed content to the cleaner stage for getting organized data
         for table_cleaner in self.table_cleaners:
-            table_cleaner(assets)
+            for asset in assets["img_table_extractors"]:
+                new_asset = table_cleaner(asset)
+                assets["table_cleaners"].append(new_asset)
 
         return assets
