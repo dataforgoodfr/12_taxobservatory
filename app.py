@@ -7,6 +7,7 @@ from pathlib import Path
 import streamlit as st
 import yaml
 from pypdf import PdfReader
+from st_aggrid import AgGrid, JsCode
 
 from country_by_country.processor import ReportProcessor
 from country_by_country.utils.utils import gather_tables, keep_pages
@@ -19,6 +20,57 @@ def get_pdf_iframe(pdf_to_process: str) -> str:
     " width="800px" height="1000px" type="application/pdf"></iframe>
     """
     return pdf_display
+
+
+def apply_filter(column_name: str) -> None:
+
+    if st.session_state.column_name == "is_negative":
+        js_code = JsCode(
+            """
+            function(params) {
+                if (params.value > 0) {
+                    return {backgroundColor: 'green'}
+                } else {
+                    return {backgroundColor: 'red'}
+                }
+            }
+            """,
+        )
+
+    if st.session_state.column_name == "is_number":
+        js_code = JsCode(
+            """
+            function(params) {
+                if (typeof params.value === 'number') {
+                    return {backgroundColor: 'green'}
+                } else {
+                    return {backgroundColor: 'red'}
+                }
+            }
+            """,
+        )
+
+    if st.session_state.column_name is not None:
+        st.session_state.filters_selected[column_name] = st.session_state.column_name
+        add_gridoption(js_code, column_name)
+    else:
+        del st.session_state.filters_selected[column_name]
+        remove_gridoption(column_name)
+
+
+def add_gridoption(js_code: str, column_name: str) -> None:
+    new_column_def = {"headerName": column_name, "cellStyle": js_code}
+    # add a new element to columnDefs
+    st.session_state.gridOptions["columnDefs"].append(new_column_def)
+
+
+def remove_gridoption(column_name: str) -> None:
+    for column_def in st.session_state.gridOptions["columnDefs"]:
+        # check if the column8name exist
+        if column_def["headerName"] == column_name:
+            # remove the element
+            st.session_state.gridOptions["columnDefs"].remove(column_def)
+            break
 
 
 st.set_page_config(layout="wide")
@@ -102,6 +154,10 @@ if pdf is not None and config is not None and first_part is not False:
 
 if page_selected is not None and page_selected != "None":
     placeholder.empty()
+    st.session_state.filters_selected = {}
+    st.session_state.gridOptions = {
+        "columnDefs": [],
+    }
     logging.info(f"Page selected : {page_selected}")
 
     assets["pagefilter"]["selected_pages"] = [page_selected]
@@ -136,3 +192,33 @@ if page_selected is not None and page_selected != "None":
                 num_rows="dynamic",
             )
             st.session_state.tables[algorithm_name] = edited_df
+
+    st.markdown("""---""")
+    col3, col4 = st.columns(2)
+    filter_list = ["is_number", "is_negative"]
+    with col3:
+        for column_name in list(edited_df.columns.values):
+            st.selectbox(
+                "Do you want to apply a filter to the column " + column_name,
+                filter_list,
+                index=None,
+                placeholder="Select a filter",
+                on_change=apply_filter,
+                key=column_name,
+                args=(column_name),
+            )
+
+    logging.info(f"Grid Options : {st.session_state.gridOptions}")
+    logging.info(f"Filters selected : {st.session_state.filters_selected}")
+
+    with col4:
+        if st.session_state.filters_selected is False:
+            AgGrid(edited_df, editable=True, reload_data=True)
+        else:
+            AgGrid(
+                edited_df,
+                editable=True,
+                reload_data=True,
+                gridOptions=st.session_state.gridOptions,
+                allow_unsafe_jscode=True,
+            )
