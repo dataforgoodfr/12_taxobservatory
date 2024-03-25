@@ -27,7 +27,7 @@ easyocr = "^1.7.1"
 transformers = "^4.38.2"
 sentence-transformers = "2.2.2"
 chromadb = "0.4.22"
-langchain = "0.1.1"
+langchain = "0.1.12"
 ipykernel = "6.26.0"
 
 [tool.poetry.group.dev.dependencies]
