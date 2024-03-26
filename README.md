@@ -61,6 +61,13 @@ This config file uses:
 
 ### Page filter
 
+A page filter takes as input a pdf filepath and fills in the assets under the
+key `pagefilter`:
+
+- `src_pdf`: the path to the original pdf
+- `selected_pages`: the list of indices of the selected pages. The indices are 0
+  based.
+
 - [Copy As is](#copy-as-is)
 - [From filename](#from-filename)
 - [RF Classifier](#rf-classifier)
