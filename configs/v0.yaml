@@ -15,5 +15,6 @@ table_extraction:
       hi_res_model_name: "yolox"
       pdf_image_dpi: 300
 #    - type: LLamaParse
+#    - type: UnstructuredAPI
 
 # table_cleaning:
