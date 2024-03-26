@@ -32,7 +32,6 @@ from pathlib import Path
 import pandas as pd
 from unstructured_client import UnstructuredClient
 from unstructured_client.models import shared
-from unstructured_client.models.errors import SDKError
 
 
 class UnstructuredAPI:
