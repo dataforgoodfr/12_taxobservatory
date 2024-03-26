@@ -23,9 +23,10 @@
 # Standard imports
 import logging
 
-# Local imports
 from . import pagefilter, table_cleaning, table_extraction
-from .pagefilter.filter_pages import filter_pages
+
+# Local imports
+from .utils.utils import keep_pages
 
 
 class ReportProcessor:
@@ -49,7 +50,7 @@ class ReportProcessor:
             if "table_cleaning" in config:
                 table_cleaners = config["table_cleaning"]
                 self.table_cleaners = [
-                    table_cleaning.from_config(name) for name in table_cleaners
+                    self.table_cleaning.from_config(name) for name in table_cleaners
                 ]
 
     def process(self, pdf_filepath: str) -> dict:
@@ -67,7 +68,7 @@ class ReportProcessor:
         # Now that we identified the pages to be extracted, we extract them
         # Note, in a GUI, we could ask the user to the change the content of
         # assets["pagefilter"]["selected_pages"] before selecting the pages
-        pdf_to_process = filter_pages(
+        pdf_to_process = keep_pages(
             pdf_filepath,
             assets["pagefilter"]["selected_pages"],
         )

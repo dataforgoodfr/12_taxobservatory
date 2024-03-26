@@ -27,7 +27,7 @@ import tempfile
 import pypdf
 
 
-def filter_pages(pdf_filepath: str, selected_pages: list[int]) -> str:
+def keep_pages(pdf_filepath: str, selected_pages: list[int]) -> str:
     """
     Function to extract the selected pages from a source pdf
     It returns the path to the PDF created by keeping only the
@@ -43,3 +43,26 @@ def filter_pages(pdf_filepath: str, selected_pages: list[int]) -> str:
     writer.write(filename)
 
     return filename
+
+
+def gather_tables(
+    assets: dict,
+) -> dict:
+    tables_by_name = {}
+    for algo, algo_assets in assets["text_table_extractors"].items():
+        tables = algo_assets["tables"]
+        if len(tables) == 1:
+            tables_by_name[algo] = tables[0]
+        if len(tables) > 1:
+            for i in range(len(tables)):
+                tables_by_name[algo + "_" + str(i)] = tables[i]
+
+    for algo, algo_assets in assets["img_table_extractors"].items():
+        tables = algo_assets["tables"]
+        if len(tables) == 1:
+            tables_by_name[algo] = tables[0]
+        if len(tables) > 1:
+            for i in range(len(tables)):
+                tables_by_name[algo + "_" + str(i)] = tables[i]
+
+    return tables_by_name
