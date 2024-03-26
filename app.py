@@ -41,12 +41,15 @@ def apply_filter(column_name: str, algorithm_name: str) -> None:
         js_code = JsCode(
             """
             function(params) {
-                if (typeof params.value === 'number') {
-                    return {backgroundColor: '#abf7b1'}
-                } else {
+                if (/[^a-zA-Z0-9]/.test(params.value))
+                {
                     return {backgroundColor: '#fcccbb'}
                 }
-            }
+                else
+                {
+                    return {backgroundColor: '#abf7b1'}
+                }
+            };
             """,
         )
 
