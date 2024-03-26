@@ -52,8 +52,7 @@ if pdf is not None and config is not None and first_part is not False:
 
     assets = {
         "pagefilter": {},
-        "text_table_extractors": {},
-        "img_table_extractors": {},
+        "table_extractors": [],
     }
 
     # Filtering the pages
@@ -111,8 +110,9 @@ if page_selected is not None and page_selected != "None":
     )
 
     if "tables" not in st.session_state:
-        for img_table_extractor in proc.img_table_extractors:
-            img_table_extractor(pdf_after_page_validation, assets)
+        for table_extractor in proc.table_extractors:
+            new_asset = table_extractor(pdf_after_page_validation)
+            assets["table_extractors"].append(new_asset)
         tables_extracted_by_name = gather_tables(assets)
         logging.info(f"Table extracted : {tables_extracted_by_name}")
 
