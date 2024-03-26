@@ -5,11 +5,10 @@ pagefilter:
   type: FromFilename
 
 table_extraction:
-  img:
-    - type: Unstructured
-      params:
-        pdf_image_dpi: 300
-        hi_res_model_name: "yolox"
+  - type: Unstructured
+    params:
+      pdf_image_dpi: 300
+      hi_res_model_name: "yolox"
 
 table_cleaning:
   - type: LLM

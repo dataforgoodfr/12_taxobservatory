@@ -25,7 +25,7 @@ import pandas as pd
 from pandas.testing import assert_frame_equal
 
 # Local imports
-from country_by_country import img_table_extraction
+from country_by_country import table_extraction
 
 
 def test_unstructured_yolox() -> None:
@@ -33,7 +33,7 @@ def test_unstructured_yolox() -> None:
         "type": "Unstructured",
         "params": {"pdf_image_dpi": 300, "hi_res_model_name": "yolox"},
     }
-    table_extractor = img_table_extraction.from_config(config)
+    table_extractor = table_extraction.from_config(config)
 
     src_path = "./test/data/Acciona_2020_CbCR_1.pdf"
     asset = table_extractor(src_path)
