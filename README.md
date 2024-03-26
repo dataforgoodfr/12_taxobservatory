@@ -121,6 +121,20 @@ The following table extractors can be considered :
 
 ### Camelot
 
+Camelot is a python library for extracting tables. The documentation is
+available at
+[https://camelot-py.readthedocs.io/en/master/](https://camelot-py.readthedocs.io/en/master/).
+
+We can use two flavors : `stream` or `lattice`. It can be specified in the
+config as :
+
+```
+table_extraction:
+  - type: Camelot
+    params:
+      flavor: stream
+```
+
 ### Unstructured API
 
 ### Unstructured
