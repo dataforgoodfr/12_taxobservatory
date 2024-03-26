@@ -100,6 +100,25 @@ pages content. Several features are used to identify relevant pages such as :
 
 ## Table extraction
 
+We allow multiple table extraction algorithms to be used simultaneously. This is
+the reason why the `table_extraction` key of the `config.yaml` is a list. A
+table extraction algorithm fills in the assets under the key
+`table_extractors`, which is a list containing the assets for every algorithm
+you considered. Every algorithm provides the following assets :
+
+- `id`: a unique identifier for this algorithm
+- `type`: the algorithm type, can be any of the listed algorithms below `camelot`, `unstructured`, `unstructured_api`,  `llama_parse`
+- `params`: the named parameters and their values given to the construction of
+  the algorithm
+- `tables`: the list of extracted tables as pandas dataframes 
+
+The following table extractors can be considered :
+
+- [Camelot](#camelot)
+- [Unstructured API](#unstructured-api)
+- [Unstructured](#unstructured)
+- [Llama parse](#llama-parse)
+
 ### Camelot
 
 ### Unstructured API
