@@ -117,7 +117,7 @@ The following table extractors can be considered :
 - [Camelot](#camelot)
 - [Unstructured API](#unstructured-api)
 - [Unstructured](#unstructured)
-- [Llama parse](#llama-parse)
+- [Llama parse API](#llama-parse-api)
 
 ### Camelot
 
@@ -180,7 +180,29 @@ table_extraction:
         hi_res_model_name: "yolox"
 ```
 
-### Llama parse
+### Llama parse API
+
+The [llama parse](https://github.com/run-llama/llama_parse) requires an API key.
+To create a key, go to [http://cloud.llamaindex.ai](http://cloud.llamaindex.ai).
+This key must be specified in the `.env` file, a sample file being `.env.example` :
+
+```
+# Required for table extraction with LLAMA PARSE API
+LLAMA_CLOUD_API_KEY=CHANGE_ME
+```
+
+You can then use llama parse in your configuration as below. The parameters are
+forward to the constructor of
+[LlamaParse](https://github.com/run-llama/llama_parse/blob/97c7a38a69f34a6d4d9c633a873de7afd57ce93d/llama_parse/base.py#L172)
+
+For example, you can customize the verbosity, ..
+
+```
+table_extraction:
+    - type: LlamaParse
+      params:
+        verbosity: False
+```
 
 ## Table cleaning
 
