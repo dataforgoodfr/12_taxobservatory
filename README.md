@@ -140,6 +140,16 @@ table_extraction:
 The unstructured API is documented at
 [https://unstructured-io.github.io/unstructured/apis/api_sdks.html](https://unstructured-io.github.io/unstructured/apis/api_sdks.html). In the `config.yaml`, you can specify any of the parameters considered by [shared.PartitionParameters](https://github.com/Unstructured-IO/unstructured-python-client/blob/main/docs/models/shared/partitionparameters.md) although we already set `strategy="hi_res", pdf_infer_table_structure="True"`.
 
+For example, you can use their beta released model `chipper` by setting in your
+`config.yaml` :
+
+```
+table_extraction:
+    - type: UnstructuredAPI
+      params:
+        hi_res_model_name: chipper 
+```
+
 This API requires an API key. You can create one at
 [https://unstructured.io/api-key-free](https://unstructured.io/api-key-free).
 Once you have your key, you must copy the sample `.env.sample` to `.env` :
@@ -154,6 +164,21 @@ UNSTRUCTURED_API_KEY=CHANGE_ME
 ```
 
 ### Unstructured
+
+In addition to use the unstructured API, you can also run unstructured locally.
+The parameters to be specified in your `config.yaml` script are given to the
+[partition_pdf function](https://unstructured-io.github.io/unstructured/core/partition.html#partition-pdf), although we already set `strategy="hi_res", infer_table_structure=True`.
+
+You can for example set the `pdf_image_dpi` as well as the table detection
+algorithm by setting :
+
+```
+table_extraction:
+    - type: Unstructured
+      params:
+        pdf_image_dpi: 300
+        hi_res_model_name: "yolox"
+```
 
 ### Llama parse
 
