@@ -57,6 +57,32 @@ This config file uses:
 - LangChain with GPT-4-turbo-preview for requesting the parsed tables to extract
   and re-order the necessary informations
 
+## Avaiable blocks
+
+### Page filter
+
+#### Copy as is
+
+This filter does not perform any selection on the input document and just copy
+the whole content as is.
+
+#### From filename
+
+This filter expects the pages to extract from the input filename either as a
+single page number or a page range. Valid names are given below :
+
+- `arbitrarily_long_and_cumBerSOME_prefix_PAGENUMBER.pdf` : gets the page
+  numbered PAGENUMBER
+- `arbitrarily_long_and_cumBerSOME_prefix_PAGENUMBER1-PAGENUMBER2.pdf` : gets the range [PAGENUMBER1, PAGENUMBER2]
+
+#### RF Classifier
+
+This filter uses a random forest trained to identify the pages from the text the
+pages content. Several features are used to identify relevant pages such as :
+
+- the number of country names listed in the page
+- the presence of keywords such as "tax", "countr", "report", "cbc", .."
+
 ## Using the building blocks involving an API
 
 ### OpenAI
