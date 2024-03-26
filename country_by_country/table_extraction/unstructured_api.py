@@ -69,7 +69,7 @@ class UnstructuredAPI:
 
         try:
             resp = s.general.partition(req)
-        except SDKError as e:
+        except Exception as e:
             print(e)
         else:
             tables_list = [
