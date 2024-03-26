@@ -206,6 +206,25 @@ table_extraction:
 
 ## Table cleaning
 
+Table cleaning is the last step of the pipeline, taking as input the parsed
+tables and extracting the relevant information. You can specify multiple table
+cleaners and that's the reason why `table_cleaning` is a list in the
+`config.yaml`. Every list of tables extracted by every table extractor will be
+processed by every table cleaner. 
+
+The table cleaners append their assets in the list under the `table_cleaners`
+key. As for the table extractors, the table cleaners fill in the following
+assets :
+
+- `id`: a unique identifier for the table cleaner execution
+- `type`: the type of table cleaner
+- `params`: the parameters given for the construction of the cleaner
+- `table`: the output dataframe with the expected data per country
+
+The list of available cleaners is given below :
+
+- [Langchain / LangSmith](#langchain-langsmith)
+
 ### LangChain / LangSmith
 
 ## Using the building blocks involving an API
