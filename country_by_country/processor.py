@@ -44,7 +44,7 @@ class ReportProcessor:
                 table_extraction.from_config(name) for name in table_extractors
             ]
 
-            # Tables cleaning & reformatting
+            # Table cleaning & reformatting
             # We can do this step only if we had table extraction algorithms
             # otherwise, the assets will not be available
             if "table_cleaning" in config:
