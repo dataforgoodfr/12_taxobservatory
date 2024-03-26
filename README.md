@@ -223,22 +223,37 @@ assets :
 
 The list of available cleaners is given below :
 
-- [Langchain / LangSmith](#langchain-langsmith)
+- [Langchain / LangSmith](#langchain--langsmith)
+
 
 ### LangChain / LangSmith
 
-## Using the building blocks involving an API
+The [LangChain](https://python.langchain.com/docs/get_started/introduction)
+module can be used by specifying in the `config.yaml`:
 
-### OpenAI
+```
+table_cleaning:
+    - type: LLM
+      params: 
+        openai_model: "gpt-4-turbo-preview"
+```
 
-The data extraction may involve a block requiring an OpenAI API Key. To use it, you need to request for an API Key on the [OpenAI website](https://openai.com/blog/openai-api).
+For now, we only support OpenAI models but we may later also consider local
+models. For OpenAI models, you need an API key (see [OpenAI website](https://openai.com/blog/openai-api)) that must be provided in your
+`.env` file :
 
-### LangChain
+```
+OPENAI_API_KEY=CHANGE_ME
+```
 
-The data extraction may involve a block requiring a LangChain API Key. In
-particular, for tracing LLM, you need an API key for LangSmith. You need to
-login on the [LangSmith](https://smith.langchain.com) website and create an API
-Key. 
+With LangChain, you can also trace the LLMs request using [LangSmith](https://docs.smith.langchain.com/tracing). Although optional, this might be usefull to keep an eye on the expenses for paid language models and to debug the context/questions/answers. LangSmith requires an API key to be created by login in at [https://smith.langchain.com](https://smith.langchain.com) and a project name provided in your `.env` file as :
+
+```
+LANGCHAIN_API_KEY=CHANGE_ME
+LANGCHAIN_TRACING_V2=true
+LANGCHAIN_PROJECT="country-by-country"
+```
+
 
 # Contributing
 
