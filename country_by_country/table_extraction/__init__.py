@@ -24,6 +24,7 @@
 from .camelot_extractor import Camelot
 from .llama_parse_extractor import LlamaParseExtractor
 from .unstructured import Unstructured
+from .unstructured_api import UnstructuredAPI
 
 
 def from_config(config: dict) -> Camelot:
@@ -35,6 +36,8 @@ def from_config(config: dict) -> Camelot:
         return Camelot(**extractor_params)
     elif extractor_type == "Unstructured":
         return Unstructured(**extractor_params)
+    elif extractor_type == "UnstructuredAPI":
+        return UnstructuredAPI(**extractor_params)
     elif extractor_type == "LLamaParse":
         return LlamaParseExtractor(**extractor_params)
     return None
