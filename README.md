@@ -42,6 +42,11 @@ table_extraction:
       params:
         pdf_image_dpi: 300
         hi_res_model_name: "yolox"
+
+table_cleaning:
+  - type: LLM
+    params:
+      openai_model: "gpt-4-turbo-preview"
 ```
 
 This config file uses:
@@ -49,6 +54,8 @@ This config file uses:
   contain a CbCR table
 - camelot with its stream flavor and unstructured with yolox as the table
   detector for locating and parsing the tables on the previously selected pages
+- LangChain with GPT-4-turbo-preview for requesting the parsed tables to extract
+  and re-order the necessary informations
 
 ## Using the building blocks involving an API
 
