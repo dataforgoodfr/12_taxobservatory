@@ -23,7 +23,7 @@
 # Standard imports
 import logging
 
-from . import pagefilter, table_cleaning, table_extraction
+from . import pagefilter, table_extraction
 
 # Local imports
 from .utils.utils import keep_pages
