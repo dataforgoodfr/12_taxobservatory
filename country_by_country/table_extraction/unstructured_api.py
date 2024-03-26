@@ -27,6 +27,7 @@ import logging
 import os
 import uuid
 from io import StringIO
+from pathlib import Path
 
 import pandas as pd
 from unstructured_client import UnstructuredClient
@@ -52,7 +53,7 @@ class UnstructuredAPI:
 
         s = UnstructuredClient(api_key_auth=os.getenv("UNSTRUCTURED_API_KEY"))
 
-        with open(pdf_filepath, "rb") as f:
+        with Path(pdf_filepath).open("rb") as f:
             # Note that this currently only supports a single file
             files = shared.Files(
                 content=f.read(),
@@ -68,7 +69,9 @@ class UnstructuredAPI:
 
         try:
             resp = s.general.partition(req)
-
+        except SDKError as e:
+            print(e)
+        else:
             tables_list = [
                 pd.read_html(StringIO(el["metadata"]["text_as_html"]))[0]
                 for el in resp.elements
@@ -84,6 +87,3 @@ class UnstructuredAPI:
             }
 
             return new_asset
-
-        except SDKError as e:
-            print(e)
