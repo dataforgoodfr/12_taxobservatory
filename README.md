@@ -98,6 +98,20 @@ pages content. Several features are used to identify relevant pages such as :
 - the presence of keywords such as "tax", "countr", "report", "cbc", .."
 
 
+## Table extraction
+
+### Camelot
+
+### Unstructured API
+
+### Unstructured
+
+### Llama parse
+
+## Table cleaning
+
+### LangChain / LangSmith
+
 ## Using the building blocks involving an API
 
 ### OpenAI
