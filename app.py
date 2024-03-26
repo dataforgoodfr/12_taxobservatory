@@ -7,7 +7,7 @@ from pathlib import Path
 import streamlit as st
 import yaml
 from pypdf import PdfReader
-from st_aggrid import AgGrid, JsCode
+from st_aggrid import AgGrid, GridOptionsBuilder, JsCode
 
 from country_by_country.processor import ReportProcessor
 from country_by_country.utils.utils import gather_tables, keep_pages
@@ -22,9 +22,9 @@ def get_pdf_iframe(pdf_to_process: str) -> str:
     return pdf_display
 
 
-def apply_filter(column_name: str) -> None:
+def apply_filter(column_name: str, algorithm_name: str) -> None:
 
-    if st.session_state.column_name == "is_negative":
+    if st.session_state[column_name] == "is_negative":
         js_code = JsCode(
             """
             function(params) {
@@ -37,7 +37,7 @@ def apply_filter(column_name: str) -> None:
             """,
         )
 
-    if st.session_state.column_name == "is_number":
+    if st.session_state[column_name] == "is_number":
         js_code = JsCode(
             """
             function(params) {
@@ -50,26 +50,43 @@ def apply_filter(column_name: str) -> None:
             """,
         )
 
-    if st.session_state.column_name is not None:
-        st.session_state.filters_selected[column_name] = st.session_state.column_name
-        add_gridoption(js_code, column_name)
+    # TODO : what will happen if the same column_name has been found in two differents tables ?
+    if st.session_state[column_name] is not None:
+        st.session_state["filters_selected" + "_" + algorithm_name][
+            column_name
+        ] = st.session_state[column_name]
+        update_gridoption_cellstyle(column_name, js_code, algorithm_name)
     else:
-        del st.session_state.filters_selected[column_name]
-        remove_gridoption(column_name)
+        del st.session_state["filters_selected" + "_" + algorithm_name][column_name]
+        remove_gridoption_cellstyle(column_name, algorithm_name)
 
 
-def add_gridoption(js_code: str, column_name: str) -> None:
-    new_column_def = {"headerName": column_name, "cellStyle": js_code}
-    # add a new element to columnDefs
-    st.session_state.gridOptions["columnDefs"].append(new_column_def)
+def update_gridoption_cellstyle(
+    header_name: str,
+    js_code: str,
+    algorithm_name: str,
+) -> None:
+    # Find the index of the column definition corresponding to the headerName
+    for i, column_def in enumerate(
+        st.session_state["grid_options" + "_" + algorithm_name]["columnDefs"],
+    ):
+        if column_def["headerName"] == header_name:
+            # Update the cellStyle for the found column definition
+            st.session_state["grid_options" + "_" + algorithm_name]["columnDefs"][i][
+                "cellStyle"
+            ] = js_code
+            break
 
 
-def remove_gridoption(column_name: str) -> None:
-    for column_def in st.session_state.gridOptions["columnDefs"]:
-        # check if the column8name exist
-        if column_def["headerName"] == column_name:
-            # remove the element
-            st.session_state.gridOptions["columnDefs"].remove(column_def)
+def remove_gridoption_cellstyle(header_name: str, algorithm_name: str) -> None:
+    # Find the column definition corresponding to the headerName
+    for column_def in st.session_state["grid_options" + "_" + algorithm_name][
+        "columnDefs"
+    ]:
+        if column_def["headerName"] == header_name:
+            # Check if cellStyle exists, and remove it if it does
+            if "cellStyle" in column_def:
+                del column_def["cellStyle"]
             break
 
 
@@ -154,10 +171,6 @@ if pdf is not None and config is not None and first_part is not False:
 
 if page_selected is not None and page_selected != "None":
     placeholder.empty()
-    st.session_state.filters_selected = {}
-    st.session_state.gridOptions = {
-        "columnDefs": [],
-    }
     logging.info(f"Page selected : {page_selected}")
 
     assets["pagefilter"]["selected_pages"] = [page_selected]
@@ -194,7 +207,16 @@ if page_selected is not None and page_selected != "None":
             st.session_state.tables[algorithm_name] = edited_df
 
     st.markdown("""---""")
-    col3, col4 = st.columns(2)
+
+    if "filters_selected" + "_" + algorithm_name not in st.session_state:
+        st.session_state["filters_selected" + "_" + algorithm_name] = {}
+        st.session_state[
+            "grid_options" + "_" + algorithm_name
+        ] = GridOptionsBuilder.from_dataframe(
+            st.session_state.tables[algorithm_name],
+        ).build()
+
+    col3, col4 = st.columns([1, 3])
     filter_list = ["is_number", "is_negative"]
     with col3:
         for column_name in list(edited_df.columns.values):
@@ -205,20 +227,23 @@ if page_selected is not None and page_selected != "None":
                 placeholder="Select a filter",
                 on_change=apply_filter,
                 key=column_name,
-                args=(column_name),
+                args=(column_name, algorithm_name),
             )
-
-    logging.info(f"Grid Options : {st.session_state.gridOptions}")
-    logging.info(f"Filters selected : {st.session_state.filters_selected}")
+    logging.info(f"Algorithm_name : {algorithm_name}")
+    logging.info(
+        f"""Grid Options : {st.session_state["grid_options" + "_" + algorithm_name]}""",
+    )
+    logging.info(
+        f"""Filters selected : {st.session_state["filters_selected" + "_" + algorithm_name]}""",
+    )
 
     with col4:
-        if st.session_state.filters_selected is False:
-            AgGrid(edited_df, editable=True, reload_data=True)
-        else:
-            AgGrid(
-                edited_df,
-                editable=True,
-                reload_data=True,
-                gridOptions=st.session_state.gridOptions,
-                allow_unsafe_jscode=True,
-            )
+        AgGrid(
+            edited_df,
+            editable=True,
+            reload_data=True,
+            gridOptions=st.session_state["grid_options" + "_" + algorithm_name],
+            allow_unsafe_jscode=True,
+        )
+
+        # if not st.session_state["filters_selected" + "_" + algorithm_name]:
