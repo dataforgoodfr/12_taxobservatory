@@ -53,7 +53,7 @@ def gather_tables(
         tables = asset["tables"]
         if len(tables) == 1:
             tables_by_name[asset["type"]] = tables[0]
-        if len(tables) > 1:
+        elif len(tables) > 1:
             for i in range(len(tables)):
                 tables_by_name[asset["type"] + "_" + str(i)] = tables[i]
 
