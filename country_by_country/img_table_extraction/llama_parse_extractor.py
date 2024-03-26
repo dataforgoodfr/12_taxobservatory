@@ -21,12 +21,12 @@
 # SOFTWARE.
 
 # Standard imports
+import logging
+import uuid
 
 # External imports
-
 import nest_asyncio
 import pandas as pd
-from dotenv import load_dotenv
 from llama_parse import LlamaParse
 
 
@@ -40,13 +40,15 @@ class LlamaParseExtractor:
         You are free to define any parameter LlamaParse recognizes
         """
         self.kwargs = kwargs
+        self.type = "llama_parse"
 
-        # Load LLAMA_CLOUD_API_KEY from .env file
-        load_dotenv()
         # llama-parse is async-first
         nest_asyncio.apply()
 
-    def __call__(self, pdf_filepath: str, assets: dict) -> None:
+    def __call__(self, pdf_filepath: str) -> dict:
+        logging.info("\nKicking off extraction stage...")
+        logging.info(f"Extraction type: {self.type}, with params: {self.kwargs}")
+
         json_objs = LlamaParse(**self.kwargs).get_json_result(pdf_filepath)
 
         tables_list = []
@@ -56,7 +58,12 @@ class LlamaParseExtractor:
                     df = pd.DataFrame(item["rows"][1:], columns=item["rows"][0])
                     tables_list.append(df)
 
-        assets["img_table_extractors"]["llama_parse"] = {
-            "ntables": len(tables_list),
+        # Create asset
+        new_asset = {
+            "id": uuid.uuid4(),
+            "type": self.type,
+            "params": self.kwargs,
             "tables": tables_list,
         }
+
+        return new_asset

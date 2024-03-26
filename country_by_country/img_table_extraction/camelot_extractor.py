@@ -22,6 +22,7 @@
 
 # Standard imports
 import logging
+import uuid
 
 # External imports
 import camelot
@@ -30,25 +31,27 @@ import camelot
 class Camelot:
     def __init__(self, flavor: str) -> None:
         self.flavor = flavor
+        self.type = "camelot"
 
-    def __call__(self, pdf_filepath: str, assets: dict) -> None:
+    def __call__(self, pdf_filepath: str) -> dict:
         """
-        Writes assets:
-            ntables: the number of detected tables
+        Returns asset that contain:
             tables: a list of pandas dataframe of the parsed tables
         """
+        logging.info("\nKicking off extraction stage...")
+        logging.info(f"Extraction type: {self.type}, with params: {self.flavor}")
+
         tables = camelot.read_pdf(pdf_filepath, flavor=self.flavor)
 
         # Write the parsed tables into the assets
         tables_list = [t.df for t in tables]
-        key_assets = f"camelot_{self.flavor}"
-        if key_assets in assets["text_table_extractors"]:
-            logging.warning(
-                f">> The key {key_assets} already exists"
-                f" in the assets dictionary. I will overwrite its content",
-            )
 
-        assets["text_table_extractors"][key_assets] = {
-            "ntables": len(tables_list),
+        # Create asset
+        new_asset = {
+            "id": uuid.uuid4(),
+            "type": "camelot",
+            "params": {"flavor": self.flavor},
             "tables": tables_list,
         }
+
+        return new_asset
