@@ -1,8 +1,8 @@
-import pandas as pd
-import os
-import re
-from fuzzywuzzy import process
 import csv
+from pathlib import Path
+
+import pandas as pd
+from fuzzywuzzy import process
 
 # this is a list of companies that have published CbCRs and have been identified by Giuila
 CbCRs_companies = [
@@ -135,27 +135,26 @@ CbCRs_companies = [
 ]
 
 
-def convert_xlsx_to_csv(xlsx_file_path):
+def convert_xlsx_to_csv(xlsx_file_path: str) -> None:
     # Read the XLSX file
     df = pd.read_excel(xlsx_file_path)
-    directory_path = os.path.dirname(xlsx_file_path)
-    csv_file_path = os.path.join(
-        directory_path, os.path.splitext(os.path.basename(xlsx_file_path))[0] + ".csv"
-    )
+    directory_path = Path(xlsx_file_path).parent
+    csv_file_path = directory_path / (Path(xlsx_file_path).stem + ".csv")
+
     # Convert to CSV
     df.to_csv(csv_file_path, index=False)
 
 
-def get_best_match(name, choices, threshold=90):
+def get_best_match(name: str, choices: str, threshold: int = 90) -> tuple | None:
     best_match = process.extractOne(name, choices, score_cutoff=threshold)
     return best_match[0] if best_match else None
 
 
-def create_sample_orbis_csv():
+def create_sample_orbis_csv() -> None:
     # Read the CSV files
     df_1 = pd.read_csv("collection/data/CbCRs_sample.csv")
 
-    companies_1 = df_1["Company"].unique()
+    df_1["Company"].unique()
     uploaded_csv_path = "collection/data/orbis_d4g.csv"
     orbis_df = pd.read_csv(uploaded_csv_path)
 
@@ -179,14 +178,14 @@ def create_sample_orbis_csv():
     filtered_df.to_csv("collection/data/orbis_d4g_sample.csv", index=False)
 
 
-def sort_csv_file(input_file_path, output_file_path):
-    with open(input_file_path, mode="r", newline="", encoding="utf-8") as infile:
+def sort_csv_file(input_file_path: str, output_file_path: str) -> None:
+    with Path.open(input_file_path, newline="", encoding="utf-8") as infile:
         # Read the CSV file
         reader = csv.reader(infile)
         # Sort the rows by the first column (ignoring case)
         sorted_rows = sorted(reader, key=lambda row: row[0].lower())
 
-    with open(output_file_path, mode="w", newline="", encoding="utf-8") as outfile:
+    with Path.open(output_file_path, mode="w", newline="", encoding="utf-8") as outfile:
         # Write the sorted data to a new CSV file
         writer = csv.writer(outfile)
         for row in sorted_rows:
@@ -194,7 +193,6 @@ def sort_csv_file(input_file_path, output_file_path):
 
 
 if __name__ == "__main__":
-    # create_sample_orbis_csv()
     sort_csv_file(
         "collection/data/orbis_d4g_sample.csv",
         "collection/data/orbis_d4g_sample_sorted.csv",

@@ -1295,6 +1295,20 @@ ssh = ["paramiko"]
 tqdm = ["tqdm"]
 
 [[package]]
+name = "fuzzywuzzy"
+version = "0.18.0"
+description = "Fuzzy string matching in python"
+optional = false
+python-versions = "*"
+files = [
+    {file = "fuzzywuzzy-0.18.0-py2.py3-none-any.whl", hash = "sha256:928244b28db720d1e0ee7587acf660ea49d7e4c632569cad4f1cd7e68a5f0993"},
+    {file = "fuzzywuzzy-0.18.0.tar.gz", hash = "sha256:45016e92264780e58972dca1b3d939ac864b78437422beecebb3095f8efd00e8"},
+]
+
+[package.extras]
+speedup = ["python-levenshtein (>=0.12)"]
+
+[[package]]
 name = "ghostscript"
 version = "0.7"
 description = "Interface to the Ghostscript C-API, both high- and low-level, based on ctypes"
@@ -6691,4 +6705,4 @@ multidict = ">=4.0"
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.10"
-content-hash = "90232a8a4a0b0e4fcca7db5f9fbb30c3562f10b9d277e1963684f70a199c9dc9"
+content-hash = "432e3171f726240d49326208523f79b861100ff5cdc6e3be6061489f8c92dc81"
