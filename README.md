@@ -137,6 +137,22 @@ table_extraction:
 
 ### Unstructured API
 
+The unstructured API is documented at
+[https://unstructured-io.github.io/unstructured/apis/api_sdks.html](https://unstructured-io.github.io/unstructured/apis/api_sdks.html). In the `config.yaml`, you can specify any of the parameters considered by [shared.PartitionParameters](https://github.com/Unstructured-IO/unstructured-python-client/blob/main/docs/models/shared/partitionparameters.md) although we already set `strategy="hi_res", pdf_infer_table_structure="True"`.
+
+This API requires an API key. You can create one at
+[https://unstructured.io/api-key-free](https://unstructured.io/api-key-free).
+Once you have your key, you must copy the sample `.env.sample` to `.env` :
+
+```
+cp .env.sample .env
+```
+
+and then copy your key at 
+```
+UNSTRUCTURED_API_KEY=CHANGE_ME
+```
+
 ### Unstructured
 
 ### Llama parse
