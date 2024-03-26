@@ -24,7 +24,7 @@
 import logging
 
 # Local imports
-from . import img_table_extraction, pagefilter, table_cleaning
+from . import pagefilter, table_cleaning, table_extraction
 from .pagefilter.filter_pages import filter_pages
 
 
@@ -33,17 +33,17 @@ class ReportProcessor:
         # Report filter
         self.page_filter = pagefilter.from_config(config["pagefilter"])
 
-        # Table extraction from images
-        self.img_table_extractors = []
+        self.table_extractors = []
         self.table_cleaners = []
 
+        # Tables extraction
         if "table_extraction" in config:
-            img_table_extractors = config["table_extraction"]["img"]
-            self.img_table_extractors = [
-                img_table_extraction.from_config(name) for name in img_table_extractors
+            table_extractors = config["table_extraction"]
+            self.table_extractors = [
+                table_extraction.from_config(name) for name in table_extractors
             ]
 
-            # Table cleaning & reformatting
+            # Tables cleaning & reformatting
             # We can do this step only if we had table extraction algorithms
             # otherwise, the assets will not be available
             if "table_cleaning" in config:
@@ -57,8 +57,7 @@ class ReportProcessor:
 
         assets = {
             "pagefilter": {},
-            "text_table_extractors": [],
-            "img_table_extractors": [],
+            "table_extractors": [],
             "table_cleaners": [],
         }
 
@@ -75,13 +74,13 @@ class ReportProcessor:
 
         # Process the selected pages to detect the tables and extract
         # their contents
-        for img_table_extractor in self.img_table_extractors:
-            new_asset = img_table_extractor(pdf_to_process)
-            assets["img_table_extractors"].append(new_asset)
+        for table_extractor in self.table_extractors:
+            new_asset = table_extractor(pdf_to_process)
+            assets["table_extractors"].append(new_asset)
 
         # Give the parsed content to the cleaner stage for getting organized data
         for table_cleaner in self.table_cleaners:
-            for asset in assets["img_table_extractors"]:
+            for asset in assets["table_extractors"]:
                 new_asset = table_cleaner(asset)
                 assets["table_cleaners"].append(new_asset)
 

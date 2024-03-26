@@ -21,7 +21,7 @@
 # SOFTWARE.
 
 # Local imports
-from country_by_country import img_table_extraction
+from country_by_country import table_extraction
 
 NTABLES_DETECTED_ACCIONA = 4
 
@@ -29,7 +29,7 @@ NTABLES_DETECTED_ACCIONA = 4
 def test_camelot() -> None:
     flavor = "stream"
     config = {"type": "Camelot", "params": {"flavor": flavor}}
-    table_extractor = img_table_extraction.from_config(config)
+    table_extractor = table_extraction.from_config(config)
 
     src_path = "./test/data/Acciona_2020_CbCR_1.pdf"
     asset = table_extractor(src_path)
