@@ -68,9 +68,12 @@ key `pagefilter`:
 - `selected_pages`: the list of indices of the selected pages. The indices are 0
   based.
 
+The available filters are :
+
 - [Copy As is](#copy-as-is)
 - [From filename](#from-filename)
 - [RF Classifier](#rf-classifier)
+
 
 #### Copy as is
 
