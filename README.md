@@ -61,6 +61,10 @@ This config file uses:
 
 ### Page filter
 
+- [Copy As is](#copy-as-is)
+- [From filename](#from-filename)
+- [RF Classifier](#rf-classifier)
+
 #### Copy as is
 
 This filter does not perform any selection on the input document and just copy
@@ -82,6 +86,9 @@ pages content. Several features are used to identify relevant pages such as :
 
 - the number of country names listed in the page
 - the presence of keywords such as "tax", "countr", "report", "cbc", .."
+
+###
+
 
 ## Using the building blocks involving an API
 
