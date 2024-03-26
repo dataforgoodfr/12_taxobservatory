@@ -29,9 +29,9 @@ def apply_filter(column_name: str, algorithm_name: str) -> None:
             """
             function(params) {
                 if (params.value > 0) {
-                    return {backgroundColor: 'green'}
+                    return {backgroundColor: '#abf7b1'} #green
                 } else {
-                    return {backgroundColor: 'red'}
+                    return {backgroundColor: '#fcccbb'} # red
                 }
             }
             """,
@@ -42,9 +42,9 @@ def apply_filter(column_name: str, algorithm_name: str) -> None:
             """
             function(params) {
                 if (typeof params.value === 'number') {
-                    return {backgroundColor: 'green'}
+                    return {backgroundColor: '#abf7b1'}
                 } else {
-                    return {backgroundColor: 'red'}
+                    return {backgroundColor: '#fcccbb'}
                 }
             }
             """,
