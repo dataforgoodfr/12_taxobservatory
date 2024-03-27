@@ -23,10 +23,13 @@
 # External imports
 try:
     from ExtractTable import ExtractTable
-except:
-    raise RuntimeError(
-        "Cannot import ExtractTable. If you wish to use this module, you are expected to install it manually by triggering : pip install ExtractTable"
-    )
+except ImportError as e:
+
+    class ExtractTableModuleException(Exception):
+        def __init__(self) -> None:
+            super().__init__("You must install ExtractTable : pip install ExtractTable")
+
+    raise ExtractTableModuleException() from e
 
 
 class ExtractTableAPI:
