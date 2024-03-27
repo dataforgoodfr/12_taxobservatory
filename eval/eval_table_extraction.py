@@ -21,15 +21,15 @@
 # SOFTWARE.
 
 # External imports
-import logging
-import yaml
-from pypdf import PdfReader, PdfWriter
-import tempfile
-import pdfkit
 import io
-from dotenv import load_dotenv
-from typing import List
+import logging
+import tempfile
 from pathlib import Path
+
+import pdfkit
+import yaml
+from dotenv import load_dotenv
+from pypdf import PdfReader, PdfWriter
 
 # Local imports
 from country_by_country import processor
@@ -48,21 +48,25 @@ CONFIG_FILE = "./configs/eval_table_extraction.yaml"
 
 def add_page(asset: dict, table_idx: int, writer):
     # Create temporary file to store content of each page
-    with tempfile.NamedTemporaryFile(suffix=".html", mode="w", encoding="utf-8", delete=False) as f:
+    with tempfile.NamedTemporaryFile(
+        suffix=".html", mode="w", encoding="utf-8", delete=False
+    ) as f:
         # Add header
         f.writelines('<meta charset="UTF-8">')
-       
+
         # Add any detected tables
-        if table_idx==None:
+        if table_idx is None:
             f.writelines(f"<h3>{asset['type']} {asset['params']} - no table</h3>")
         else:
-            f.writelines(f"<h3>{asset['type']} {asset['params']} - table {table_idx+1}/{len(asset['tables'])}</h3>")
-            f.write(asset['tables'][table_idx].to_html(index=False))
-    
+            f.writelines(
+                f"<h3>{asset['type']} {asset['params']} - table {table_idx+1}/{len(asset['tables'])}</h3>"
+            )
+            f.write(asset["tables"][table_idx].to_html(index=False))
+
     # Load file content into byte stream
     stream = io.BytesIO()
     stream.write(pdfkit.from_file(f.name, False))
-    
+
     # Create page from byte stream
     writer.add_page(PdfReader(stream).pages[0])
 
@@ -75,7 +79,7 @@ def save_to_pdf(assets: dict, output_file: str) -> str:
     for asset in assets["table_extractors"]:
         if len(asset["tables"]) > 0:
             # If tables, create one table per page
-            for table_idx, df in enumerate(asset["tables"]):
+            for table_idx, _df in enumerate(asset["tables"]):
                 add_page(asset, table_idx, writer)
         else:
             # If no table, create page with header only
@@ -85,7 +89,9 @@ def save_to_pdf(assets: dict, output_file: str) -> str:
     writer.write(output_file)
 
 
-def run_extractions(config: dict, pdf_files: List[str], output_folder: str) -> List[List[dict]]:
+def run_extractions(
+    config: dict, pdf_files: list[str], output_folder: str
+) -> list[list[dict]]:
     # Initialize processor
     report_processor = processor.ReportProcessor(config)
 
@@ -109,7 +115,7 @@ if __name__ == "__main__":
     load_dotenv()
 
     # PDF files to parse
-    pdf_files=[INPUT_FOLDER + pdf_file for pdf_file in PDF_FILES]
+    pdf_files = [INPUT_FOLDER + pdf_file for pdf_file in PDF_FILES]
 
     # Create output folder
     path = Path(OUTPUT_FOLDER)
@@ -126,5 +132,5 @@ if __name__ == "__main__":
     assets = run_extractions(
         config=config,
         pdf_files=pdf_files,
-        output_folder=OUTPUT_FOLDER
+        output_folder=OUTPUT_FOLDER,
     )
