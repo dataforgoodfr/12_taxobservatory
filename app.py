@@ -221,18 +221,29 @@ if page_selected is not None and page_selected != "None":
 
     col3, col4 = st.columns([1, 3])
     filter_list = ["is_number", "is_negative"]
+    logging.info(f"Algorithm_name : {algorithm_name}")
     with col3:
         for column_name in list(edited_df.columns.values):
+            if (
+                column_name
+                in st.session_state["filters_selected" + "_" + algorithm_name]
+            ):
+                index = filter_list.index(
+                    st.session_state["filters_selected" + "_" + algorithm_name][
+                        column_name
+                    ],
+                )
+            else:
+                index = None
             st.selectbox(
                 "Do you want to apply a filter to the column " + column_name,
                 filter_list,
-                index=None,
+                index=index,
                 placeholder="Select a filter",
                 on_change=apply_filter,
                 key=column_name,
                 args=(column_name, algorithm_name),
             )
-    logging.info(f"Algorithm_name : {algorithm_name}")
     logging.info(
         f"""Grid Options : {st.session_state["grid_options" + "_" + algorithm_name]}""",
     )
@@ -241,12 +252,10 @@ if page_selected is not None and page_selected != "None":
     )
 
     with col4:
-        AgGrid(
+        edited_df = AgGrid(
             edited_df,
-            editable=True,
+            editable=True,  # TODO : pas editable ??
             reload_data=True,
             gridOptions=st.session_state["grid_options" + "_" + algorithm_name],
             allow_unsafe_jscode=True,
         )
-
-        # if not st.session_state["filters_selected" + "_" + algorithm_name]:
