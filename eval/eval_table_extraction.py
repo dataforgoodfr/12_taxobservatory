@@ -54,15 +54,14 @@ def add_page(asset: dict, table_idx: int, writer: object) -> None:
         encoding="utf-8",
         delete=False,
     ) as f:
-        # Add header
-        f.writelines('<meta charset="UTF-8">')
-
         # Add any detected tables
+        f.writelines('<meta charset="UTF-8">')
+        html_header_start = f"<h3>{asset['type']} {asset['params']} - "
         if table_idx is None:
-            f.writelines(f"<h3>{asset['type']} {asset['params']} - no table</h3>")
+            f.writelines(html_header_start + "no table</h3>")
         else:
             f.writelines(
-                f"<h3>{asset['type']} {asset['params']} - table {table_idx+1}/{len(asset['tables'])}</h3>",
+                html_header_start + f"table {table_idx+1}/{len(asset['tables'])}</h3>",
             )
             f.write(asset["tables"][table_idx].to_html(index=False))
 
