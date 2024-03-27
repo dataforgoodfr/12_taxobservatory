@@ -37,7 +37,7 @@ except ImportError as e:
 
 class ExtractTableAPI:
     def __init__(self) -> None:
-        api_key = os.getenv("EXTRACTABLE_API_KEY")
+        api_key = os.getenv("EXTRACT_TABLE_API_KEY")
         self.extract_table = ExtractTable(api_key)
 
     def __call__(self, pdf_filepath: str, assets: dict) -> None:
