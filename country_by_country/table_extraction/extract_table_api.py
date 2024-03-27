@@ -21,7 +21,12 @@
 # SOFTWARE.
 
 # External imports
-from ExtractTable import ExtractTable
+try:
+    from ExtractTable import ExtractTable
+except:
+    raise RuntimeError(
+        "Cannot import ExtractTable. If you wish to use this module, you are expected to install it manually by triggering : pip install ExtractTable"
+    )
 
 
 class ExtractTableAPI:
