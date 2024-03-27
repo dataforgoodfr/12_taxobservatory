@@ -46,7 +46,7 @@ OUTPUT_FOLDER = "../example_set/extractions/"
 CONFIG_FILE = "./configs/eval_table_extraction.yaml"
 
 
-def add_page(asset: dict, table_idx: int, writer):
+def add_page(asset: dict, table_idx: int, writer: object) -> None:
     # Create temporary file to store content of each page
     with tempfile.NamedTemporaryFile(
         suffix=".html",
@@ -74,7 +74,7 @@ def add_page(asset: dict, table_idx: int, writer):
     writer.add_page(PdfReader(stream).pages[0])
 
 
-def save_to_pdf(assets: dict, output_file: str) -> str:
+def save_to_pdf(assets: dict, output_file: str) -> None:
     # Initialize PDF writer
     writer = PdfWriter()
 
@@ -127,7 +127,7 @@ if __name__ == "__main__":
     path.mkdir(parents=True, exist_ok=True)
 
     # Load config file
-    with open(CONFIG_FILE) as stream:
+    with Path(CONFIG_FILE).open() as stream:
         try:
             config = yaml.safe_load(stream)
         except Exception as e:
