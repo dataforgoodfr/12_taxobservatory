@@ -40,4 +40,14 @@ def from_config(config: dict) -> Camelot:
         return UnstructuredAPI(**extractor_params)
     elif extractor_type == "LLamaParse":
         return LlamaParseExtractor(**extractor_params)
+    elif extractor_type == "ExtractTableAPI":
+        # This is for legacy support
+        # In order to be able to use ExtractTable
+        # for benchmarking
+        # Note: ExtractTable-py is not maintained anymore
+        # This is the reason why this case is handled in a specific way
+        from .extract_table_api import ExtractTableAPI
+
+        return ExtractTableAPI(**extractor_params)
+
     return None
