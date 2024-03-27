@@ -22,6 +22,7 @@
 
 # Standard imports
 import os
+import uuid
 
 # External imports
 try:
@@ -46,13 +47,17 @@ class ExtractTableAPI:
             ntables: the number of detected tables
             tables: a list of pandas dataframe of the parsed tables
         """
-        table_data = self.extract_table.process_file(
+        tables_list = self.extract_table.process_file(
             filepath=pdf_filepath,
             pages="all",
             output_format="df",
         )
 
-        assets["img_table_extractors"]["extracttable"] = {
-            "ntables": len(table_data),
-            "tables": table_data,
+        # Create asset
+        new_asset = {
+            "id": uuid.uuid4(),
+            "type": "ExtractTableAPI",
+            "tables": tables_list,
         }
+
+        return new_asset
