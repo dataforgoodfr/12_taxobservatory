@@ -40,7 +40,7 @@ class ExtractTableAPI:
         api_key = os.getenv("EXTRACT_TABLE_API_KEY")
         self.extract_table = ExtractTable(api_key)
 
-    def __call__(self, pdf_filepath: str, assets: dict) -> None:
+    def __call__(self, pdf_filepath: str) -> None:
         """
         Writes assets:
             ntables: the number of detected tables
