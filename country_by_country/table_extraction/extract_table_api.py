@@ -20,6 +20,9 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
+# Standard imports
+import os
+
 # External imports
 try:
     from ExtractTable import ExtractTable
@@ -33,10 +36,10 @@ except ImportError as e:
 
 
 class ExtractTableAPI:
-    def __init__(self, api_key: str) -> None:
+    def __init__(self) -> None:
+        api_key = os.getenv("EXTRACTABLE_API_KEY")
         self.extract_table = ExtractTable(api_key)
-        usage = self.extract_table.check_usage()
-        print(usage)
+        # usage = self.extract_table.check_usage()
 
     def __call__(self, pdf_filepath: str, assets: dict) -> None:
         """
