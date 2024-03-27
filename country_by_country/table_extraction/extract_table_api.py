@@ -39,7 +39,6 @@ class ExtractTableAPI:
     def __init__(self) -> None:
         api_key = os.getenv("EXTRACTABLE_API_KEY")
         self.extract_table = ExtractTable(api_key)
-        # usage = self.extract_table.check_usage()
 
     def __call__(self, pdf_filepath: str, assets: dict) -> None:
         """
