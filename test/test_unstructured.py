@@ -20,16 +20,38 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
+# External imports
+import pandas as pd
+from pandas.testing import assert_frame_equal
+
 # Local imports
-from .camelot_extractor import Camelot
-from .extract_table_api import ExtractTableAPI
+from country_by_country import table_extraction
 
 
-def from_config(config: dict) -> Camelot | ExtractTableAPI:
-    extractor_type = config["type"]
-    extractor_params = config["params"]
+def test_unstructured_yolox() -> None:
+    config = {
+        "type": "Unstructured",
+        "params": {"pdf_image_dpi": 300, "hi_res_model_name": "yolox"},
+    }
+    table_extractor = table_extraction.from_config(config)
 
-    if extractor_type == "Camelot":
-        return Camelot(**extractor_params)
-    elif extractor_type == "ExtractTableAPI":
-        return ExtractTableAPI(**extractor_params)
+    src_path = "./test/data/Acciona_2020_CbCR_1.pdf"
+    asset = table_extractor(src_path)
+
+    tables = asset["tables"]
+
+    # As of 03/2024, unstructured yolox detects 1 table
+    assert len(tables) == 1
+
+    # The detection of the table is perfect
+    table = tables[0]
+
+    # To get the expected result :
+    # python -m pytest -s
+    # >> table.to_csv("/tmp/table.csv", index=False)
+
+    expected_table = pd.read_csv(
+        "./test/data/unstructured_yolox_Acciona_2020_CbCR_1.csv",
+    )
+
+    assert_frame_equal(table, expected_table)

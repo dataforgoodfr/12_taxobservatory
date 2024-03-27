@@ -23,9 +23,10 @@
 # Standard imports
 import logging
 
+from . import pagefilter, table_extraction
+
 # Local imports
-from . import img_table_extraction, pagefilter
-from .pagefilter.filter_pages import filter_pages
+from .utils.utils import keep_pages
 
 
 class ReportProcessor:
@@ -33,40 +34,55 @@ class ReportProcessor:
         # Report filter
         self.page_filter = pagefilter.from_config(config["pagefilter"])
 
-        # Table extraction from images
-        img_table_extractors = config["table_extraction"]["img"]
-        self.img_table_extractors = [
-            img_table_extraction.from_config(name) for name in img_table_extractors
-        ]
+        self.table_extractors = []
+        self.table_cleaners = []
+
+        # Tables extraction
+        if "table_extraction" in config:
+            table_extractors = config["table_extraction"]
+            self.table_extractors = [
+                table_extraction.from_config(name) for name in table_extractors
+            ]
+
+            # Table cleaning & reformatting
+            # We can do this step only if we had table extraction algorithms
+            # otherwise, the assets will not be available
+            if "table_cleaning" in config:
+                table_cleaners = config["table_cleaning"]
+                self.table_cleaners = [
+                    self.table_cleaning.from_config(name) for name in table_cleaners
+                ]
 
     def process(self, pdf_filepath: str) -> dict:
         logging.info(f"Processing {pdf_filepath}")
 
         assets = {
             "pagefilter": {},
-            "text_table_extractors": {},
-            "img_table_extractors": {},
+            "table_extractors": [],
+            "table_cleaners": [],
         }
 
-        # Filtering the pages
+        # Identifying the pages to extract
         self.page_filter(pdf_filepath, assets)
 
         # Now that we identified the pages to be extracted, we extract them
         # Note, in a GUI, we could ask the user to the change the content of
         # assets["pagefilter"]["selected_pages"] before selecting the pages
-        pdf_to_process = filter_pages(
+        pdf_to_process = keep_pages(
             pdf_filepath,
             assets["pagefilter"]["selected_pages"],
         )
 
         # Process the selected pages to detect the tables and extract
         # their contents
-        for img_table_extractor in self.img_table_extractors:
-            img_table_extractor(pdf_to_process, assets)
+        for table_extractor in self.table_extractors:
+            new_asset = table_extractor(pdf_to_process)
+            assets["table_extractors"].append(new_asset)
 
-        # Given the parsed content to the RAG for identifying the key numbers
-        # TODO
-        # For now, just print the results
-        print(assets)
+        # Give the parsed content to the cleaner stage for getting organized data
+        for table_cleaner in self.table_cleaners:
+            for asset in assets["table_extractors"]:
+                new_asset = table_cleaner(asset)
+                assets["table_cleaners"].append(new_asset)
 
         return assets

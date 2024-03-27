@@ -1,0 +1,16 @@
+# Full workflow
+# Requires OpenAI API key and only works with table_extraction:Unstructured and r
+
+pagefilter:
+  type: FromFilename
+
+table_extraction:
+  - type: Unstructured
+    params:
+      pdf_image_dpi: 300
+      hi_res_model_name: "yolox"
+
+table_cleaning:
+  - type: LLM
+    params:
+      openai_model: "gpt-4-turbo-preview"

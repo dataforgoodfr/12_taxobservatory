@@ -21,47 +21,40 @@
 # SOFTWARE.
 
 # Standard imports
-import logging
-import pickle
-import sys
-from pathlib import Path
+import tempfile
 
-import yaml
-
-# Local imports
-from dotenv import load_dotenv
-
-from country_by_country import processor
-
-NUM_CLI_ARGS = 3
+# External imports
+import pypdf
 
 
-def process_report(config: dict, pdf_filepath: str) -> None:
-    # Loading API keys from .env file
-    load_dotenv()
+def keep_pages(pdf_filepath: str, selected_pages: list[int]) -> str:
+    """
+    Function to extract the selected pages from a source pdf
+    It returns the path to the PDF created by keeping only the
+    selected pages
+    """
+    reader = pypdf.PdfReader(pdf_filepath)
+    writer = pypdf.PdfWriter()
 
-    proc = processor.ReportProcessor(config)
-    return proc.process(pdf_filepath)
+    for pi in selected_pages:
+        writer.add_page(reader.pages[pi])
+
+    filename = tempfile.NamedTemporaryFile(suffix=".pdf", delete=False).name
+    writer.write(filename)
+
+    return filename
 
 
-if __name__ == "__main__":
+def gather_tables(
+    assets: dict,
+) -> dict:
+    tables_by_name = {}
+    for asset in assets["table_extractors"]:
+        tables = asset["tables"]
+        if len(tables) == 1:
+            tables_by_name[asset["type"]] = tables[0]
+        elif len(tables) > 1:
+            for i in range(len(tables)):
+                tables_by_name[asset["type"] + "_" + str(i)] = tables[i]
 
-    logging.basicConfig(stream=sys.stdout, level=logging.INFO, format="%(message)s")
-
-    if len(sys.argv) != NUM_CLI_ARGS:
-        logging.error("Usage : python -m country_by_country config.yaml report.pdf")
-        sys.exit(-1)
-
-    logging.info(f"\nLoading {sys.argv[1]}")
-    with Path(sys.argv[1]).open() as fh:
-        config = yaml.safe_load(fh)
-
-    assets = process_report(config, sys.argv[2])
-
-    # Save all the assets to disk
-    with Path("assets.pkl").open("wb") as fh:
-        pickle.dump(assets, fh)
-    logging.info(
-        "Assets dumped in assets.pkl. You can read then using : \n"
-        + "pickle.load(open('assets.pkl', 'rb'))",
-    )
+    return tables_by_name

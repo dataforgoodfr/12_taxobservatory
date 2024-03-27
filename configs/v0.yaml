@@ -4,13 +4,17 @@ pagefilter:
     modelfile: random_forest_model_low_false_positive.joblib
 
 table_extraction:
-  img:
-    - type: Camelot
-      params:
-        flavor: stream
-    - type: Camelot
-      params:
-        flavor: lattice
-    # - type: ExtractTableAPI
-    #   params:
-    #     api_key: xxxxxxxxxxxxxxxxxxxxxxxxx
+  - type: Camelot
+    params:
+      flavor: stream
+  - type: Camelot
+    params:
+      flavor: lattice
+  - type: Unstructured
+    params:
+      hi_res_model_name: "yolox"
+      pdf_image_dpi: 300
+#    - type: LLamaParse
+#    - type: UnstructuredAPI
+
+# table_cleaning:

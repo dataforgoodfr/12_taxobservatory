@@ -21,25 +21,37 @@
 # SOFTWARE.
 
 # Standard imports
-import tempfile
+import logging
+import uuid
 
 # External imports
-import pypdf
+import camelot
 
 
-def filter_pages(pdf_filepath: str, selected_pages: list[int]) -> str:
-    """
-    Function to extract the selected pages from a source pdf
-    It returns the path to the PDF created by keeping only the
-    selected pages
-    """
-    reader = pypdf.PdfReader(pdf_filepath)
-    writer = pypdf.PdfWriter()
+class Camelot:
+    def __init__(self, flavor: str) -> None:
+        self.flavor = flavor
+        self.type = "camelot"
 
-    for pi in selected_pages:
-        writer.add_page(reader.pages[pi])
+    def __call__(self, pdf_filepath: str) -> dict:
+        """
+        Returns asset that contain:
+            tables: a list of pandas dataframe of the parsed tables
+        """
+        logging.info("\nKicking off extraction stage...")
+        logging.info(f"Extraction type: {self.type}, with params: {self.flavor}")
 
-    filename = tempfile.NamedTemporaryFile(suffix=".pdf", delete=False).name
-    writer.write(filename)
+        tables = camelot.read_pdf(pdf_filepath, flavor=self.flavor)
 
-    return filename
+        # Write the parsed tables into the assets
+        tables_list = [t.df for t in tables]
+
+        # Create asset
+        new_asset = {
+            "id": uuid.uuid4(),
+            "type": "camelot",
+            "params": {"flavor": self.flavor},
+            "tables": tables_list,
+        }
+
+        return new_asset

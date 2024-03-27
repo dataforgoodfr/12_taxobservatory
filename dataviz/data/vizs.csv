@@ -1,0 +1,54 @@
+what,Viz,how to compute,variants,comment,specific values
+Number of tracked reports,raw figure,count distinct (mnc x year),"on homepage : total
+
+on company / sector / hq country pages : total filter by company / sector / hq country  ","data : would simplify to have a report_id in final dataset
+
+safeguard needed (on data end ? or ours ?) : what if duplicates in the dataset ",
+Number of tracked reports over time,bar chart / line chart,"count distinct mnc x year, by year ","on homepage : total
+
+on sector / hq country pages : total filter by company / sector / hq country  ",same comment as above on report_id ,
+Number of tracked mnc,raw figure,count distinct (mnc),"on homepage : total
+
+on sector / hq country pages : total filter by sector / hq country  ",safeguard needed (on data end ? or ours ?) : what if a company is attached to different sector / country from one year to another,
+breakdown of reports by sector / hq country,pie chart,"count distinct mnc x year, by sector / country","on homepage : total
+
+on sector / hq country pages : total filter by sector / hq country  ",same comment as above on report_id ,
+breakdown of reports by sector / country over time,bar chart,"count distinct mnc x year, by sector / country and year","on homepage : total
+
+on sector / hq country pages : total filter by sector / hq country  ",same comment as above on report_id ,
+breakdown of mnc by sector / hq country,pie chart,"count distinct mnc, by sector / country","on homepage : total
+
+on sector / hq country pages : total filter by sector / hq country  ",,
+breakdown of mnc by sector / hq country,bar chart,"count distinct mnc, by sector / country and year","on homepage : total
+
+on sector / hq country pages : total filter by sector / hq country  ",,
+mnc tracked ,"world cloud of unique mnc 
+on hover : with number of reports + avg transparency score when hovering","unique mnc, with sector
+
+number of report is unique year for each mnc
+
+avg transparency score has to be defined","on homepage : all
+
+on sector / hq country pages : all filtered by sector / hq country  ",,
+available reports by company,"tbd (goal is on company page, to show reports tracked, so could be just a table showing year available for a company)",,"on company page, need a filter by company ",,
+"company key financial kpis : 
+hq country, 
+total revenue, total unrelated party revenues, total related party revenues, pre-tax profits, taxes paid, employees","raw figure for each, or table with indicator name in col A, value in col B","hq country : - 
+
+metrics : sum (metric) by mnc","on company page, so need a filter by company and year",,"giulialiprandi@gmail.com ici comment tu traites les valeurs négatives pour revenue, unrelated, related, pre tax profits, taxes paid (sachant que cest le total qui est montré)"
+company top jurisdictions for revenue ,horizontal bar chart showing % total revenue for top 9 jurisdictions + rest as “OTHERS” ,"sum(revenue) by company x country x year, display top 9 and group remaining countries","on company page, need a filter by company and year",,"giulialiprandi@gmail.com ici comme c’est un % du total qu’on affiche, est-ce que le calcul du total prend en compte les valeurs négatives ?"
+company’s % pre-tax profit and % employees by jurisdiction,"horizontal bar chart with one bar for % pre tax profit, the other for % employees, in different colors
+
+rank by % pre-tax profit descending","for a company : profits by JUR / total profit vs
+employees by JUR / total employees","on company page, need a filter by company and year",,"giulialiprandi@gmail.com comme c’est un % du total qu’on affiche, est-ce que le calcul du total prend en compte les valeurs négatives ? comment ?"
+,"plot % profit vs. % employee per jurisdiction, with size of the bubble based on profit per employee and a color code for tax havens vs others","for a company : profits by JUR / total profit vs
+employees by JUR / total employees","on company page, need a filter by company and year",,giulialiprandi@gmail.com same question
+company’s % pre-tax profit and % employees in TH vs domestic vs non TH,"horizontal bar chart of % profit, % employee and profit per employee for domestic vs tax havens vs. non havens ","for a company : profits by JUR / total profit vs
+employees by JUR / total employees
+
+first isolate domestic : jur code = hq code
+then isolate tax havens : use dedicated column (absent from current dataset)
+then non tax havens","on company page, need a filter by company and year",,giulialiprandi@gmail.com same question
+…,,,,,
+number of multinational corporations subject to the directive,"tbd (oecd data, first need to fetch)",,,,
+transparency / quality score,tbd (transparency kpi to determine),,,,

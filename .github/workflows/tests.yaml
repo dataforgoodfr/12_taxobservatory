@@ -1,0 +1,24 @@
+name: tests
+
+on: [push]
+
+jobs:
+  tests:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python: ["3.10"]
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python }}
+      - name: Install poppler (required by pdf2image/unstructured)
+        run: sudo apt install -y poppler-utils
+      - name: Install tesseract (required by unstructured)
+        run: sudo apt install -y tesseract-ocr
+      - name: Install tox
+        run: pip install tox
+      - name: Run tox
+        run: tox -e py

@@ -20,48 +20,24 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-# Standard imports
-import logging
-import pickle
-import sys
-from pathlib import Path
-
-import yaml
-
 # Local imports
-from dotenv import load_dotenv
-
-from country_by_country import processor
-
-NUM_CLI_ARGS = 3
-
-
-def process_report(config: dict, pdf_filepath: str) -> None:
-    # Loading API keys from .env file
-    load_dotenv()
-
-    proc = processor.ReportProcessor(config)
-    return proc.process(pdf_filepath)
+from .camelot_extractor import Camelot
+from .llama_parse_extractor import LlamaParseExtractor
+from .unstructured import Unstructured
+from .unstructured_api import UnstructuredAPI
 
 
-if __name__ == "__main__":
-
-    logging.basicConfig(stream=sys.stdout, level=logging.INFO, format="%(message)s")
-
-    if len(sys.argv) != NUM_CLI_ARGS:
-        logging.error("Usage : python -m country_by_country config.yaml report.pdf")
-        sys.exit(-1)
-
-    logging.info(f"\nLoading {sys.argv[1]}")
-    with Path(sys.argv[1]).open() as fh:
-        config = yaml.safe_load(fh)
-
-    assets = process_report(config, sys.argv[2])
-
-    # Save all the assets to disk
-    with Path("assets.pkl").open("wb") as fh:
-        pickle.dump(assets, fh)
-    logging.info(
-        "Assets dumped in assets.pkl. You can read then using : \n"
-        + "pickle.load(open('assets.pkl', 'rb'))",
-    )
+def from_config(config: dict) -> Camelot:
+    extractor_type = config["type"]
+    extractor_params = {}
+    if "params" in config:
+        extractor_params = config["params"]
+    if extractor_type == "Camelot":
+        return Camelot(**extractor_params)
+    elif extractor_type == "Unstructured":
+        return Unstructured(**extractor_params)
+    elif extractor_type == "UnstructuredAPI":
+        return UnstructuredAPI(**extractor_params)
+    elif extractor_type == "LLamaParse":
+        return LlamaParseExtractor(**extractor_params)
+    return None
