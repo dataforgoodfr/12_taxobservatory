@@ -49,7 +49,10 @@ CONFIG_FILE = "./configs/eval_table_extraction.yaml"
 def add_page(asset: dict, table_idx: int, writer):
     # Create temporary file to store content of each page
     with tempfile.NamedTemporaryFile(
-        suffix=".html", mode="w", encoding="utf-8", delete=False
+        suffix=".html",
+        mode="w",
+        encoding="utf-8",
+        delete=False,
     ) as f:
         # Add header
         f.writelines('<meta charset="UTF-8">')
@@ -59,7 +62,7 @@ def add_page(asset: dict, table_idx: int, writer):
             f.writelines(f"<h3>{asset['type']} {asset['params']} - no table</h3>")
         else:
             f.writelines(
-                f"<h3>{asset['type']} {asset['params']} - table {table_idx+1}/{len(asset['tables'])}</h3>"
+                f"<h3>{asset['type']} {asset['params']} - table {table_idx+1}/{len(asset['tables'])}</h3>",
             )
             f.write(asset["tables"][table_idx].to_html(index=False))
 
@@ -90,7 +93,9 @@ def save_to_pdf(assets: dict, output_file: str) -> str:
 
 
 def run_extractions(
-    config: dict, pdf_files: list[str], output_folder: str
+    config: dict,
+    pdf_files: list[str],
+    output_folder: str,
 ) -> list[list[dict]]:
     # Initialize processor
     report_processor = processor.ReportProcessor(config)
