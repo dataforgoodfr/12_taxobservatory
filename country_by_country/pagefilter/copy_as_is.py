@@ -20,10 +20,6 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-# Standard imports
-import shutil
-import tempfile
-
 # External imports
 import pypdf
 
@@ -44,8 +40,6 @@ class CopyAsIs:
             src_pdf: the original pdf filepath
             selected_pages : list of selected pages
         """
-        filename = tempfile.NamedTemporaryFile(suffix=".pdf", delete=False).name
-        shutil.copy(pdf_filepath, filename)
 
         reader = pypdf.PdfReader(pdf_filepath)
         n_pages = len(reader.pages)
