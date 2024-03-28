@@ -57,7 +57,7 @@ This config file uses:
 - LangChain with GPT-4-turbo-preview for requesting the parsed tables to extract
   and re-order the necessary informations
 
-# Avaiable blocks
+# Available blocks
 
 ## Page filter
 
@@ -252,6 +252,31 @@ With LangChain, you can also trace the LLMs request using [LangSmith](https://do
 LANGCHAIN_API_KEY=CHANGE_ME
 LANGCHAIN_TRACING_V2=true
 LANGCHAIN_PROJECT="country-by-country"
+```
+
+
+# Deploy a database to persist extraction data
+
+With docker installed, here are a few commands to setup a database used for extraction :
+
+### Build the docker image containing the database (once)
+```
+docker build -t extract_db -f Dockerfile.extract_db .
+```
+
+### Run the database locally (once)
+```
+docker run -d --name extract_db -p 5400:5432 -e POSTGRES_HOST_AUTH_METHOD=trust extract_db
+```
+
+### Start the container (everytime needed)
+```
+docker start extract_db
+```
+
+### Open a shell in the conainer (everytime needed)
+```
+docker exec -it extract_db bash
 ```
 
 
