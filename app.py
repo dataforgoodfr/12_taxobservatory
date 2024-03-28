@@ -104,22 +104,50 @@ st.subheader(
 )
 
 with st.sidebar:
-    pdf = st.file_uploader("Upload a pdf document")
-    config = st.file_uploader("Upload a config")
+    pdf = st.file_uploader("Upload a pdf document containing financial table : ")
+    loaded_config = st.file_uploader(
+        "Upload a config if the default config doesn't suit you :",
+    )
+
+    yaml_config = """
+pagefilter:
+  type: RFClassifier
+  params:
+    modelfile: random_forest_model_low_false_positive.joblib
+
+table_extraction:
+  - type: Camelot
+    params:
+      flavor: stream
+  - type: Camelot
+    params:
+      flavor: lattice
+  - type: Unstructured
+    params:
+      hi_res_model_name: "yolox"
+      pdf_image_dpi: 300
+    """
+
+    if loaded_config is None:
+        config = yaml.safe_load(yaml_config)
+    else:
+        config = yaml.safe_load(loaded_config)
+    yaml_str = yaml.dump(config, default_flow_style=False, indent=2)
+    # Ajouter des backticks triples pour créer un bloc de code markdown
+    markdown_str = f"The configuration is : \n\n```\n{yaml_str}\n```"
+    st.write(markdown_str)
 
 mytmpfile = tempfile.NamedTemporaryFile(suffix=".pdf", delete=False)
 page_selected = None
 first_part = True
-
 placeholder = st.empty()
+
 if pdf is not None and config is not None and first_part is not False:
     mytmpfile.write(pdf.read())
     pdfreader = PdfReader(mytmpfile.name)
 
-    config_checked = yaml.safe_load(config)
-
     logging.info("Loading config and pdf")
-    proc = ReportProcessor(config_checked)
+    proc = ReportProcessor(config)
 
     logging.info("Config and pdf loaded")
 
