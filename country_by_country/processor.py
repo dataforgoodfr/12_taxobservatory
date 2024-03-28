@@ -23,7 +23,7 @@
 # Standard imports
 import logging
 
-from . import pagefilter, table_extraction
+from . import pagefilter, table_extraction, table_cleaning
 
 # Local imports
 from .utils.utils import keep_pages
@@ -50,7 +50,7 @@ class ReportProcessor:
             if "table_cleaning" in config:
                 table_cleaners = config["table_cleaning"]
                 self.table_cleaners = [
-                    self.table_cleaning.from_config(name) for name in table_cleaners
+                    table_cleaning.from_config(name) for name in table_cleaners
                 ]
 
     def process(self, pdf_filepath: str) -> dict:

@@ -32,7 +32,8 @@ from langchain.prompts import PromptTemplate
 from langchain_core.output_parsers import JsonOutputParser, PydanticOutputParser
 from langchain_core.pydantic_v1 import BaseModel, Field
 from langchain_openai import ChatOpenAI
-
+from langchain_community.llms import LlamaCpp
+from langchain_core.callbacks import CallbackManager, StreamingStdOutCallbackHandler
 from country_by_country.utils import constants
 
 
@@ -47,7 +48,7 @@ class LLMCleaner:
         """
         self.kwargs = kwargs
         self.type = "llm_cleaner"
-        self.openai_model = self.kwargs["openai_model"]
+        # self.openai_model = self.kwargs["openai_model"]
 
     def __call__(self, asset: dict) -> dict:
         logging.info("\nKicking off cleaning stage...")
@@ -61,11 +62,15 @@ class LLMCleaner:
 
         logging.info(f"Pulling {len(tables)} tables from extraction stage")
 
-        # Convert tables to html to add to LLM prompt
-        html_tables = [table.to_html() for table in tables]
+        # Convert tables to markdown to add to LLM prompt
+        md_tables = [table.to_markdown() for table in tables]
 
         # Define our LLM model
-        model = ChatOpenAI(temperature=0, model=self.openai_model)
+        # model = ChatOpenAI(temperature=0, model=self.openai_model)
+        model = LlamaCpp(
+            model_path="/home/fix_jer/Downloads/llama-2-7b-chat.Q2_K.gguf",
+            n_ctx=3000,
+        )
 
         # ---------- CHAIN 1/2 - Pull countries from each table ----------
         logging.info("Starting chain 1/2: extracting country names from tables")
@@ -83,7 +88,7 @@ class LLMCleaner:
         # Prompt includes one extracted table and some JSON output formatting instructions
         prompt1 = PromptTemplate(
             template="Extract an exhaustive list of countries from the following table "
-            + "in html format:\n{table}\n{format_instructions}",
+            + "in markdown format:\n{table}\n{format_instructions}",
             input_variables=["table"],
             partial_variables={
                 "format_instructions": parser1.get_format_instructions(),
@@ -94,7 +99,7 @@ class LLMCleaner:
         chain1 = {"table": lambda x: x} | prompt1 | model | parser1
 
         # Run it
-        responses1 = chain1.batch(html_tables, {"max_concurrency": 4})
+        responses1 = chain1.batch(md_tables, {"max_concurrency": 4})
 
         # Extract country lists from responses
         country_lists = [resp["country_names"] for resp in responses1]
@@ -137,7 +142,7 @@ class LLMCleaner:
         # Prompt includes one extracted table and some JSON output formatting instructions
         template = (
             """You are an assistant tasked with extracting financial """
-            + """data about {country_list} from the following table in html format:\n
+            + """data about {country_list} from the following table in markdown format:\n
         {table}\n
         {format_instructions}
         """
@@ -160,7 +165,7 @@ class LLMCleaner:
 
         # Run it
         responses2 = chain2.batch(
-            list(zip(html_tables, country_lists, strict=True)),
+            list(zip(md_tables, country_lists, strict=True)),
             {"max_concurrency": 4},
         )
 
