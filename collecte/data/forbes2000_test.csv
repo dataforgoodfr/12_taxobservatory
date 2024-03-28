@@ -1,0 +1,21 @@
+rank ,global company,country,sales ,profit ,assets,market value,website_url
+1,Berkshire Hathaway,United States,$276.09 B,$89.8 B,$958.78 B,$741.48 B,https://www.berkshirehathaway.com/
+2,ICBC,China,$208.13 B,$54.03 B,"$5,518.51 B",$214.43 B,https://www.icbc.com/
+3,Saudi Arabian Oil Company (Saudi Aramco),Saudi Arabia,$400.38 B,$105.36 B,$576.04 B,"$2,292.08 B",https://www.aramco.com/en
+4,JPMorgan Chase,United States,$124.54 B,$42.12 B,"$3,954.69 B",$374.45 B,https://www.jpmorganchase.com/
+5,China Construction Bank,China,$202.07 B,$46.89 B,"$4,746.95 B",$181.32 B,http://www.ccb.com/en/home/indexv3.html
+6,Amazon,United States,$469.82 B,$33.36 B,$420.55 B,"$1,468.4 B",https://www.amazon.com/
+7,Apple,United States,$378.7 B,$100.56 B,$381.19 B,"$2,640.32 B",https://www.apple.com/
+8,Agricultural Bank of China,China,$181.42 B,$37.38 B,"$4,561.05 B",$133.38 B,https://www.abchina.com/en/
+9,Bank of America,United States,$96.83 B,$31 B,"$3,238.22 B",$303.1 B,https://www.bankofamerica.com/
+10,Toyota Motor,Japan,$281.75 B,$28.15 B,$552.46 B,$237.73 B,https://www.global.toyota/
+11,Alphabet,United States,$257.49 B,$76.03 B,$359.27 B,"$1,581.72 B",http://abc.xyz/
+12,Microsoft,United States,$184.9 B,$71.19 B,$340.39 B,"$2,054.37 B",https://www.microsoft.com/
+13,Bank of China,China,$152.43 B,$33.57 B,"$4,192.84 B",$117.83 B,https://www.boc.cn/en/
+14,Samsung Group,South Korea,$244.16 B,$34.27 B,$358.88 B,$367.26 B,https://www.samsung.com/us/about-us/our-business/
+15,ExxonMobil,United States,$280.51 B,$23.04 B,$338.92 B,$359.73 B,https://corporate.exxonmobil.com/
+16,Shell,United Kingdom,$261.76 B,$20.27 B,$404.38 B,$211.1 B,https://www.shell.com/
+17,Ping An Insurance Group,China,$181.37 B,$15.74 B,"$1,587.11 B",$121.69 B,https://group.pingan.com/
+18,Wells Fargo,United States,$84.12 B,$20.58 B,"$1,939.71 B",$176.77 B,https://www.wellsfargo.com/
+19,Verizon Communications,United States,$134.35 B,$21.52 B,$366.6 B,$218.02 B,https://www.verizon.com/
+20,AT&T,United States,$163.03 B,$17.33 B,$551.62 B,$141.79 B,https://www.att.com/
