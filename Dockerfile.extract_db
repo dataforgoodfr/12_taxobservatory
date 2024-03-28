@@ -1,0 +1,5 @@
+FROM postgres:alpine
+
+ENV POSTGRES_DB extract_db
+
+COPY ./tax_observatory_extract.sql /docker-entrypoint-initdb.d/extract_db.sql
