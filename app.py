@@ -4,6 +4,7 @@ import sys
 import tempfile
 from pathlib import Path
 
+import pandas as pd
 import streamlit as st
 import yaml
 from pypdf import PdfReader
@@ -53,7 +54,8 @@ def apply_filter(column_name: str, algorithm_name: str) -> None:
             """,
         )
 
-    # TODO : what will happen if the same column_name has been found in two differents tables ?
+    # TODO : what will happen if the same column_name has been found
+    # in two differents tables ? use a key with algorithm name
     if st.session_state[column_name] is not None:
         st.session_state["filters_selected" + "_" + algorithm_name][
             column_name
@@ -62,6 +64,7 @@ def apply_filter(column_name: str, algorithm_name: str) -> None:
     else:
         del st.session_state["filters_selected" + "_" + algorithm_name][column_name]
         remove_gridoption_cellstyle(column_name, algorithm_name)
+    st.rerun()
 
 
 def update_gridoption_cellstyle(
@@ -202,22 +205,27 @@ if page_selected is not None and page_selected != "None":
             algorithm_name = st.selectbox(
                 "Choose the extracted table you to see",
                 list(st.session_state.tables.keys()),
-            )
+            )  # TODO : if switch , last edited_df is erased
+            if (
+                "aggrid_" + algorithm_name in st.session_state
+                and st.session_state["aggrid_" + algorithm_name] is not None
+            ):
+                st.session_state.tables[algorithm_name] = pd.DataFrame(
+                    st.session_state["aggrid_" + algorithm_name]["rowData"],
+                )
+
             edited_df = st.data_editor(
                 st.session_state.tables[algorithm_name],
                 num_rows="dynamic",
             )
-            st.session_state.tables[algorithm_name] = edited_df
 
     st.markdown("""---""")
 
     if "filters_selected" + "_" + algorithm_name not in st.session_state:
         st.session_state["filters_selected" + "_" + algorithm_name] = {}
-        st.session_state[
-            "grid_options" + "_" + algorithm_name
-        ] = GridOptionsBuilder.from_dataframe(
-            st.session_state.tables[algorithm_name],
-        ).build()
+        gd = GridOptionsBuilder.from_dataframe(edited_df)
+        gd.configure_default_column(editable=True)
+        st.session_state["grid_options" + "_" + algorithm_name] = gd.build()
 
     col3, col4 = st.columns([1, 3])
     filter_list = ["is_number", "is_negative"]
@@ -252,10 +260,12 @@ if page_selected is not None and page_selected != "None":
     )
 
     with col4:
-        edited_df = AgGrid(
+        AgGrid(
             edited_df,
-            editable=True,  # TODO : pas editable ??
+            editable=True,
             reload_data=True,
             gridOptions=st.session_state["grid_options" + "_" + algorithm_name],
+            update_mode="VALUE_CHANGED",
             allow_unsafe_jscode=True,
+            key="aggrid_" + algorithm_name,
         )
