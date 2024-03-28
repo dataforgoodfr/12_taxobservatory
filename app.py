@@ -217,6 +217,8 @@ if page_selected is not None and page_selected != "None":
             edited_df = st.data_editor(
                 st.session_state.tables[algorithm_name],
                 num_rows="dynamic",
+                width=800,
+                height=900,
             )
 
     st.markdown("""---""")
