@@ -23,10 +23,10 @@
 # External imports
 import io
 import logging
+import os
+import pickle
 import tempfile
 from pathlib import Path
-import pickle
-import os
 
 import pdfkit
 import yaml
@@ -112,7 +112,7 @@ def run_extractions(
         save_to_pdf(assets, output_file)
 
     # Return extracted tables for further processing
-    return (all_assets)
+    return all_assets
 
 
 if __name__ == "__main__":

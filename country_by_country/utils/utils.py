@@ -21,8 +21,8 @@
 # SOFTWARE.
 
 # Standard imports
-import tempfile
 import re
+import tempfile
 
 # External imports
 import pypdf
@@ -79,7 +79,7 @@ def reformat(el: str) -> str:
     - If comma, remove comma
     - If numerical, convert to float
     Output string."""
-    el = re.sub(r"\((\d+)\)", r"-\1", str(el).replace(',',''))
+    el = re.sub(r"\((\d+)\)", r"-\1", str(el).replace(",", ""))
     try:
         el = float(el)
     except:
