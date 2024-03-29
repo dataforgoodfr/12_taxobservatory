@@ -22,9 +22,8 @@
 
 # Standard imports
 import glob
-import logging
-from pathlib import Path
 import uuid
+from pathlib import Path
 
 # External imports
 import pandas as pd

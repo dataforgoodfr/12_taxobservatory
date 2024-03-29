@@ -48,7 +48,9 @@ def keep_pages(pdf_filepath: str, selected_pages: list[int]) -> str:
     # CSV to load
     pdf_stem = pathlib.Path(pdf_filepath).stem
     filename = tempfile.NamedTemporaryFile(
-        prefix=f"{pdf_stem}____", suffix=".pdf", delete=False
+        prefix=f"{pdf_stem}____",
+        suffix=".pdf",
+        delete=False,
     ).name
     print(f"filename {filename}")
     writer.write(filename)
