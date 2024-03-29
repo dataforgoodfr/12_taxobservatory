@@ -22,6 +22,7 @@
 
 # Local imports
 from .llm_cleaner import LLMCleaner
+from .hf_cleaner import HFCleaner
 
 
 def from_config(config: dict) -> LLMCleaner:
@@ -31,4 +32,6 @@ def from_config(config: dict) -> LLMCleaner:
         extractor_params = config["params"]
     if extractor_type == "LLM":
         return LLMCleaner(**extractor_params)
+    elif extractor_type == "HFCleaner":
+        return HFCleaner(**extractor_params)
     return None
