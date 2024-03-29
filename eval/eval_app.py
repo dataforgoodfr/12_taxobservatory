@@ -1,6 +1,6 @@
 import json
-import os
 import pickle
+from pathlib import Path
 
 import streamlit as st
 from huggingface_hub import hf_hub_download
@@ -13,7 +13,7 @@ from country_by_country.utils.utils import append_count_to_duplicates, reformat
 
 
 # Callbacks
-def on_pdf_selected():
+def on_pdf_selected() -> None:
     ss["pdf_downloaded"] = hf_hub_download(
         repo_id="DataForGood/taxobservatory_data",
         filename=ss.pdf_selected,
@@ -21,7 +21,7 @@ def on_pdf_selected():
     )
 
 
-def on_table_selected(key):
+def on_table_selected(key: str) -> None:
     selected = ss[key]
     ss.selected_idx = int(selected.split(" ", 1)[1])
 
@@ -48,10 +48,10 @@ with st.sidebar:
         assets = pickle.load(uploaded_file)
 
         # List PDFs
-        pdf_files = [os.path.basename(asset[0]) for asset in assets]
+        pdf_files = [Path(asset[0]).name for asset in assets]
         asset_dict = {}
         for asset in assets:
-            asset_dict[os.path.basename(asset[0])] = asset[1]
+            asset_dict[Path(asset[0]).name] = asset[1]
 
         # Select PDF to load results
         pdf_file = st.selectbox(
@@ -73,7 +73,9 @@ if "pdf_file" in locals():
     # Select reference extraction for comparison
     with st.sidebar:
         ref_extraction = st.selectbox(
-            "Select ref extraction for comparison", extractions[:-1], index=0
+            "Select ref extraction for comparison",
+            extractions[:-1],
+            index=0,
         )
         if ref_extraction is not None:
             ss.ref_extraction = ref_extraction
@@ -85,7 +87,7 @@ if "pdf_file" in locals():
         with tab:
             # Display parameters of the extraction
             st.write(
-                json.dumps(asset_dict[pdf_file]["table_extractors"][idx]["params"])
+                json.dumps(asset_dict[pdf_file]["table_extractors"][idx]["params"]),
             )
 
             # P Pull tables from the extraction
@@ -130,10 +132,10 @@ if "pdf_file" in locals():
             mask = df.map(reformat).isin(refvalues)
 
             # Apply font color (green vs red) based on above check
-            def color_mask(val):
+            def color_mask(val: bool) -> None:
                 return f'color: {"green" if val is True else "red"}'
 
-            dfst = df.style.apply(lambda _: mask.map(color_mask), axis=None)
+            dfst = df.style.apply(lambda c: mask[c.name].apply(color_mask))
 
             # Display table with appropriate font color
             column_config = {}
@@ -144,7 +146,7 @@ if "pdf_file" in locals():
                 dfst,
                 column_config=column_config,
                 use_container_width=True,
-                height=1000,
+                height=1200,
             )
 
     # Last tab to display PDF
@@ -167,5 +169,7 @@ if "pdf_file" in locals():
 
             # Render pages from PDF
             pdf_viewer(
-                input=ss.pdf_downloaded, pages_to_render=pages_to_render, width=1000
+                input=ss.pdf_downloaded,
+                pages_to_render=pages_to_render,
+                width=1000,
             )

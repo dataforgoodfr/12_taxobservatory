@@ -21,6 +21,7 @@
 # SOFTWARE.
 
 # Standard imports
+import contextlib
 import re
 import tempfile
 
@@ -80,8 +81,7 @@ def reformat(el: str) -> str:
     - If numerical, convert to float
     Output string."""
     el = re.sub(r"\((\d+)\)", r"-\1", str(el).replace(",", ""))
-    try:
+    with contextlib.suppress(Exception):
         el = float(el)
-    except:
-        pass
+
     return str(el)

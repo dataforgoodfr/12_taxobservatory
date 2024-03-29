@@ -23,7 +23,6 @@
 # External imports
 import io
 import logging
-import os
 import pickle
 import tempfile
 from pathlib import Path
@@ -105,7 +104,7 @@ def run_extractions(
     all_assets = []
     for pdf_file in pdf_files:
         assets = report_processor.process(pdf_file)
-        all_assets.append((os.path.basename(pdf_file), assets))
+        all_assets.append((Path(pdf_file).name, assets))
 
         # Save extracted tables in new PDF file
         output_file = output_folder + Path(pdf_file).stem + "_parsed.pdf"
