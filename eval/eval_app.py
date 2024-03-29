@@ -135,7 +135,7 @@ if "pdf_file" in locals():
             def color_mask(val: bool) -> None:
                 return f'color: {"green" if val is True else "red"}'
 
-            dfst = df.style.apply(lambda c: mask[c.name].apply(color_mask))
+            dfst = df.style.apply(lambda c, mask=mask: mask[c.name].apply(color_mask))
 
             # Display table with appropriate font color
             column_config = {}
