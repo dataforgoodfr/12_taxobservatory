@@ -50,7 +50,6 @@ class FromCSV:
 
         tables_files = glob.glob(f"{self.csv_directory}/{report_basename}*.csv")
         tables_list = [pd.read_csv(f) for f in tables_files]
-        print(tables_list)
 
         # Create asset
         new_asset = {
