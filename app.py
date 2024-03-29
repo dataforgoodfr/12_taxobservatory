@@ -25,20 +25,20 @@ def get_pdf_iframe(pdf_to_process: str) -> str:
 
 def apply_filter(column_name: str, algorithm_name: str) -> None:
 
-    if st.session_state[column_name] == "is_negative":
+    if st.session_state[column_name + algorithm_name] == "is_negative":
         js_code = JsCode(
             """
             function(params) {
                 if (params.value > 0) {
-                    return {backgroundColor: '#abf7b1'} #green
+                    return {backgroundColor: '#abf7b1'}
                 } else {
-                    return {backgroundColor: '#fcccbb'} # red
+                    return {backgroundColor: '#fcccbb'}
                 }
             }
             """,
         )
 
-    if st.session_state[column_name] == "is_number":
+    if st.session_state[column_name + algorithm_name] == "is_number":
         js_code = JsCode(
             """
             function(params) {
@@ -54,17 +54,14 @@ def apply_filter(column_name: str, algorithm_name: str) -> None:
             """,
         )
 
-    # TODO : what will happen if the same column_name has been found
-    # in two differents tables ? use a key with algorithm name
-    if st.session_state[column_name] is not None:
+    if st.session_state[column_name + algorithm_name] is not None:
         st.session_state["filters_selected" + "_" + algorithm_name][
             column_name
-        ] = st.session_state[column_name]
+        ] = st.session_state[column_name + algorithm_name]
         update_gridoption_cellstyle(column_name, js_code, algorithm_name)
     else:
         del st.session_state["filters_selected" + "_" + algorithm_name][column_name]
         remove_gridoption_cellstyle(column_name, algorithm_name)
-    st.rerun()
 
 
 def update_gridoption_cellstyle(
@@ -231,7 +228,7 @@ if page_selected is not None and page_selected != "None":
 
         with col2:
             algorithm_name = st.selectbox(
-                "Choose the extracted table you to see",
+                "Choose the extracted table you want to see",
                 list(st.session_state.tables.keys()),
             )  # TODO : if switch , last edited_df is erased
             if (
@@ -279,7 +276,7 @@ if page_selected is not None and page_selected != "None":
                 index=index,
                 placeholder="Select a filter",
                 on_change=apply_filter,
-                key=column_name,
+                key=column_name + algorithm_name,
                 args=(column_name, algorithm_name),
             )
     logging.info(
@@ -299,3 +296,6 @@ if page_selected is not None and page_selected != "None":
             allow_unsafe_jscode=True,
             key="aggrid_" + algorithm_name,
         )
+        # There is an open bug here :
+        # https://github.com/PablocFonseca/streamlit-aggrid/issues/234
+        # currently we cannot use the key and the reload_data option together
