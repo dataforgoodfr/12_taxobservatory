@@ -25,6 +25,8 @@ import io
 import logging
 import tempfile
 from pathlib import Path
+import pickle
+import os
 
 import pdfkit
 import yaml
@@ -103,14 +105,14 @@ def run_extractions(
     all_assets = []
     for pdf_file in pdf_files:
         assets = report_processor.process(pdf_file)
-        all_assets.append(assets)
+        all_assets.append((os.path.basename(pdf_file), assets))
 
         # Save extracted tables in new PDF file
         output_file = output_folder + Path(pdf_file).stem + "_parsed.pdf"
         save_to_pdf(assets, output_file)
 
     # Return extracted tables for further processing
-    return all_assets
+    return (all_assets)
 
 
 if __name__ == "__main__":
@@ -133,8 +135,16 @@ if __name__ == "__main__":
             print(e)
 
     # Run extractions
-    assets = run_extractions(
+    eval_assets = run_extractions(
         config=config,
         pdf_files=pdf_files,
         output_folder=OUTPUT_FOLDER,
+    )
+
+    # Save all assets to disk
+    with Path("eval/eval_assets.pkl").open("wb") as fh:
+        pickle.dump(eval_assets, fh)
+    logging.info(
+        "Assets dumped in assets.pkl. You can read then using : \n"
+        + "pickle.load(open('eval/eval_assets.pkl', 'rb'))",
     )

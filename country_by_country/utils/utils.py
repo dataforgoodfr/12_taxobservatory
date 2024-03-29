@@ -22,6 +22,7 @@
 
 # Standard imports
 import tempfile
+import re
 
 # External imports
 import pypdf
@@ -58,3 +59,29 @@ def gather_tables(
                 tables_by_name[asset["type"] + "_" + str(i)] = tables[i]
 
     return tables_by_name
+
+
+def append_count_to_duplicates(strings: list[str]) -> list[str]:
+    """Append count to duplicate strings in array"""
+    count_dict = {}
+    for i, string in enumerate(strings):
+        if string in count_dict:
+            count_dict[string] += 1
+            strings[i] = f"{string}_{count_dict[string]}"
+        else:
+            count_dict[string] = 0
+    return strings
+
+
+def reformat(el: str) -> str:
+    """Normalize input string:
+    - If enclosed in "()", convert to negative value
+    - If comma, remove comma
+    - If numerical, convert to float
+    Output string."""
+    el = re.sub(r"\((\d+)\)", r"-\1", str(el).replace(',',''))
+    try:
+        el = float(el)
+    except:
+        pass
+    return str(el)
