@@ -46,7 +46,8 @@ if "ref_uploaded" not in ss:
         ss.ref_uploaded = pd.read_csv(REF_DATA_FILE)
     except Exception:
         st.warning(
-            "REF data not found. Continue without or set the constant REF_DATA_FILE to the full path of the data_step2_before-currency-unit.csv file.",
+            """REF data not found. Continue without or set the constant REF_DATA_FILE /
+            to the full path of the data_step2_before-currency-unit.csv file.""",
         )
         ss.ref_uploaded = None
 
