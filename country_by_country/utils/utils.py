@@ -74,14 +74,18 @@ def append_count_to_duplicates(strings: list[str]) -> list[str]:
     return strings
 
 
-def reformat(el: str) -> str:
-    """Normalize input string:
-    - If enclosed in "()", convert to negative value
-    - If comma, remove comma
-    - If numerical, convert to float
-    Output string."""
-    el = re.sub(r"\((\d+)\)", r"-\1", str(el).replace(",", ""))
+def convert_to_str(val: any) -> str:
+    """Convert input to str and remove any trailing zeros for floats"""
     with contextlib.suppress(Exception):
-        el = float(el)
+        return str(float(val)).rstrip("0").rstrip(".")
+    return str(val)
 
-    return str(el)
+
+def reformat(el: any) -> str:
+    """Normalize input value:
+    - If numerical, convert to string
+    - If contains comma, remove comma
+    - If enclosed in "()", convert to negative value
+    Output string."""
+    el = convert_to_str(el).replace(",", "")
+    return re.sub(r"\((\d+)\)", r"-\1", el)
