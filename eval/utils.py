@@ -21,40 +21,34 @@
 # SOFTWARE.
 
 # Standard imports
-import tempfile
-
-# External imports
-import pypdf
+import contextlib
+import re
 
 
-def keep_pages(pdf_filepath: str, selected_pages: list[int]) -> str:
-    """
-    Function to extract the selected pages from a source pdf
-    It returns the path to the PDF created by keeping only the
-    selected pages
-    """
-    reader = pypdf.PdfReader(pdf_filepath)
-    writer = pypdf.PdfWriter()
-
-    for pi in selected_pages:
-        writer.add_page(reader.pages[pi])
-
-    filename = tempfile.NamedTemporaryFile(suffix=".pdf", delete=False).name
-    writer.write(filename)
-
-    return filename
+def append_count_to_duplicates(strings: list[str]) -> list[str]:
+    """Append count to duplicate strings in array"""
+    count_dict = {}
+    for i, string in enumerate(strings):
+        if string in count_dict:
+            count_dict[string] += 1
+            strings[i] = f"{string}_{count_dict[string]}"
+        else:
+            count_dict[string] = 0
+    return strings
 
 
-def gather_tables(
-    assets: dict,
-) -> dict:
-    tables_by_name = {}
-    for asset in assets["table_extractors"]:
-        tables = asset["tables"]
-        if len(tables) == 1:
-            tables_by_name[asset["type"]] = tables[0]
-        elif len(tables) > 1:
-            for i in range(len(tables)):
-                tables_by_name[asset["type"] + "_" + str(i)] = tables[i]
+def convert_to_str(val: any) -> str:
+    """Convert input to str and remove any trailing zeros for floats"""
+    with contextlib.suppress(Exception):
+        return str(float(val)).rstrip("0").rstrip(".")
+    return str(val)
 
-    return tables_by_name
+
+def reformat_str(el: any) -> str:
+    """Normalize input value:
+    - If numerical, convert to string
+    - If contains comma, remove comma
+    - If enclosed in "()", convert to negative value
+    Output string."""
+    el = convert_to_str(el).replace(",", "")
+    return re.sub(r"\((\d+)\)", r"-\1", el)

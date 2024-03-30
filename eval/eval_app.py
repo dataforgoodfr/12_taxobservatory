@@ -32,13 +32,9 @@ from huggingface_hub import hf_hub_download
 from streamlit import session_state as ss
 from streamlit_option_menu import option_menu
 from streamlit_pdf_viewer import pdf_viewer
+from utils import append_count_to_duplicates, convert_to_str, reformat_str
 
 from country_by_country import pagefilter
-from country_by_country.utils.utils import (
-    append_count_to_duplicates,
-    convert_to_str,
-    reformat,
-)
 
 REF_DATA_FILE = "./eval/data_step2_before-currency-units.csv"
 
@@ -195,8 +191,8 @@ if "pdf_file" in locals() and pdf_file:
             for dfref in asset_dict[pdf_file]["table_extractors"][
                 extractions.index(ref_extraction)
             ]["tables"]:
-                refvalues.extend(dfref.map(reformat).to_numpy().flatten())
-            mask = df.map(reformat).isin(refvalues)
+                refvalues.extend(dfref.map(reformat_str).to_numpy().flatten())
+            mask = df.map(reformat_str).isin(refvalues)
 
             # Apply font color (green vs red) based on above check
             def color_mask(val: bool) -> None:
