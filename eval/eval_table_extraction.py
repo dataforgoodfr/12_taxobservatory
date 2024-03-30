@@ -21,6 +21,7 @@
 # SOFTWARE.
 
 # External imports
+import datetime
 import io
 import logging
 import pickle
@@ -35,6 +36,9 @@ from pypdf import PdfReader, PdfWriter
 # Local imports
 from country_by_country import processor
 
+CONFIG_FILE = "./configs/eval_table_extraction.yaml"
+
+PDF_FOLDER = "../example_set/inputs/"
 PDF_FILES = [
     "Acciona_2020_CbCR_1.pdf",
     "Acerinox_2020_CbCR_1.pdf",
@@ -42,9 +46,8 @@ PDF_FILES = [
     "ENI_2018_CbCR_12-13.pdf",
 ]
 
-INPUT_FOLDER = "../example_set/inputs/"
+# Optionally output PDF files
 OUTPUT_FOLDER = "../example_set/extractions/"
-CONFIG_FILE = "./configs/eval_table_extraction.yaml"
 
 
 def add_page(asset: dict, table_idx: int, writer: object) -> None:
@@ -120,7 +123,7 @@ if __name__ == "__main__":
     load_dotenv()
 
     # PDF files to parse
-    pdf_files = [INPUT_FOLDER + pdf_file for pdf_file in PDF_FILES]
+    pdf_files = [PDF_FOLDER + pdf_file for pdf_file in PDF_FILES]
 
     # Create output folder
     path = Path(OUTPUT_FOLDER)
@@ -141,9 +144,12 @@ if __name__ == "__main__":
     )
 
     # Save all assets to disk
-    with Path("eval/eval_assets.pkl").open("wb") as fh:
+    cur_datetime = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
+    filename = "eval/eval_" + str(cur_datetime) + ".pkl"
+
+    with Path(filename).open("wb") as fh:
         pickle.dump(eval_assets, fh)
     logging.info(
         "Assets dumped in assets.pkl. You can read then using : \n"
-        + "pickle.load(open('eval/eval_assets.pkl', 'rb'))",
+        + "pickle.load(open({filename}, 'rb'))",
     )
