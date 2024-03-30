@@ -45,6 +45,9 @@ class HFCleaner:
         logging.info("LLM loaded")
 
     def __call__(self, asset: dict) -> dict:
+        """
+        Extracts clean data from tables using a language model with huggingface
+        """
         tables = asset["tables"]
 
         logging.info(f"Pulling {len(tables)} tables from extraction stage")
