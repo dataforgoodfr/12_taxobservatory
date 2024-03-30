@@ -22,9 +22,11 @@
 
 # External imports
 import datetime
+import glob
 import io
 import logging
 import pickle
+import sys
 import tempfile
 from pathlib import Path
 
@@ -35,19 +37,6 @@ from pypdf import PdfReader, PdfWriter
 
 # Local imports
 from country_by_country import processor
-
-CONFIG_FILE = "./configs/eval_table_extraction.yaml"
-
-PDF_FOLDER = "../example_set/inputs/"
-PDF_FILES = [
-    "Acciona_2020_CbCR_1.pdf",
-    "Acerinox_2020_CbCR_1.pdf",
-    "ACS_2021_CbCR_2-3.pdf",
-    "ENI_2018_CbCR_12-13.pdf",
-]
-
-# Optionally output PDF files
-OUTPUT_FOLDER = "../example_set/extractions/"
 
 
 def add_page(asset: dict, table_idx: int, writer: object) -> None:
@@ -98,7 +87,7 @@ def save_to_pdf(assets: dict, output_file: str) -> None:
 def run_extractions(
     config: dict,
     pdf_files: list[str],
-    output_folder: str,
+    output_folder: Path,
 ) -> list[list[dict]]:
     # Initialize processor
     report_processor = processor.ReportProcessor(config)
@@ -106,24 +95,39 @@ def run_extractions(
     # Process each PDF file
     all_assets = []
     for pdf_file in pdf_files:
+        print("\n\n\n")
+        logging.info(f"Processing {pdf_file}")
         assets = report_processor.process(pdf_file)
         all_assets.append((Path(pdf_file).name, assets))
 
         # Save extracted tables in new PDF file
-        output_file = output_folder + Path(pdf_file).stem + "_parsed.pdf"
+        output_file = output_folder / (Path(pdf_file).stem + "_parsed.pdf")
         save_to_pdf(assets, output_file)
+        logging.info(f"Saved to {output_file}")
 
     # Return extracted tables for further processing
     return all_assets
 
+
+NUMBER_OF_ARGS = 4
 
 if __name__ == "__main__":
 
     logging.basicConfig(level=logging.INFO)
     load_dotenv()
 
+    if len(sys.argv) != NUMBER_OF_ARGS:
+        print(
+            "Usage: python eval_table_extraction.py <config_file> <pdf_folder> <output_folder>",
+        )
+        sys.exit(-1)
+
+    CONFIG_FILE = sys.argv[1]
+    PDF_FOLDER = sys.argv[2]
+    OUTPUT_FOLDER = Path(sys.argv[3])
+
     # PDF files to parse
-    pdf_files = [PDF_FOLDER + pdf_file for pdf_file in PDF_FILES]
+    pdf_files = list(glob.glob(PDF_FOLDER + "*.pdf"))
 
     # Create output folder
     path = Path(OUTPUT_FOLDER)
