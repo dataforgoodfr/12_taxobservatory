@@ -53,7 +53,7 @@ class FromCSV:
         # Create asset
         new_asset = {
             "id": uuid.uuid4(),
-            "type": "camelot",
+            "type": "from_csv",
             "params": {"csv_directory": self.csv_directory},
             "tables": tables_list,
         }
