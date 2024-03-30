@@ -151,5 +151,5 @@ if __name__ == "__main__":
         pickle.dump(eval_assets, fh)
     logging.info(
         "Assets dumped in assets.pkl. You can read then using : \n"
-        + "pickle.load(open({filename}, 'rb'))",
+        + f"pickle.load(open({filename}, 'rb'))",
     )
