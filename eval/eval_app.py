@@ -44,9 +44,9 @@ if "pdf_downloaded" not in ss:
 if "ref_uploaded" not in ss:
     try:
         ss.ref_uploaded = pd.read_csv(REF_DATA_FILE)
-    except:
+    except Exception:
         st.warning(
-            "REF data not found. Continue without or set the constant REF_DATA_FILE to the full path of the data_step2_before-currency-unit.csv file."
+            "REF data not found. Continue without or set the constant REF_DATA_FILE to the full path of the data_step2_before-currency-unit.csv file.",
         )
         ss.ref_uploaded = None
 
@@ -96,7 +96,7 @@ if "pdf_file" in locals() and pdf_file:
             .dropna(axis="columns", how="all")
         )
         asset_dict[pdf_file]["table_extractors"].append(
-            {"type": "REF", "params": {"src_file": REF_DATA_FILE}, "tables": [ref_df]}
+            {"type": "REF", "params": {"src_file": REF_DATA_FILE}, "tables": [ref_df]},
         )
 
     # Pull the extractions from the asssets
@@ -110,7 +110,7 @@ if "pdf_file" in locals() and pdf_file:
     with st.sidebar:
         try:
             ref_idx = extractions.index("REF")
-        except:
+        except Exception:
             ref_idx = 0
 
         ref_extraction = st.selectbox(
