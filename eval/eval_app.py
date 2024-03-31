@@ -23,8 +23,8 @@
 # Standard imports
 import json
 import pickle
-from pathlib import Path
 import sys
+from pathlib import Path
 
 # External imports
 import pandas as pd
