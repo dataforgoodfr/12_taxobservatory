@@ -75,6 +75,15 @@ def main(ref_data_file: str = None) -> None:
     # Display title
     st.title("Table extraction benchmark")
 
+    st.markdown(
+        """Once you drag and drop a pickle file, you can select a PDF to display
+        its tables\nand visually compare the results. The cells in the tables
+        are colored :green[green] if they are present in the tables of the
+        reference extraction, and :red[red] otherwise. Note the color only
+        indicates if one extracted value is present in the reference
+        extraction, not if that value is at the right location in the table.""",
+    )
+
     # Display sidebar
     pdf_file = None
     with st.sidebar:
