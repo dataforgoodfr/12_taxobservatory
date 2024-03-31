@@ -111,142 +111,146 @@ def main(ref_data_file: str = None) -> None:
 
     # Pull the extractions applied to the PDF
     if pdf_file is not None:
-        # Append REF data matching the PDF to our assets
-        if ss.ref_uploaded is not None:
-            company = pdf_file.split("_")[0]
-            year = pdf_file.split("_")[1]
-            cols = [2, *list(range(5, 10)), *list(range(15, 18))]
-            ref_df = (
-                ss.ref_uploaded.query(f'company=="{company}" and year=={year}')
-                .iloc[:, cols]
-                .reset_index(drop=True)
-                .dropna(axis="columns", how="all")
+        process_pdf(pdf_file, asset_dict)
+
+
+def process_pdf(pdf_file: str, asset_dict: dict) -> None:
+    # Append REF data matching the PDF to our assets
+    if ss.ref_uploaded is not None:
+        company = pdf_file.split("_")[0]
+        year = pdf_file.split("_")[1]
+        cols = [2, *list(range(5, 10)), *list(range(15, 18))]
+        ref_df = (
+            ss.ref_uploaded.query(f'company=="{company}" and year=={year}')
+            .iloc[:, cols]
+            .reset_index(drop=True)
+            .dropna(axis="columns", how="all")
+        )
+        asset_dict[pdf_file]["table_extractors"].append(
+            {
+                "type": "REF",
+                "params": {"src_file": ref_data_file},
+                "tables": [ref_df],
+            },
+        )
+
+    # Pull the extractions from the asssets
+    extractions = [
+        extractor["type"] for extractor in asset_dict[pdf_file]["table_extractors"]
+    ]
+    extractions = append_count_to_duplicates(extractions)
+    extractions.append("PDF")
+
+    # Select reference extraction for comparison (default to REF data)
+    with st.sidebar:
+        try:
+            ref_idx = extractions.index("REF")
+        except Exception:
+            ref_idx = 0
+        ref_extraction = st.selectbox(
+            "Select ref extraction for comparison",
+            extractions[:-1],
+            index=ref_idx,
+        )
+        if ref_extraction is not None:
+            ss.ref_extraction = ref_extraction
+
+    # Display tabs (one per extraction + one to display PDF)
+    tabs = st.tabs(extractions)
+
+    for idx, tab in enumerate(tabs[:-1]):
+        with tab:
+            # Display parameters of the extraction
+            st.write(
+                json.dumps(asset_dict[pdf_file]["table_extractors"][idx]["params"]),
             )
-            asset_dict[pdf_file]["table_extractors"].append(
-                {
-                    "type": "REF",
-                    "params": {"src_file": ref_data_file},
-                    "tables": [ref_df],
+
+            # Pull tables from the extraction
+            dfs = asset_dict[pdf_file]["table_extractors"][idx]["tables"]
+            dfs = [df.map(convert_to_str).replace("nan", "") for df in dfs]
+            dfs_str = ["Table " + str(i) for i in range(len(dfs))]
+
+            # Select table to display
+            selected = option_menu(
+                None,
+                dfs_str,
+                menu_icon=None,
+                icons=None,
+                manual_select=min(ss.selected_idx, len(dfs_str) - 1),
+                orientation="horizontal",
+                key="tab_" + str(idx),
+                on_change=on_table_selected,
+                styles={
+                    "container": {
+                        "padding": "0!important",
+                        "margin": "0!important",
+                        "background-color": "#D3D3D3",
+                    },
+                    "nav-item": {
+                        "max-width": "100px",
+                        "color": "black",
+                        "font-size": "14px",
+                    },
+                    "icon": {"font-size": "0px"},
                 },
             )
+            ss.selected_idx = dfs_str.index(selected)
 
-        # Pull the extractions from the asssets
-        extractions = [
-            extractor["type"] for extractor in asset_dict[pdf_file]["table_extractors"]
-        ]
-        extractions = append_count_to_duplicates(extractions)
-        extractions.append("PDF")
+            # Display table
+            df = dfs[ss.selected_idx]
 
-        # Select reference extraction for comparison (default to REF data)
-        with st.sidebar:
-            try:
-                ref_idx = extractions.index("REF")
-            except Exception:
-                ref_idx = 0
-            ref_extraction = st.selectbox(
-                "Select ref extraction for comparison",
-                extractions[:-1],
-                index=ref_idx,
+            # Check if values in table are in tables of reference extraction
+            refvalues = []
+            for dfref in asset_dict[pdf_file]["table_extractors"][
+                extractions.index(ref_extraction)
+            ]["tables"]:
+                refvalues.extend(dfref.map(reformat_str).to_numpy().flatten())
+            mask = df.map(reformat_str).isin(refvalues)
+
+            # Apply font color (green vs red) based on above check
+            def color_mask(val: bool) -> None:
+                return f'color: {"green" if val is True else "red"}'
+
+            dfst = df.style.apply(
+                lambda c, mask=mask: mask[c.name].apply(color_mask),
             )
-            if ref_extraction is not None:
-                ss.ref_extraction = ref_extraction
 
-        # Display tabs (one per extraction + one to display PDF)
-        tabs = st.tabs(extractions)
+            # Display table with appropriate font color
+            column_config = {}
+            for col in df.columns:
+                column_config[col] = st.column_config.Column(width="small")
 
-        for idx, tab in enumerate(tabs[:-1]):
-            with tab:
-                # Display parameters of the extraction
-                st.write(
-                    json.dumps(asset_dict[pdf_file]["table_extractors"][idx]["params"]),
-                )
+            st.dataframe(
+                dfst,
+                column_config=column_config,
+                use_container_width=False,
+                height=round(35.5 * (len(dfst.index) + 1)),
+            )
 
-                # Pull tables from the extraction
-                dfs = asset_dict[pdf_file]["table_extractors"][idx]["tables"]
-                dfs = [df.map(convert_to_str).replace("nan", "") for df in dfs]
-                dfs_str = ["Table " + str(i) for i in range(len(dfs))]
+    # Tab to display PDF
+    with tabs[-1]:
 
-                # Select table to display
-                selected = option_menu(
-                    None,
-                    dfs_str,
-                    menu_icon=None,
-                    icons=None,
-                    manual_select=min(ss.selected_idx, len(dfs_str) - 1),
-                    orientation="horizontal",
-                    key="tab_" + str(idx),
-                    on_change=on_table_selected,
-                    styles={
-                        "container": {
-                            "padding": "0!important",
-                            "margin": "0!important",
-                            "background-color": "#D3D3D3",
-                        },
-                        "nav-item": {
-                            "max-width": "100px",
-                            "color": "black",
-                            "font-size": "14px",
-                        },
-                        "icon": {"font-size": "0px"},
-                    },
-                )
-                ss.selected_idx = dfs_str.index(selected)
+        if not ss.pdf_downloaded:
+            ss["pdf_downloaded"] = hf_hub_download(
+                repo_id="DataForGood/taxobservatory_data",
+                filename=ss.pdf_selected,
+                repo_type="dataset",
+            )
 
-                # Display table
-                df = dfs[ss.selected_idx]
+        if ss.pdf_downloaded:
+            # Get pages to render
+            assets = {}
+            pagefilter.FromFilename()(ss.pdf_downloaded, assets=assets)
+            pages_to_render = [
+                page + 1 for page in assets["pagefilter"]["selected_pages"]
+            ]
 
-                # Check if values in table are in tables of reference extraction
-                refvalues = []
-                for dfref in asset_dict[pdf_file]["table_extractors"][
-                    extractions.index(ref_extraction)
-                ]["tables"]:
-                    refvalues.extend(dfref.map(reformat_str).to_numpy().flatten())
-                mask = df.map(reformat_str).isin(refvalues)
-
-                # Apply font color (green vs red) based on above check
-                def color_mask(val: bool) -> None:
-                    return f'color: {"green" if val is True else "red"}'
-
-                dfst = df.style.apply(
-                    lambda c, mask=mask: mask[c.name].apply(color_mask),
-                )
-
-                # Display table with appropriate font color
-                column_config = {}
-                for col in df.columns:
-                    column_config[col] = st.column_config.Column(width="small")
-
-                st.dataframe(
-                    dfst,
-                    column_config=column_config,
-                    use_container_width=False,
-                    height=round(35.5 * (len(dfst.index) + 1)),
-                )
-
-        # Tab to display PDF
-        with tabs[-1]:
-
-            if not ss.pdf_downloaded:
-                ss["pdf_downloaded"] = hf_hub_download(
-                    repo_id="DataForGood/taxobservatory_data",
-                    filename=ss.pdf_selected,
-                    repo_type="dataset",
-                )
-
-            if ss.pdf_downloaded:
-                # Get pages to render
-                assets = {}
-                pagefilter.FromFilename()(ss.pdf_downloaded, assets=assets)
-                pages_to_render = [
-                    page + 1 for page in assets["pagefilter"]["selected_pages"]
-                ]
-
-                # Render pages from PDF
-                pdf_viewer(
-                    input=ss.pdf_downloaded,
-                    pages_to_render=pages_to_render,
-                    width=1000,
-                )
+            # Render pages from PDF
+            pdf_viewer(
+                input=ss.pdf_downloaded,
+                pages_to_render=pages_to_render,
+                width=1000,
+            )
 
 
 if __name__ == "__main__":
