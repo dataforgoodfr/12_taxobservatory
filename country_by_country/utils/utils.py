@@ -21,6 +21,7 @@
 # SOFTWARE.
 
 # Standard imports
+import pathlib
 import tempfile
 
 # External imports
@@ -39,7 +40,19 @@ def keep_pages(pdf_filepath: str, selected_pages: list[int]) -> str:
     for pi in selected_pages:
         writer.add_page(reader.pages[pi])
 
-    filename = tempfile.NamedTemporaryFile(suffix=".pdf", delete=False).name
+    # We add the original pdf name without extension
+    # in the prefix of the temporary file
+    # in order to keep a trace of this name so that the next modules, from table
+    # extraction can make use of this name.
+    # For example, FromCSV makes use of this name to determine the name of the
+    # CSV to load
+    pdf_stem = pathlib.Path(pdf_filepath).stem
+    filename = tempfile.NamedTemporaryFile(
+        prefix=f"{pdf_stem}____",
+        suffix=".pdf",
+        delete=False,
+    ).name
+    print(f"filename {filename}")
     writer.write(filename)
 
     return filename
