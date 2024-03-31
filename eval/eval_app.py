@@ -174,7 +174,7 @@ def main(ref_data_file: str = None) -> None:
                         "container": {
                             "padding": "0!important",
                             "margin": "0!important",
-                            "background-color": "#ffffff",
+                            "background-color": "#D3D3D3",
                         },
                         "nav-item": {
                             "max-width": "100px",
