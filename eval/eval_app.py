@@ -245,9 +245,6 @@ def main(ref_data_file: str = None) -> None:
 
 if __name__ == "__main__":
 
-    if len(sys.argv) > 1:
-        ref_data_file = sys.argv[1]
-    else:
-        ref_data_file = None
+    ref_data_file = sys.argv[1] if len(sys.argv) > 1 else None
 
     main(ref_data_file)
