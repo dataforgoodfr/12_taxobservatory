@@ -202,7 +202,7 @@ def main(ref_data_file: str = None) -> None:
                     return f'color: {"green" if val is True else "red"}'
 
                 dfst = df.style.apply(
-                    lambda c, mask=mask: mask[c.name].apply(color_mask)
+                    lambda c, mask=mask: mask[c.name].apply(color_mask),
                 )
 
                 # Display table with appropriate font color
