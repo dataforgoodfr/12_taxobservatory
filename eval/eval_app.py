@@ -89,11 +89,8 @@ def main(ref_data_file: str = None) -> None:
             # Load pickle
             assets = pickle.load(uploaded_file)
 
-            # List PDFs
-            pdf_files = [Path(asset[0]).name for asset in assets]
-            asset_dict = {}
-            for asset in assets:
-                asset_dict[Path(asset[0]).name] = asset[1]
+            # List PDFs and their extracted assets
+            asset_dict = {Path(asset[0]).name: asset[1] for asset in assets}
 
             # Select PDF to load results
             pdf_file = st.selectbox(
