@@ -76,6 +76,7 @@ def main(ref_data_file: str = None) -> None:
     st.title("Table extraction benchmark")
 
     # Display sidebar
+    pdf_file = None
     with st.sidebar:
         # Select pickle containing results
         uploaded_file = st.file_uploader(
@@ -103,7 +104,7 @@ def main(ref_data_file: str = None) -> None:
             )
 
     # Pull the extractions applied to the PDF
-    if "pdf_file" in locals() and pdf_file:
+    if pdf_file is not None:
         # Append REF data matching the PDF to our assets
         if ss.ref_uploaded is not None:
             company = pdf_file.split("_")[0]
