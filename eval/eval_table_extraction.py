@@ -112,7 +112,6 @@ def run_extractions(
 NUMBER_OF_ARGS = 4
 
 if __name__ == "__main__":
-
     logging.basicConfig(level=logging.INFO)
     load_dotenv()
 
@@ -149,11 +148,11 @@ if __name__ == "__main__":
 
     # Save all assets to disk
     cur_datetime = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
-    filename = "eval/eval_" + str(cur_datetime) + ".pkl"
+    filename = "eval_" + str(cur_datetime) + ".pkl"
 
     with Path(filename).open("wb") as fh:
         pickle.dump(eval_assets, fh)
     logging.info(
         "Assets dumped in assets.pkl. You can read then using : \n"
-        + f"pickle.load(open({filename}, 'rb'))",
+        + f"pickle.load(open('{filename}', 'rb'))",
     )
