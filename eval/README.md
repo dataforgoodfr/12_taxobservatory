@@ -1,5 +1,14 @@
 # Evaluation of the table extraction
 
+## Setup
+
+To run the evaluation script, we need some additional requirements that are not
+listed in the project dependencies.
+
+```
+python3 -m pip install pdfkit streamlit_option_menu
+```
+
 ## Qualitative evaluation
 
 The evaluation is performed with the `eval_table_extraction.py` script. This
