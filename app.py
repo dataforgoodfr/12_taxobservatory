@@ -285,7 +285,6 @@ if page_selected is not None and page_selected != "None":
     logging.info(
         f"""Filters selected : {st.session_state["filters_selected" + "_" + algorithm_name]}""",
     )
-
     with col4:
         AgGrid(
             edited_df,
