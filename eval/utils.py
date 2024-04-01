@@ -20,27 +20,35 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-# Local imports
-from .camelot_extractor import Camelot
-from .from_csv import FromCSV
-from .llama_parse_extractor import LlamaParseExtractor
-from .unstructured import Unstructured
-from .unstructured_api import UnstructuredAPI
+# Standard imports
+import contextlib
+import re
 
 
-def from_config(config: dict) -> Camelot:
-    extractor_type = config["type"]
-    extractor_params = {}
-    if "params" in config:
-        extractor_params = config["params"]
-    if extractor_type == "Camelot":
-        return Camelot(**extractor_params)
-    elif extractor_type == "FromCSV":
-        return FromCSV(**extractor_params)
-    elif extractor_type == "Unstructured":
-        return Unstructured(**extractor_params)
-    elif extractor_type == "UnstructuredAPI":
-        return UnstructuredAPI(**extractor_params)
-    elif extractor_type == "LLamaParse":
-        return LlamaParseExtractor(**extractor_params)
-    return None
+def append_count_to_duplicates(strings: list[str]) -> list[str]:
+    """Append count to duplicate strings in array"""
+    count_dict = {}
+    for i, string in enumerate(strings):
+        if string in count_dict:
+            count_dict[string] += 1
+            strings[i] = f"{string}_{count_dict[string]}"
+        else:
+            count_dict[string] = 0
+    return strings
+
+
+def convert_to_str(val: any) -> str:
+    """Convert input to str and remove any trailing zeros for floats"""
+    with contextlib.suppress(Exception):
+        return str(float(val)).rstrip("0").rstrip(".")
+    return str(val)
+
+
+def reformat_str(el: any) -> str:
+    """Normalize input value:
+    - If numerical, convert to string
+    - If contains comma, remove comma
+    - If enclosed in "()", convert to negative value
+    Output string."""
+    el = convert_to_str(el).replace(",", "")
+    return re.sub(r"\((\d+)\)", r"-\1", el)
