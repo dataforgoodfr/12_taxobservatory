@@ -23,9 +23,11 @@
 # Standard imports
 import pathlib
 import tempfile
+import io
 
 # External imports
 import pypdf
+import pandas as pd
 
 
 def keep_pages(pdf_filepath: str, selected_pages: list[int]) -> str:
@@ -71,3 +73,9 @@ def gather_tables(
                 tables_by_name[asset["type"] + "_" + str(i)] = tables[i]
 
     return tables_by_name
+
+
+def convert_dataframe_to_bytes(df: pd.DataFrame) -> bytes:
+    buffer = io.BytesIO()
+    df.to_pickle(buffer)
+    return buffer.getvalue()

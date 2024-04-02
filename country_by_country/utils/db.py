@@ -3,6 +3,7 @@ import logging
 from pypika import Query, Table, Criterion
 from pypika.queries import QueryBuilder
 from typing import Any
+from utils import convert_dataframe_to_bytes
 
 
 class Database:
@@ -36,26 +37,15 @@ class Database:
         else:
             raise Exception("This instance holds no database connection")
 
-    def get_or_create_v1(self, table_name: str, column: str, value: Any) -> list[tuple[Any, ...]]:
-        """
-        In table_name, returns the row where column == value if it exists, 
-        otherwise creates it.
-        Creation only works if table requires only this single column / value to create a row.
-        """
-        get_query = Query.from_(table_name).select("*").where(column == value)
-        queried_value = self._query(get_query, autocommit=False)
-        if len(queried_value) == 0:
-            insert_query = Query.into(table_name).columns(column).insert(value)
-            new_row = self._query(insert_query)
-            return new_row
-        if len(queried_value) >= 1:
-            return queried_value
         
-    def get_or_create_v2(self, table_name: str, insert_dict: dict[str, Any]) -> list[tuple[Any, ...]]:
+    def get_or_create(self, table_name: str, insert_dict: dict[str, Any]) -> list[tuple[Any, ...]]:
         """
         Get all entries in table_name where all the key-value pairs in insert_dict match. 
         Create a new row if no such row exists.
         """
+        for key, val in insert_dict.items():
+            if isinstance(val, bytes):
+                insert_dict[key] = psycopg2.Binary(val)
         table = Table(table_name)
         get_query = Query.from_(table).select("*")
         get_query = get_query.where(
@@ -65,7 +55,7 @@ class Database:
         )
         queried_value = self._query(get_query, autocommit=False)
         if len(queried_value) == 0:
-            insert_query = Query.into(table).columns(*[insert_dict.keys()]).insert(*[insert_dict.values()])
+            insert_query = Query.into(table).columns(*(insert_dict.keys())).insert(*(insert_dict.values()))
             new_row = self._query(insert_query)
             return new_row
         if len(queried_value) >= 1:
@@ -93,9 +83,7 @@ if __name__ == "__main__":
         "a": [1, 2, 3],
         "b": [4, 5, 6]
     })
-    buffer = io.BytesIO()
-    df.to_pickle(buffer)
-    df_bytes = buffer.getvalue()
+    df_bytes = convert_dataframe_to_bytes(df)
     db = Database("localhost", 5400, 'postgres', 'postgres', 'extract_db')
     llm_extr_data = {
         'document_id': '1234',
@@ -105,4 +93,4 @@ if __name__ == "__main__":
         "llm_model_params_id": 56,
         "data": df_bytes
     }
-    db.get_or_create_v2('llm_extracted_data', llm_extr_data)
+    db.get_or_create('llm_extracted_data', llm_extr_data)
