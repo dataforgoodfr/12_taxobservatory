@@ -1,5 +1,5 @@
 CREATE TABLE "documents" (
-  "id" integer PRIMARY KEY,
+  "id" serial PRIMARY KEY,
   "s3_id" varchar UNIQUE,
   "relevant_pages" integer[],
   "created_at" timestamp,
@@ -7,31 +7,31 @@ CREATE TABLE "documents" (
 );
 
 CREATE TABLE "table_extractors" (
-  "id" integer PRIMARY KEY,
+  "id" serial PRIMARY KEY,
   "name" varchar UNIQUE
 );
 
 CREATE TABLE "table_extractor_params" (
-  "id" integer PRIMARY KEY,
+  "id" serial PRIMARY KEY,
   "table_extractor_id" integer,
   "params" json,
   "params_text" text GENERATED ALWAYS AS (params::text) STORED UNIQUE
 );
 
 CREATE TABLE "llm_models" (
-  "id" integer PRIMARY KEY,
+  "id" serial PRIMARY KEY,
   "name" varchar UNIQUE
 );
 
 CREATE TABLE "llm_model_params" (
-  "id" integer PRIMARY KEY,
+  "id" serial PRIMARY KEY,
   "llm_model_id" integer,
   "params" json,
   "params_text" text GENERATED ALWAYS AS (params::text) STORED UNIQUE
 );
 
 CREATE TABLE "llm_extracted_data" (
-  "id" integer PRIMARY KEY,
+  "id" serial PRIMARY KEY,
   "document_id" integer,
   "table_extractor_id" integer,
   "table_extractor_params_id" integer,
@@ -41,7 +41,7 @@ CREATE TABLE "llm_extracted_data" (
 );
 
 CREATE TABLE "corrected_data" (
-  "id" integer PRIMARY KEY,
+  "id" serial PRIMARY KEY,
   "document_id" integer UNIQUE,
   "data" bytea
 );
