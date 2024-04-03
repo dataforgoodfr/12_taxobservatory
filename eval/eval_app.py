@@ -68,7 +68,7 @@ def main(ref_data_file: str = None) -> None:
         except Exception as e:
             msg = "REF data file not specified." if ref_data_file is None else e
             st.warning(
-                f"REF data file not loaded. Continue without or fix the below error.\n\n{msg}"
+                f"REF data file not loaded. Continue without or fix the below error.\n\n{msg}",
             )
             ss.ref_uploaded = None
 
