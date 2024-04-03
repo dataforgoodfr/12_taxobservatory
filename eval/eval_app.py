@@ -66,11 +66,10 @@ def main(ref_data_file: str = None) -> None:
         try:
             ss.ref_uploaded = pd.read_csv(ref_data_file)
         except Exception as e:
-            if ref_data_file is None:
-                msg= "REF data file not specified."
-            else:
-                msg=e
-            st.warning(f"REF data file not loaded. Continue without or fix the below error.\n\n{msg}")
+            msg = "REF data file not specified." if ref_data_file is None else e
+            st.warning(
+                f"REF data file not loaded. Continue without or fix the below error.\n\n{msg}"
+            )
             ss.ref_uploaded = None
 
     # Display title
