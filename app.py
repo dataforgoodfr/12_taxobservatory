@@ -4,7 +4,6 @@ import sys
 import tempfile
 from pathlib import Path
 
-import pandas as pd
 import streamlit as st
 import yaml
 from pypdf import PdfReader
@@ -93,6 +92,10 @@ def remove_gridoption_cellstyle(header_name: str, algorithm_name: str) -> None:
             break
 
 
+def set_variable() -> None:
+    st.session_state["validate"] = True
+
+
 st.set_page_config(layout="wide")
 logging.basicConfig(stream=sys.stdout, level=logging.INFO, format="%(message)s")
 st.title("Country by Country Tax Reporting analysis")
@@ -135,11 +138,10 @@ table_extraction:
     st.write(markdown_str)
 
 mytmpfile = tempfile.NamedTemporaryFile(suffix=".pdf", delete=False)
-page_selected = None
-first_part = True
 placeholder = st.empty()
+pages_selected = []
 
-if pdf is not None and config is not None and first_part is not False:
+if pdf is not None and config is not None:
     mytmpfile.write(pdf.read())
     pdfreader = PdfReader(mytmpfile.name)
 
@@ -167,28 +169,33 @@ if pdf is not None and config is not None and first_part is not False:
         mytmpfile.name,
         assets["pagefilter"]["selected_pages"],
     )
-    mytmpfile.close()
 
     assets["pagefilter"]["selected_pages"].append("None")
 
     logging.info(f"Assets : {assets}")
 
     with placeholder.container():
-        page_selected = st.selectbox(
+        number_pages = len(PdfReader(pdf_before_page_validation).pages) + 1
+        pages_selected = st.multiselect(
             "Which page of the following pdf contains the table you want to extract ?",
-            assets["pagefilter"]["selected_pages"],
-            index=None,
+            list(range(1, number_pages)),
             placeholder="Select a page number",
         )
+        col1, col2 = st.columns([3, 1])
+        with col1:
+            st.markdown(
+                get_pdf_iframe(pdf_before_page_validation),
+                unsafe_allow_html=True,
+            )
 
-        st.markdown(get_pdf_iframe(pdf_before_page_validation), unsafe_allow_html=True)
+        with col2:
+            st.button("Validate your selected pages", on_click=set_variable)
 
-        if page_selected == "None":
+        if pages_selected == ["None"]:  # TODO : check this behavior
             number_pages = len(pdfreader.pages)
-            page_selected = st.selectbox(
+            pages_selected = st.multiselect(
                 "Which page of the following pdf contains the table you want to extract ?",
-                assets["pagefilter"]["selected_pages"],
-                index=None,
+                [int(d) for d in number_pages],
                 placeholder="Select a page number",
             )
 
@@ -197,17 +204,19 @@ if pdf is not None and config is not None and first_part is not False:
                 unsafe_allow_html=True,
             )
 
-        first_part = False
+        assets["pagefilter"]["selected_pages"] = pages_selected
+        logging.info(f"Page selected : {pages_selected}")
 
-if page_selected is not None and page_selected != "None":
+
+if "validate" in st.session_state and st.session_state["validate"] is True:
+
     placeholder.empty()
-    logging.info(f"Page selected : {page_selected}")
 
-    assets["pagefilter"]["selected_pages"] = [page_selected]
     pdf_after_page_validation = keep_pages(
-        pdf_before_page_validation,
+        mytmpfile.name,
         assets["pagefilter"]["selected_pages"],
     )
+    mytmpfile.close()
 
     if "tables" not in st.session_state:
         for table_extractor in proc.table_extractors:
@@ -230,14 +239,12 @@ if page_selected is not None and page_selected != "None":
             algorithm_name = st.selectbox(
                 "Choose the extracted table you want to see",
                 list(st.session_state.tables.keys()),
-            )  # TODO : if switch , last edited_df is erased
-            if (
-                "aggrid_" + algorithm_name in st.session_state
-                and st.session_state["aggrid_" + algorithm_name] is not None
-            ):
-                st.session_state.tables[algorithm_name] = pd.DataFrame(
-                    st.session_state["aggrid_" + algorithm_name]["rowData"],
-                )
+            )
+            # if (
+            #    "aggrid_" + algorithm_name in st.session_state
+            #    and st.session_state["aggrid_" + algorithm_name] is not None
+            # ):
+            #    st.session_state.tables[algorithm_name] = pd.DataFrame(
 
             edited_df = st.data_editor(
                 st.session_state.tables[algorithm_name],
@@ -288,12 +295,8 @@ if page_selected is not None and page_selected != "None":
     with col4:
         AgGrid(
             edited_df,
-            editable=True,
-            reload_data=True,
             gridOptions=st.session_state["grid_options" + "_" + algorithm_name],
-            update_mode="VALUE_CHANGED",
             allow_unsafe_jscode=True,
-            key="aggrid_" + algorithm_name,
         )
         # There is an open bug here :
         # https://github.com/PablocFonseca/streamlit-aggrid/issues/234
