@@ -65,11 +65,12 @@ def main(ref_data_file: str = None) -> None:
     if "ref_uploaded" not in ss:
         try:
             ss.ref_uploaded = pd.read_csv(ref_data_file)
-        except Exception:
-            st.warning(
-                """REF data not found. Continue without or set the constant ref_data_file /
-                to the full path of the data_step2_before-currency-unit.csv file.""",
-            )
+        except Exception as e:
+            if ref_data_file is None:
+                msg= "REF data file not specified."
+            else:
+                msg=e
+            st.warning(f"REF data file not loaded. Continue without or fix the below error.\n\n{msg}")
             ss.ref_uploaded = None
 
     # Display title
@@ -184,7 +185,7 @@ def process_pdf(pdf_file: str, asset_dict: dict) -> None:
                     "container": {
                         "padding": "0!important",
                         "margin": "0!important",
-                        "background-color": "#D3D3D3",
+                        "background-color": "#EFF2F6",
                     },
                     "nav-item": {
                         "max-width": "100px",
@@ -194,10 +195,10 @@ def process_pdf(pdf_file: str, asset_dict: dict) -> None:
                     "icon": {"font-size": "0px"},
                 },
             )
-            ss.selected_idx = dfs_str.index(selected)
+            selected_idx = dfs_str.index(selected)
 
             # Display table
-            df = dfs[ss.selected_idx]
+            df = dfs[selected_idx]
 
             # Check if values in table are in tables of reference extraction
             refvalues = []
