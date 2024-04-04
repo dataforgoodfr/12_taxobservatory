@@ -1,9 +1,9 @@
 import psycopg2
 import logging
-from pypika import Query, Table, Criterion
+from pypika import Query, Table, Criterion, PostgreSQLQuery
 from pypika.queries import QueryBuilder
 from typing import Any
-from utils import convert_dataframe_to_bytes
+from country_by_country.utils.utils import convert_dataframe_to_bytes
 
 
 class Database:
@@ -37,27 +37,36 @@ class Database:
         else:
             raise Exception("This instance holds no database connection")
 
-        
-    def get_or_create(self, table_name: str, insert_dict: dict[str, Any]) -> list[tuple[Any, ...]]:
-        """
-        Get all entries in table_name where all the key-value pairs in insert_dict match. 
-        Create a new row if no such row exists.
-        """
-        for key, val in insert_dict.items():
-            if isinstance(val, bytes):
-                insert_dict[key] = psycopg2.Binary(val)
+    def get_rows(self, table_name: str) -> list[tuple[Any, ...]]:
+        """Get all rows in table_name where all the key-value pairs in insert_dict match."""
         table = Table(table_name)
-        get_query = Query.from_(table).select("*")
+        get_query = Query.from_((table)).select("*")
         get_query = get_query.where(
             Criterion.all([
                 getattr(table, key) == value for key, value in insert_dict.items()
             ])
         )
-        queried_value = self._query(get_query, autocommit=False)
+        return self._query(get_query, autocommit=False)
+
+
+    def create_row(self, table_name: str, insert_dict: dict[str, Any]) -> list[tuple[Any, ...]]:
+        """Create a new row in table_name with the key-value pairs in insert_dict."""
+        for key, val in insert_dict.items():
+            if isinstance(val, bytes):
+                insert_dict[key] = psycopg2.Binary(val)
+        insert_query = PostgreSQLQuery.into(Table(table_name)).columns(*(insert_dict.keys())).insert(*(insert_dict.values())).returning("*")
+        new_row = self._query(insert_query)
+        return new_row
+    
+
+    def get_or_create(self, table_name: str, insert_dict: dict[str, Any]) -> list[tuple[Any, ...]]:
+        """
+        Get all entries in table_name where all the key-value pairs in insert_dict match. 
+        Create a new row if no such row exists.
+        """        
+        queried_value = self.get_rows(table_name, insert_dict)
         if len(queried_value) == 0:
-            insert_query = Query.into(table).columns(*(insert_dict.keys())).insert(*(insert_dict.values()))
-            new_row = self._query(insert_query)
-            return new_row
+            return self.create_row(table_name, insert_dict)
         if len(queried_value) >= 1:
             return queried_value
             
