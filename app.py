@@ -92,8 +92,46 @@ def remove_gridoption_cellstyle(header_name: str, algorithm_name: str) -> None:
             break
 
 
-def set_variable() -> None:
-    st.session_state["validate"] = True
+def set_validate(validate: str) -> None:
+    st.session_state[validate] = True
+
+
+keep = "keep the extracted value"
+remove = "remove this column"
+
+
+def set_headers(algorithm_name: str) -> None:
+    for header in st.session_state.tables[algorithm_name].columns.values.tolist():
+        if st.session_state["widget" + header] == remove:
+            st.session_state.tables[algorithm_name].drop(columns=[header], inplace=True)
+        if st.session_state["widget" + header] == keep:
+            pass
+        else:
+            st.session_state.tables[algorithm_name].rename(
+                columns={header: st.session_state["widget" + header]},
+                inplace=True,
+            )
+
+
+header_list = [
+    keep,
+    "jurisdiction",
+    "profit_before_tax",
+    "tax_accrued",
+    "tax_paid",
+    "employees",
+    "unrelated_revenues",
+    "related_revenues",
+    "stated_capital",
+    "accumulated_earnings",
+    "tangible_assets",
+    "total_revenues",
+    remove,
+]
+
+
+def set_algorithm_name(my_key: str) -> None:
+    st.session_state["algorithm_name"] = st.session_state[my_key]
 
 
 st.set_page_config(layout="wide")
@@ -176,21 +214,25 @@ if pdf is not None and config is not None:
     logging.info(f"Assets : {assets}")
 
     with placeholder.container():
-        number_pages = len(PdfReader(pdf_before_page_validation).pages) + 1
-        pages_selected = st.multiselect(
-            "Which page of the following pdf contains the table you want to extract ?",
-            list(range(1, number_pages)),
-            placeholder="Select a page number",
-        )
-        col1, col2 = st.columns([5, 1])
+        col1, col2 = st.columns([1, 1])
         with col1:
             st.markdown(
                 get_pdf_iframe(pdf_before_page_validation),
                 unsafe_allow_html=True,
             )
 
-        with col2:
-            st.button("Validate your selected pages", on_click=set_variable)
+        with col2, st.form(key="selected_pages_form"):
+            number_pages = len(PdfReader(pdf_before_page_validation).pages) + 1
+            pages_selected = st.multiselect(
+                "Which page of the following pdf contains the table you want to extract ?",
+                list(range(1, number_pages)),
+                placeholder="Select a page number",
+            )
+            submitted = st.form_submit_button(
+                label="Validate your selected pages",
+                on_click=set_validate,
+                args=("validate_selected_pages",),
+            )
 
         if pages_selected == ["None"]:  # TODO : check this behavior
             number_pages = len(pdfreader.pages)
@@ -208,14 +250,17 @@ if pdf is not None and config is not None:
         assets["pagefilter"]["selected_pages"] = pages_selected
         logging.info(f"Page selected : {pages_selected}")
 
+        pdf_after_page_validation = keep_pages(
+            pdf_before_page_validation,
+            assets["pagefilter"]["selected_pages"],
+        )
 
-if "validate" in st.session_state and st.session_state["validate"] is True:
+
+if (
+    "validate_selected_pages" in st.session_state
+    and st.session_state["validate_selected_pages"] is True
+):
     placeholder.empty()
-
-    pdf_after_page_validation = keep_pages(
-        pdf_before_page_validation,
-        assets["pagefilter"]["selected_pages"],
-    )
 
     if "tables" not in st.session_state:
         for table_extractor in proc.table_extractors:
@@ -233,11 +278,64 @@ if "validate" in st.session_state and st.session_state["validate"] is True:
                 get_pdf_iframe(pdf_after_page_validation),
                 unsafe_allow_html=True,
             )
-
         with col2:
-            algorithm_name = st.selectbox(
+            algorithm_name_tmp = st.selectbox(
                 "Choose the extracted table you want to see",
                 list(st.session_state.tables.keys()),
+                on_change=set_algorithm_name,
+                args=("selectbox1",),
+                key="selectbox1",
+            )
+
+            algorithm_name = (
+                st.session_state["algorithm_name"]
+                if "algorithm_name" in st.session_state
+                else algorithm_name_tmp
+            )
+
+            with st.form(key="my_form"):
+                for header in st.session_state.tables[
+                    algorithm_name
+                ].columns.values.tolist():
+                    st.selectbox(
+                        "Choose the value of the following extracted header : "
+                        + str(header),
+                        header_list,
+                        key="widget" + str(header),
+                    )
+                submitted = st.form_submit_button(
+                    label="Submit",
+                    on_click=set_headers,
+                    args=(algorithm_name,),
+                )
+                if submitted:
+                    set_validate("validate_headers")
+
+
+if (
+    "validate_headers" in st.session_state
+    and st.session_state["validate_headers"] is True
+):
+    placeholder.empty()
+
+    with placeholder.container():
+        col3, col4 = st.columns(2)
+        with col3:
+            st.markdown(
+                get_pdf_iframe(pdf_after_page_validation),
+                unsafe_allow_html=True,
+            )
+
+        with col4:
+            st.selectbox(
+                "Choose the extracted table you want to see",
+                list(st.session_state.tables.keys()),
+                index=list(st.session_state.tables.keys()).index(
+                    st.session_state["algorithm_name"],
+                ),
+                on_change=set_algorithm_name,
+                args=("selectbox2",),
+                key="selectbox2",
             )
             # if (
             #    "aggrid_" + algorithm_name in st.session_state
@@ -252,51 +350,46 @@ if "validate" in st.session_state and st.session_state["validate"] is True:
                 height=900,
             )
 
-    st.markdown("""---""")
+        if "filters_selected" + "_" + algorithm_name not in st.session_state:
+            st.session_state["filters_selected" + "_" + algorithm_name] = {}
+            gd = GridOptionsBuilder.from_dataframe(edited_df)
+            gd.configure_default_column(editable=True)
+            st.session_state["grid_options" + "_" + algorithm_name] = gd.build()
 
-    if "filters_selected" + "_" + algorithm_name not in st.session_state:
-        st.session_state["filters_selected" + "_" + algorithm_name] = {}
-        gd = GridOptionsBuilder.from_dataframe(edited_df)
-        gd.configure_default_column(editable=True)
-        st.session_state["grid_options" + "_" + algorithm_name] = gd.build()
-
-    col3, col4 = st.columns([1, 3])
-    filter_list = ["is_number", "is_negative"]
-    logging.info(f"Algorithm_name : {algorithm_name}")
-    with col3:
-        for column_name in list(edited_df.columns.values):
-            if (
-                column_name
-                in st.session_state["filters_selected" + "_" + algorithm_name]
-            ):
-                index = filter_list.index(
-                    st.session_state["filters_selected" + "_" + algorithm_name][
-                        column_name
-                    ],
+        col5, col6 = st.columns([1, 3])
+        filter_list = ["is_number", "is_negative"]
+        logging.info(f"Algorithm_name : {algorithm_name}")
+        with col5:
+            for column_name in list(edited_df.columns.values):
+                if (
+                    column_name
+                    in st.session_state["filters_selected" + "_" + algorithm_name]
+                ):
+                    index = filter_list.index(
+                        st.session_state["filters_selected" + "_" + algorithm_name][
+                            column_name
+                        ],
+                    )
+                else:
+                    index = None
+                st.selectbox(
+                    "Do you want to apply a filter to the column " + column_name,
+                    filter_list,
+                    index=index,
+                    placeholder="Select a filter",
+                    on_change=apply_filter,
+                    key=column_name + algorithm_name,
+                    args=(column_name, algorithm_name),
                 )
-            else:
-                index = None
-            st.selectbox(
-                "Do you want to apply a filter to the column " + column_name,
-                filter_list,
-                index=index,
-                placeholder="Select a filter",
-                on_change=apply_filter,
-                key=column_name + algorithm_name,
-                args=(column_name, algorithm_name),
-            )
-    logging.info(
-        f"""Grid Options : {st.session_state["grid_options" + "_" + algorithm_name]}""",
-    )
-    logging.info(
-        f"""Filters selected : {st.session_state["filters_selected" + "_" + algorithm_name]}""",
-    )
-    with col4:
-        AgGrid(
-            edited_df,
-            gridOptions=st.session_state["grid_options" + "_" + algorithm_name],
-            allow_unsafe_jscode=True,
+        logging.info(
+            f"""Grid Options : {st.session_state["grid_options" + "_" + algorithm_name]}""",
         )
-        # There is an open bug here :
-        # https://github.com/PablocFonseca/streamlit-aggrid/issues/234
-        # currently we cannot use the key and the reload_data option together
+        with col6:
+            AgGrid(
+                edited_df,
+                gridOptions=st.session_state["grid_options" + "_" + algorithm_name],
+                allow_unsafe_jscode=True,
+            )
+            # There is an open bug here :
+            # https://github.com/PablocFonseca/streamlit-aggrid/issues/234
+            # currently we cannot use the key and the reload_data option together
