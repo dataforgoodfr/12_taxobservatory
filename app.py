@@ -169,6 +169,7 @@ if pdf is not None and config is not None:
         mytmpfile.name,
         assets["pagefilter"]["selected_pages"],
     )
+    mytmpfile.close()
 
     assets["pagefilter"]["selected_pages"].append("None")
 
@@ -181,7 +182,7 @@ if pdf is not None and config is not None:
             list(range(1, number_pages)),
             placeholder="Select a page number",
         )
-        col1, col2 = st.columns([3, 1])
+        col1, col2 = st.columns([5, 1])
         with col1:
             st.markdown(
                 get_pdf_iframe(pdf_before_page_validation),
@@ -209,14 +210,12 @@ if pdf is not None and config is not None:
 
 
 if "validate" in st.session_state and st.session_state["validate"] is True:
-
     placeholder.empty()
 
     pdf_after_page_validation = keep_pages(
-        mytmpfile.name,
+        pdf_before_page_validation,
         assets["pagefilter"]["selected_pages"],
     )
-    mytmpfile.close()
 
     if "tables" not in st.session_state:
         for table_extractor in proc.table_extractors:
