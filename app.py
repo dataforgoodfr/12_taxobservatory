@@ -222,7 +222,9 @@ if pdf is not None and config is not None:
             )
 
         with col2, st.form(key="selected_pages_form"):
-            number_pages = len(PdfReader(pdf_before_page_validation).pages) + 1
+            number_pages = (
+                len(PdfReader(pdf_before_page_validation).pages) + 1
+            )  # Make the index start to 1
             pages_selected = st.multiselect(
                 "Which page of the following pdf contains the table you want to extract ?",
                 list(range(1, number_pages)),
@@ -252,13 +254,14 @@ if pdf is not None and config is not None:
 
         pdf_after_page_validation = keep_pages(
             pdf_before_page_validation,
-            assets["pagefilter"]["selected_pages"],
+            [item - 1 for item in assets["pagefilter"]["selected_pages"]],
         )
 
 
 if (
     "validate_selected_pages" in st.session_state
     and st.session_state["validate_selected_pages"] is True
+    and pdf is not None
 ):
     placeholder.empty()
 
@@ -311,10 +314,10 @@ if (
                 if submitted:
                     set_validate("validate_headers")
 
-
 if (
     "validate_headers" in st.session_state
     and st.session_state["validate_headers"] is True
+    and pdf is not None
 ):
     placeholder.empty()
 
