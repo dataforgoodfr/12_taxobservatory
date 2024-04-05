@@ -23,9 +23,6 @@ if "original_pdf" in st.session_state:
             unsafe_allow_html=True,
         )
 
-    print("SELECTED PAGES :")
-    print(st.session_state["assets"]["pagefilter"]["selected_pages"])
-
     with col2, st.form(key="selected_pages_form"):
         pdfreader = PdfReader(st.session_state["original_pdf"])
         number_pages = (
@@ -47,9 +44,6 @@ if "original_pdf" in st.session_state:
             on_click=set_validate,
             args=("validate_selected_pages",),
         )
-
-    print("SELECTED PAGES AFTER:")
-    print(st.session_state["assets"]["pagefilter"]["selected_pages"])
 
     st.session_state["pdf_after_page_validation"] = keep_pages(
         st.session_state["pdf_before_page_validation"],

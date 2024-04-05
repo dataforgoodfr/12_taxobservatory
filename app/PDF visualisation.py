@@ -87,10 +87,15 @@ if "original_pdf" in st.session_state:
 
         logging.info(f"Assets : {assets}")
 
-        st.session_state["pdf_before_page_validation"] = keep_pages(
-            st.session_state["original_pdf"].name,
-            assets["pagefilter"]["selected_pages"],
-        )
-        assets["pagefilter"]["selected_pages"] = []
+        if assets["pagefilter"]["selected_pages"] == []:
+            st.session_state["pdf_before_page_validation"] = st.session_state[
+                "original_pdf"
+            ].name
+        else:
+            st.session_state["pdf_before_page_validation"] = keep_pages(
+                st.session_state["original_pdf"].name,
+                assets["pagefilter"]["selected_pages"],
+            )
+            assets["pagefilter"]["selected_pages"] = []
         st.session_state["assets"] = assets
         st.switch_page("pages/1_Selected_Pages.py")
