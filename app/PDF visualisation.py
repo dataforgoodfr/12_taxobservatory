@@ -91,7 +91,7 @@ if "original_pdf" in st.session_state:
 
         logging.info(f"Assets : {assets}")
 
-        if assets["pagefilter"]["selected_pages"] == []:
+        if len(assets["pagefilter"]["selected_pages"]) == 0:
             st.session_state["pdf_before_page_validation"] = st.session_state[
                 "original_pdf"
             ].name
