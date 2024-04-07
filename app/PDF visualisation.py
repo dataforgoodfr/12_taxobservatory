@@ -20,13 +20,17 @@ st.subheader(
 mytmpfile = tempfile.NamedTemporaryFile(suffix=".pdf", delete=False)
 
 with st.sidebar:
-    pdf = st.file_uploader("Upload a pdf document containing financial table : ")
+    original_pdf = st.file_uploader(
+        "Upload a pdf document containing financial table : ",
+    )
 
-    if pdf is not None:
-        mytmpfile.write(pdf.read())
-        st.session_state["original_pdf"] = mytmpfile
-    if "original_pdf" in st.session_state:
-        st.markdown("Already loaded file : " + st.session_state["original_pdf"].name)
+    if original_pdf is not None:
+        mytmpfile.write(original_pdf.read())
+        st.session_state["working_file_pdf"] = mytmpfile
+        st.session_state["original_pdf_name"] = original_pdf.name
+        st.markdown(
+            "Already loaded file : " + st.session_state["original_pdf_name"],
+        )
 
     loaded_config = st.file_uploader(
         "Upload a config if the default config doesn't suit you :",
@@ -60,15 +64,18 @@ table_extraction:
     markdown_str = f"The configuration is : \n\n```\n{yaml_str}\n```"
     st.write(markdown_str)
 
-if "original_pdf" in st.session_state:
+if "working_file_pdf" in st.session_state:
+    # Once a pdf has been uploaded, it will be stored as
+    # the "original_pdf" key in the session state.
+    # Hence, the following code will only be executed if a pdf has been uploaded.
 
+    # Display the uploaded pdf
     st.markdown(
-        get_pdf_iframe(st.session_state["original_pdf"].name),
+        get_pdf_iframe(st.session_state["working_file_pdf"].name),
         unsafe_allow_html=True,
     )
 
-    if "first_time" not in st.session_state:
-        st.session_state["first_time"] = False
+    if "pdf_before_page_validation" not in st.session_state:
         logging.info("Loading config and pdf")
         st.session_state["proc"] = ReportProcessor(st.session_state["config"])
 
@@ -81,19 +88,22 @@ if "original_pdf" in st.session_state:
 
         # Filtering the pages
         st.session_state["proc"].page_filter(
-            st.session_state["original_pdf"].name,
+            st.session_state["working_file_pdf"].name,
             assets,
         )
 
         logging.info(f"Assets : {assets}")
 
-        if assets["pagefilter"]["selected_pages"] == []:
+        if len(assets["pagefilter"]["selected_pages"]) == 0:
+            # No page has been automatically selected by the page filter
+            # Hence, we display the full pdf, letting the user select the pages
             st.session_state["pdf_before_page_validation"] = st.session_state[
-                "original_pdf"
+                "working_file_pdf"
             ].name
         else:
+            # Otherwise, we keep only the pages selected by the page filter
             st.session_state["pdf_before_page_validation"] = keep_pages(
-                st.session_state["original_pdf"].name,
+                st.session_state["working_file_pdf"].name,
                 assets["pagefilter"]["selected_pages"],
             )
             assets["pagefilter"]["selected_pages"] = []

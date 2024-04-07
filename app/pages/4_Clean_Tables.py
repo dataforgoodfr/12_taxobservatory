@@ -86,7 +86,7 @@ st.subheader(
 
 if (
     st.session_state.get("validate_selected_pages", False)
-    and "original_pdf" in st.session_state
+    and "pdf_after_page_validation" in st.session_state
 ):
     col3, col4 = st.columns(2)
     with col3:

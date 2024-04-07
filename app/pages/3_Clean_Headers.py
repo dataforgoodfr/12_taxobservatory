@@ -51,7 +51,7 @@ if "tables" not in st.session_state:
 
 if (
     st.session_state.get("validate_selected_pages", False)
-    and "original_pdf" in st.session_state
+    and "pdf_after_page_validation" in st.session_state
 ):
     col1, col2 = st.columns(2)
     with col1:
@@ -63,11 +63,13 @@ if (
         st.session_state["algorithm_name"] = st.selectbox(
             "Choose the extracted table you want to see",
             list(st.session_state.tables.keys()),
-            index=list(st.session_state.tables.keys()).index(
-                st.session_state["algorithm_name"],
-            )
-            if "algorithm_name" in st.session_state
-            else 0,
+            index=(
+                list(st.session_state.tables.keys()).index(
+                    st.session_state["algorithm_name"],
+                )
+                if "algorithm_name" in st.session_state
+                else 0
+            ),
             on_change=set_algorithm_name,
             args=("selectbox1",),
             key="selectbox1",
@@ -88,3 +90,6 @@ if (
                 on_click=set_headers,
                 args=(st.session_state["algorithm_name"],),
             )
+
+            if submitted:
+                st.switch_page("pages/3_Tables.py")
