@@ -57,6 +57,8 @@ def keep_pages(pdf_filepath: str, selected_pages: list[int]) -> str:
 
     return filename
 
+def displayed_pages(pages: list[int]) -> list[int]:
+    return [p + 1 for p in pages]
 
 def gather_tables(
     assets: dict,

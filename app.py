@@ -10,14 +10,21 @@ from pypdf import PdfReader
 from st_aggrid import AgGrid, GridOptionsBuilder, JsCode
 
 from country_by_country.processor import ReportProcessor
-from country_by_country.utils.utils import gather_tables, keep_pages
+from country_by_country.utils.utils import gather_tables, keep_pages, displayed_pages
 
 
-def get_pdf_iframe(pdf_to_process: str) -> str:
+def get_pdf_iframe(pdf_to_process: str, title:str | None = None, metadata: dict | None = None) -> str:
     base64_pdf = base64.b64encode(Path(pdf_to_process).read_bytes()).decode("utf-8")
+    title_tag = f"<b>{title}</b><br>" if title else ""
+    metadata_tag = ""
+    if metadata:
+        for k, v in metadata.items():
+            metadata_tag += f"{k}: {v}<br>"        
     pdf_display = f"""
+    {title_tag}
+    {metadata_tag}
     <iframe src="data:application/pdf;base64,{base64_pdf}
-    " width="800px" height="1000px" type="application/pdf"></iframe>
+    " width="100%" height="1000px" type="application/pdf"></iframe>
     """
     return pdf_display
 
@@ -142,7 +149,7 @@ st.subheader(
 )
 
 with st.sidebar:
-    pdf = st.file_uploader("Upload a pdf document containing financial table : ")
+    original_pdf = st.file_uploader("Upload a pdf document containing financial table : ")
     loaded_config = st.file_uploader(
         "Upload a config if the default config doesn't suit you :",
     )
@@ -177,10 +184,10 @@ table_extraction:
 
 mytmpfile = tempfile.NamedTemporaryFile(suffix=".pdf", delete=False)
 placeholder = st.empty()
-pages_selected = []
+selected_pages_index = []
 
-if pdf is not None and config is not None:
-    mytmpfile.write(pdf.read())
+if original_pdf is not None and config is not None:
+    mytmpfile.write(original_pdf.read())
     pdfreader = PdfReader(mytmpfile.name)
 
     logging.info("Loading config and pdf")
@@ -209,15 +216,14 @@ if pdf is not None and config is not None:
     )
     mytmpfile.close()
 
-    assets["pagefilter"]["selected_pages"].append("None")
-
     logging.info(f"Assets : {assets}")
 
     with placeholder.container():
         col1, col2 = st.columns([1, 1])
+        displayed_processed_pages = displayed_pages(assets["pagefilter"]["selected_pages"])
         with col1:
             st.markdown(
-                get_pdf_iframe(pdf_before_page_validation),
+                get_pdf_iframe(pdf_before_page_validation, title=original_pdf.name, metadata={"Pages with tax data detected": displayed_processed_pages}),
                 unsafe_allow_html=True,
             )
 
@@ -225,7 +231,7 @@ if pdf is not None and config is not None:
             number_pages = (
                 len(PdfReader(pdf_before_page_validation).pages) + 1
             )  # Make the index start to 1
-            pages_selected = st.multiselect(
+            selected_pages_index = st.multiselect(
                 "Which page of the following pdf contains the table you want to extract ?",
                 list(range(1, number_pages)),
                 placeholder="Select a page number",
@@ -236,21 +242,22 @@ if pdf is not None and config is not None:
                 args=("validate_selected_pages",),
             )
 
-        if pages_selected == ["None"]:  # TODO : check this behavior
+        if selected_pages_index == ["None"]:  # TODO : check this behavior
             number_pages = len(pdfreader.pages)
-            pages_selected = st.multiselect(
+            selected_pages_index = st.multiselect(
                 "Which page of the following pdf contains the table you want to extract ?",
                 [int(d) for d in number_pages],
                 placeholder="Select a page number",
             )
 
             st.markdown(
-                get_pdf_iframe(pdf_before_page_validation),
+                get_pdf_iframe(pdf_before_page_validation, title=original_pdf.name),
                 unsafe_allow_html=True,
             )
 
-        assets["pagefilter"]["selected_pages"] = pages_selected
-        logging.info(f"Page selected : {pages_selected}")
+        displayed_selected_pages = [assets["pagefilter"]["selected_pages"][i] for i in selected_pages_index]
+        assets["pagefilter"]["selected_pages"] = selected_pages_index
+        logging.info(f"Page selected : {selected_pages_index}")
 
         pdf_after_page_validation = keep_pages(
             pdf_before_page_validation,
@@ -261,7 +268,7 @@ if pdf is not None and config is not None:
 if (
     "validate_selected_pages" in st.session_state
     and st.session_state["validate_selected_pages"] is True
-    and pdf is not None
+    and original_pdf is not None
 ):
     placeholder.empty()
 
@@ -276,9 +283,10 @@ if (
 
     with placeholder.container():
         col1, col2 = st.columns(2)
+        pdf_iframe_after_page_validation = get_pdf_iframe(pdf_after_page_validation, title=original_pdf.name, metadata={"Selected pages": displayed_selected_pages})
         with col1:
             st.markdown(
-                get_pdf_iframe(pdf_after_page_validation),
+                pdf_iframe_after_page_validation,
                 unsafe_allow_html=True,
             )
         with col2:
@@ -317,7 +325,7 @@ if (
 if (
     "validate_headers" in st.session_state
     and st.session_state["validate_headers"] is True
-    and pdf is not None
+    and original_pdf is not None
 ):
     placeholder.empty()
 
@@ -325,7 +333,7 @@ if (
         col3, col4 = st.columns(2)
         with col3:
             st.markdown(
-                get_pdf_iframe(pdf_after_page_validation),
+                pdf_iframe_after_page_validation,
                 unsafe_allow_html=True,
             )
 
