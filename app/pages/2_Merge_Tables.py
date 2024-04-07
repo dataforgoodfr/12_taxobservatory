@@ -13,10 +13,27 @@ from country_by_country.utils.utils import (
 )
 
 
-def merge_table(assets: dict, table_extractor: str) -> None:
-    for asset in assets:
+def merge_table(table_extractor: str) -> None:
+    for asset in st.session_state["assets"]["table_extractors"]:
         if asset["type"] == table_extractor:
-            st.session_state["new_tables"] = pd.concat(asset["tables"])
+            first_df_columns = asset["tables"][0].columns
+            # Replace column names for all DataFrames in the list
+            for df in asset["tables"]:
+                df.columns = first_df_columns
+
+            st.session_state["new_tables"] = pd.concat(
+                asset["tables"], ignore_index=True, sort=False
+            )
+
+
+def save_merge(table_extractor: str) -> None:
+    tables_extracted_by_name = gather_tables_with_merge(
+        st.session_state["assets"],
+        st.session_state["new_tables"],
+        table_extractor,
+    )
+    st.session_state["tables"] = tables_extracted_by_name
+    st.session_state["algorithm_name"] = table_extractor
 
 
 st.set_page_config(layout="wide")  # page_icon="📈"
@@ -32,7 +49,7 @@ if "tables" not in st.session_state:
 
 if (
     st.session_state.get("validate_selected_pages", False)
-    and "original_pdf" in st.session_state
+    and "pdf_after_page_validation" in st.session_state
 ):
     if "tables" not in st.session_state:
         for table_extractor in st.session_state["proc"].table_extractors:
@@ -43,7 +60,7 @@ if (
 
         st.session_state["tables"] = tables_extracted_by_name
 
-    if check_if_many(st.session_state["assets"]):
+    if not check_if_many(st.session_state["assets"]):
         st.markdown("# !! Nothing to merge")
 
         if "first_time_merge" not in st.session_state:
@@ -61,32 +78,31 @@ if (
 
         if table_extractor is not None:
             for asset in st.session_state["assets"]["table_extractors"]:
+                i = 0
                 if asset["type"] == table_extractor:
                     for table in asset["tables"]:
                         st.markdown("Table shape :" + str(table.shape))
+                        st.markdown("Table index : _" + str(i))
+                        i += 1
                         st.dataframe(
                             table,
                         )
 
     with col2:
         st.markdown(
-            "You won't be able to merge if the shape is not the same for each tables !!"
+            "You won't be able to merge if the number of columns is not the same for each tables !!"
         )
         merged = st.button(
             "Merge",
             type="primary",
             on_click=merge_table,
-            args=(st.session_state["assets"]["table_extractors"], table_extractor),
+            args=(table_extractor,),
         )
-        validated = st.button("Sauver le merge")
-
-        if merged is True and validated is True:
-            tables_extracted_by_name = gather_tables_with_merge(
-                st.session_state["assets"],
-                st.session_state["new_tables"],
-                table_extractor,
-            )
-            st.session_state["tables"] = tables_extracted_by_name
+        validated = st.button(
+            "Sauver le merge",
+            on_click=save_merge,
+            args=(table_extractor,),
+        )
 
     with col3:
         if merged is True:

@@ -74,7 +74,10 @@ if (
             args=("selectbox1",),
             key="selectbox1",
         )
-
+        st.markdown(
+            "Table shape :"
+            + str(st.session_state.tables[st.session_state["algorithm_name"]].shape)
+        )
         with st.form(key="my_form"):
             for header in st.session_state.tables[
                 st.session_state["algorithm_name"]
@@ -92,4 +95,4 @@ if (
             )
 
             if submitted:
-                st.switch_page("pages/3_Tables.py")
+                st.switch_page("pages/4_Clean_Tables.py")

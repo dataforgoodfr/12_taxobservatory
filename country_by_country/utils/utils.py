@@ -80,7 +80,7 @@ def check_if_many(assets: dict) -> bool:
         tables = asset["tables"]
         if len(tables) > 1:
             return True
-    return None
+    return False
 
 
 def filled_table_extractors(assets: dict) -> list:
