@@ -92,10 +92,13 @@ if "original_pdf" in st.session_state:
         logging.info(f"Assets : {assets}")
 
         if len(assets["pagefilter"]["selected_pages"]) == 0:
+            # No page has been automatically selected by the page filter
+            # Hence, we display the full pdf, letting the user select the pages
             st.session_state["pdf_before_page_validation"] = st.session_state[
                 "original_pdf"
             ].name
         else:
+            # Otherwise, we keep only the pages selected by the page filter
             st.session_state["pdf_before_page_validation"] = keep_pages(
                 st.session_state["original_pdf"].name,
                 assets["pagefilter"]["selected_pages"],
