@@ -1,6 +1,5 @@
 import streamlit as st
-from utils import set_algorithm_name, get_pdf_iframe, set_validate
-from country_by_country.utils.utils import gather_tables
+from utils import set_algorithm_name, get_pdf_iframe
 
 import sys
 import logging
@@ -47,22 +46,13 @@ st.subheader(
 )
 if "tables" not in st.session_state:
     st.markdown(
-        "# !! Don't change the page while the alorithms are runing, else they will start again"
+        "# !! Don't change the page while the algorithms are runing, else they will start again"
     )
 
 if (
     st.session_state.get("validate_selected_pages", False)
     and "original_pdf" in st.session_state
 ):
-    if "tables" not in st.session_state:
-        for table_extractor in st.session_state["proc"].table_extractors:
-            new_asset = table_extractor(st.session_state["pdf_after_page_validation"])
-            st.session_state["assets"]["table_extractors"].append(new_asset)
-        tables_extracted_by_name = gather_tables(st.session_state["assets"])
-        logging.info(f"Table extracted : {tables_extracted_by_name}")
-
-        st.session_state["tables"] = tables_extracted_by_name
-
     col1, col2 = st.columns(2)
     with col1:
         st.markdown(

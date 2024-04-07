@@ -24,6 +24,8 @@
 import pathlib
 import tempfile
 
+import pandas as pd
+
 # External imports
 import pypdf
 
@@ -69,5 +71,43 @@ def gather_tables(
         elif len(tables) > 1:
             for i in range(len(tables)):
                 tables_by_name[asset["type"] + "_" + str(i)] = tables[i]
+
+    return tables_by_name
+
+
+def check_if_many(assets: dict) -> bool:
+    for asset in assets["table_extractors"]:
+        tables = asset["tables"]
+        if len(tables) > 1:
+            return True
+    return None
+
+
+def filled_table_extractors(assets: dict) -> list:
+    tables_by_name = []
+    print(assets)
+    for asset in assets["table_extractors"]:
+        tables = asset["tables"]
+        if len(tables) > 0:
+            tables_by_name.append(asset["type"])
+    return tables_by_name
+
+
+def gather_tables_with_merge(
+    assets: dict,
+    new_tables: pd.DataFrame,
+    table_extractor: str,
+) -> dict:
+    tables_by_name = {}
+    for asset in assets["table_extractors"]:
+        if asset["type"] == table_extractor:
+            tables_by_name[table_extractor] = new_tables
+        else:
+            tables = asset["tables"]
+            if len(tables) == 1:
+                tables_by_name[asset["type"]] = tables[0]
+            elif len(tables) > 1:
+                for i in range(len(tables)):
+                    tables_by_name[asset["type"] + "_" + str(i)] = tables[i]
 
     return tables_by_name

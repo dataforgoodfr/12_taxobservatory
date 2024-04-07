@@ -58,4 +58,4 @@ if "original_pdf" in st.session_state:
         and "first_time_selected" not in st.session_state
     ):
         st.session_state["first_time_selected"] = False
-        st.switch_page("pages/2_Headers.py")
+        st.switch_page("pages/2_Merge_Tables.py")
