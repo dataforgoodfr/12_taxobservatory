@@ -54,7 +54,7 @@ if "original_pdf" in st.session_state:
     )
 
     if (
-        st.session_state["assets"]["pagefilter"]["selected_pages"] != []
+        len(st.session_state["assets"]["pagefilter"]["selected_pages"]) != 0
         and "first_time_selected" not in st.session_state
     ):
         st.session_state["first_time_selected"] = False
