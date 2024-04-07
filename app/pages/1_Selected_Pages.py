@@ -14,7 +14,7 @@ st.subheader(
     "This page will allow you to select the pages containing your tables",
 )
 
-if "original_pdf" in st.session_state:
+if "pdf_before_page_validation" in st.session_state:
 
     col1, col2 = st.columns([1, 1])
     with col1:
@@ -24,7 +24,6 @@ if "original_pdf" in st.session_state:
         )
 
     with col2, st.form(key="selected_pages_form"):
-        pdfreader = PdfReader(st.session_state["original_pdf"])
         number_pages = (
             len(PdfReader(st.session_state["pdf_before_page_validation"]).pages) + 1
         )  # Make the index start to 1
