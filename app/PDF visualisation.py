@@ -61,7 +61,11 @@ table_extraction:
     st.write(markdown_str)
 
 if "original_pdf" in st.session_state:
+    # Once a pdf has been uploaded, it will be stored as
+    # the "original_pdf" key in the session state.
+    # Hence, the following code will only be executed if a pdf has been uploaded.
 
+    # Display the uploaded pdf
     st.markdown(
         get_pdf_iframe(st.session_state["original_pdf"].name),
         unsafe_allow_html=True,
