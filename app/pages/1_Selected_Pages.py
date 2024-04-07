@@ -56,6 +56,7 @@ if "original_pdf" in st.session_state:
     if submitted:
         # Once the submission button is clicked, we commit the selected pages
         # The next pages will work with the pdf_after_page_validation
+        st.session_state["assets"]["pagefilter"]["selected_pages"] = selected_pages
         st.session_state["pdf_after_page_validation"] = keep_pages(
             st.session_state["original_pdf"].name,
             [i - 1 for i in selected_pages],
