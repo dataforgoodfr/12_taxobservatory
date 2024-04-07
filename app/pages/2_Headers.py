@@ -47,7 +47,7 @@ st.subheader(
 )
 if "tables" not in st.session_state:
     st.markdown(
-        "# !! Don't change the page while the alorithms are runing, else they will start again"
+        "# !! Don't change the page while the algorithms are runing, else they will start again"
     )
 
 if (
