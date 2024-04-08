@@ -113,22 +113,19 @@ Why building a tracker
 <|layout|columns=1 |gap=3rem||class_name=align-columns-center|
 
 <|layout|columns=1 1 1|gap=3rem||class_name=align-columns-center|
-
-<|card|
+<|cardround|
 CbCRs data is instrumental for analyzing companies' tax practices
 |>
-
-<|card|
+<|cardround|
 CbCRs data is public but not centralized/standardized, hence difficult to access
 |>
-
-<|card|
+<|cardround|
 Difficulty to access and analyze will grow as  more reports get expected
 |>
 
 |>
 
-<|button|active|label="Methodology"|>
+<|button|class_name=primary|label="Methodology"|>
 
 |>
 |>
