@@ -17,5 +17,5 @@ def set_algorithm_name(my_key: str) -> None:
     st.session_state["algorithm_name"] = st.session_state[my_key]
 
 
-def set_validate(validate: str) -> None:
-    st.session_state[validate] = True
+def set_validate() -> None:
+    st.session_state["validate_selected_pages"] = True

@@ -25,18 +25,18 @@ if "working_file_pdf" in st.session_state:
         number_pages = len(PdfReader(st.session_state["working_file_pdf"]).pages)
         logging.info("got the assets : " + str(st.session_state["assets"]))
         selected_pages = st.multiselect(
-            "Which page of the following pdf contains the table you want to extract ?",
+            "Which page of the following pdf contains the table you want to extract ? Defaults pages are the pages extracted by the decision tree algorithm",
             list(range(1, number_pages + 1)),
             placeholder="Select a page number",
             default=[
                 i + 1
                 for i in st.session_state["assets"]["pagefilter"]["selected_pages"]
             ],
+            disabled=True if "validate_selected_pages" in st.session_state else False,
         )
         submitted = st.button(
             label="Validate your selected pages",
             on_click=set_validate,
-            args=("validate_selected_pages",),
         )
 
     selected_pages = sorted(selected_pages)
@@ -63,4 +63,4 @@ if "working_file_pdf" in st.session_state:
             st.session_state["working_file_pdf"].name,
             [i - 1 for i in selected_pages],
         )
-        st.switch_page("pages/2_Headers.py")
+        st.switch_page("pages/2_Merge_Tables.py")
