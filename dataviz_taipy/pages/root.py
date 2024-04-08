@@ -2,7 +2,7 @@ from taipy.gui import Markdown
 
 import numpy as np
 
-from data.data import data
+from dataviz_taipy.data.data import data
 
 
 def to_text(val):

@@ -3,8 +3,8 @@ import pandas as pd
 
 from taipy.gui import Markdown
 
-from data.data import data
-import algo as algo
+from dataviz_taipy.data.data import data
+import dataviz_taipy.algo as algo
 
 import plotly.graph_objects as go
 

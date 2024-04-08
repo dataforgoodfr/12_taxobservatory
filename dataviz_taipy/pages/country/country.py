@@ -3,7 +3,7 @@ import pandas as pd
 
 from taipy.gui import Markdown
 
-from data.data import data
+from dataviz_taipy.data.data import data
 
 selected_country = 'Mauritius'
 country_md = Markdown("pages/country/country.md")
