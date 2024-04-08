@@ -1,20 +1,57 @@
 
-
-.grey {
-    background-color: darkgrey;
-    -webkit-text-fill-color: darkblue;
+:root {
+    background-color:#e8e9ec;
+    background:#e8e9ec;
 }
 
-.card {
-    background-color:darkblue;
-    border-radius: 20px;
+/* .MuiBox-root {
+    background-color:#e8e9ec;
+    background:#e8e9ec;
+} */
+
+.blue_section {
+    background-color:#02198D;
     -webkit-text-fill-color:ghostwhite;
 }
 
 
-.card-round {
-    background-color: aquamarine;
-    border-radius: 100px;
+.card {
+    background-color:#02198D;
+    border-radius: 20px;
+    -webkit-text-fill-color:ghostwhite;
+    font-size: 24px;
 }
 
 
+.cardround {
+    background: #021978;
+    gap: 10px;
+    -webkit-text-fill-color:ghostwhite;    
+    width: 370px; 
+    height: 370px;
+    border-radius: 50%;
+    display: flex; /* or inline-flex */
+    align-items: center; 
+    justify-content: center;  
+    font-size: 24px;
+    align-items: center;
+    text-align: center;
+}
+
+
+.header {
+    background-color:#E8E9EC;
+    -webkit-text-fill-color:#02198D;
+    font-size: 64px;
+}
+
+.subheader {    
+    -webkit-text-fill-color:#02198D;
+    font-size: 25px;
+}
+
+.footer {
+    background-color: #B8BEDB;
+    -webkit-text-fill-color:#02198D;
+    
+}

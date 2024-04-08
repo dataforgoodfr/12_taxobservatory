@@ -114,7 +114,6 @@ def tax_haven_used_by_company(df_selected_company):
         df_selected_company_th_agg['profit_before_tax']/df_selected_company_th_agg['employees']
     df_selected_company_th_agg['profit per employee'] = df_selected_company_th_agg['profit per employee'].replace([np.inf, -np.inf], None)
 
-    print (df_selected_company_th_agg.reset_index())
     return df_selected_company, df_selected_company_th_agg
 
 

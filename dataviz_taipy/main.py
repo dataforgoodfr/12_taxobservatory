@@ -8,6 +8,7 @@ from pages.viz.viz import viz_md
 from pages.home.home import home_md
 from pages.country.country import country_md
 from pages.company.company import company_md
+from pages.keystories.keystories import keystories_md
 
 # from pages.world.world import world_md
 # from pages.map.map import map_md
@@ -18,6 +19,7 @@ from pages.root import root
 
 from pages.country.country import selected_country, selector_country
 from pages.company.company import selected_company, selector_company
+# from pages.key_stories.key_stories 
 
 from config.config import Config
 
@@ -25,12 +27,9 @@ pages = {
     '/': root,
     'Viz':viz_md,
     'Home': home_md,
+    'KeyStories': keystories_md,
     'Company': company_md,
-    'Country': country_md
-    # "Country": country_md,
-    # "World": world_md,
-    # "Map": map_md,
-    # "Predictions": predictions_md
+    'Country': country_md,
 }
 
 
@@ -47,6 +46,7 @@ my_theme = {
 gui_multi_pages = Gui(pages=pages, css_file="css/style.css")
 
 if __name__ == '__main__':
+    print ('data4good')
     tp.Core().run()
 
     # gui_multi_pages.run(
@@ -54,4 +54,4 @@ if __name__ == '__main__':
     #     # theme=my_theme
         
     #     )
-    gui_multi_pages.run(title="My first Dashboard")
+    gui_multi_pages.run(title="data4good")
