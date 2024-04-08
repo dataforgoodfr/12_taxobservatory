@@ -4,10 +4,10 @@ import tempfile
 
 import streamlit as st
 import yaml
+from pypdf import PdfReader
 from utils import get_pdf_iframe
 
 from country_by_country.processor import ReportProcessor
-from country_by_country.utils.utils import keep_pages
 
 logging.basicConfig(stream=sys.stdout, level=logging.INFO, format="%(message)s")
 
@@ -75,7 +75,8 @@ if "working_file_pdf" in st.session_state:
         unsafe_allow_html=True,
     )
 
-    if "pdf_before_page_validation" not in st.session_state:
+    if "first_time" not in st.session_state:
+        st.session_state["first_time"] = False
         logging.info("Loading config and pdf")
         st.session_state["proc"] = ReportProcessor(st.session_state["config"])
 
@@ -97,15 +98,8 @@ if "working_file_pdf" in st.session_state:
         if len(assets["pagefilter"]["selected_pages"]) == 0:
             # No page has been automatically selected by the page filter
             # Hence, we display the full pdf, letting the user select the pages
-            st.session_state["pdf_before_page_validation"] = st.session_state[
-                "working_file_pdf"
-            ].name
-        else:
-            # Otherwise, we keep only the pages selected by the page filter
-            st.session_state["pdf_before_page_validation"] = keep_pages(
-                st.session_state["working_file_pdf"].name,
-                assets["pagefilter"]["selected_pages"],
-            )
-            assets["pagefilter"]["selected_pages"] = []
+            pdfreader = PdfReader(st.session_state["working_file_pdf"])
+            number_pages = len(PdfReader(st.session_state["working_file_pdf"]).pages)
+            assets["pagefilter"]["selected_pages"] = list(range(number_pages))
         st.session_state["assets"] = assets
         st.switch_page("pages/1_Selected_Pages.py")
