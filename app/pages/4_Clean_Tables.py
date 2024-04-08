@@ -78,6 +78,34 @@ def remove_gridoption_cellstyle(header_name: str, algorithm_name: str) -> None:
             break
 
 
+def check_last_cell_sum(column):
+    last_cell = column.iloc[-1]  # Get the last cell value
+    result = [""] * (len(column.tolist()) - 1)
+
+    print("check_last_cell_sum")
+    print(column)
+    try:
+        sum_except_last = column.iloc[
+            :-1
+        ].sum()  # Calculate the sum of all values except the last one
+        result.append(
+            "background-color: red"
+            if last_cell != sum_except_last
+            else "background-color: green"
+        )
+        return result
+    except:
+        result.append("background-color: red")
+        return result
+
+
+def column_sum(column):
+    try:
+        return column.iloc[:-1].sum()
+    except:
+        return None
+
+
 st.set_page_config(layout="wide")  # page_icon="📈"
 st.title("Country by Country Tax Reporting analysis : Tables")
 st.subheader(
@@ -160,17 +188,13 @@ if (
                 key=column_name + st.session_state["algorithm_name"],
                 args=(column_name, st.session_state["algorithm_name"]),
             )
+
     logging.info(
         f"""Grid Options : {st.session_state["grid_options" + "_" + st.session_state["algorithm_name"]]}""",
     )
     with col6:
-        AgGrid(
-            edited_df,
-            gridOptions=st.session_state[
-                "grid_options" + "_" + st.session_state["algorithm_name"]
-            ],
-            allow_unsafe_jscode=True,
-        )
-        # There is an open bug here :
-        # https://github.com/PablocFonseca/streamlit-aggrid/issues/234
-        # currently we cannot use the key and the reload_data option together
+        st.dataframe(edited_df.style.apply(check_last_cell_sum, axis=0))
+
+    col6, col7 = st.columns([1, 3])
+    with col7:
+        st.dataframe(edited_df.apply(column_sum, axis=0))
