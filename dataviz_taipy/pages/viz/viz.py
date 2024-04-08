@@ -53,6 +53,9 @@ df_selected_country = data[data[colname_country]==selected_country]
 df_reports_per_sector_year = algo.breakdown_of_reports_by_sector(data)
 breakdown_of_reports_by_sector_fig = algo.breakdown_of_reports_by_sector_viz(df_reports_per_sector_year)
 
+# Viz 5 - Breakdown of reports by HQ country (pie chart)
+df_reports_per_country = algo.breakdown_of_reports_by_hq_country(data)
+df_reports_per_country_fig = algo.breakdown_of_reports_by_hq_country_viz(df_reports_per_country)
 
 tracked_reports = algo.number_of_tracked_reports(data)
 tracked_reports_company = algo.number_of_tracked_reports_company(df_selected_company)
