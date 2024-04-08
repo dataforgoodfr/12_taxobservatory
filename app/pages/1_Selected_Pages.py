@@ -2,6 +2,7 @@ import streamlit as st
 from utils import get_pdf_iframe, set_validate
 from country_by_country.utils.utils import keep_pages
 from pypdf import PdfReader
+from menu import display_pages_menu
 
 import sys
 import copy
@@ -9,11 +10,12 @@ import logging
 
 logging.basicConfig(stream=sys.stdout, level=logging.INFO, format="%(message)s")
 
-st.set_page_config(layout="wide")  # page_icon="📈"
+st.set_page_config(layout="wide", page_title='Pages selection')  # page_icon="📈"
 st.title("Country by Country Tax Reporting analysis : Selected Pages")
 st.subheader(
     "This page will allow you to select the pages containing your tables",
 )
+display_pages_menu()
 
 if "working_file_pdf" in st.session_state:
 
