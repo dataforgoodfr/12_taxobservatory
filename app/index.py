@@ -6,16 +6,18 @@ import streamlit as st
 import yaml
 from pypdf import PdfReader
 from utils import get_pdf_iframe
+from menu import display_pages_menu
 
 from country_by_country.processor import ReportProcessor
 
 logging.basicConfig(stream=sys.stdout, level=logging.INFO, format="%(message)s")
 
-st.set_page_config(layout="wide")
+st.set_page_config(layout="wide", page_title="Accueil - upload de PDF")
 st.title("Country by Country Tax Reporting analysis")
 st.subheader(
     "This app will help you extract a table containing financial information from a pdf",
 )
+display_pages_menu()
 
 mytmpfile = tempfile.NamedTemporaryFile(suffix=".pdf", delete=False)
 
