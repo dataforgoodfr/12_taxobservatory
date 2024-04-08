@@ -187,6 +187,49 @@ def breakdown_of_reports_by_sector_viz(df_reports_per_sector):
     # Show the horizontal bar chart
     return go.Figure(fig)
 
+
+# Viz 5 - Breakdown of reports by HQ country (pie chart)
+def breakdown_of_reports_by_hq_country(df):
+    # Group the DataFrame by 'upe_name' (HQ country) and 'year' and count the number of unique companies for each HQ country and year
+    df_reports_per_country_year = df.groupby(['upe_name', 'year'])['mnc'].nunique().reset_index(
+        name='unique_company_count')
+
+    # Aggregate the counts of unique companies across all years for each HQ country
+    df_reports_per_country = df_reports_per_country_year.groupby('upe_name')['unique_company_count'].sum().reset_index()
+
+    # Calculate the total count of unique companies across all HQ countries
+    total_companies = df_reports_per_country['unique_company_count'].sum()
+
+    # Calculate the percentage of each HQ country's count relative to the total count and round to 2 decimals
+    df_reports_per_country['percent'] = (
+                (df_reports_per_country['unique_company_count'] / total_companies) * 100).round(2)
+
+    # Sort the DataFrame by the count of unique companies in ascending order
+    df_reports_per_country = df_reports_per_country.sort_values(by='unique_company_count', ascending=True)
+
+    return df_reports_per_country
+
+def breakdown_of_reports_by_hq_country_viz(df_reports_per_country):
+    # Plotting the horizontal bar chart with Plotly Express
+    fig = px.bar(df_reports_per_country, y='upe_name', x='percent',
+                 orientation='h',  # Horizontal orientation
+                 title='Breakdown of Reports by HQ Country over Time',
+                 labels={'percent': 'Percentage of Companies (%)', 'upe_name': 'HQ Country'},
+                 text='percent',  # Show the percentage as text label
+                 hover_data={'unique_company_count': True, 'percent': ':.2f%'},
+                 # Add tooltip for count and rounded percentage
+                 )
+
+    # Update layout to display the title above the chart
+    fig.update_layout(title='Breakdown of Reports by HQ Country over Time',
+                      title_x=0.5, title_y=0.95,  # Adjust position
+                      title_font_size=20)  # Adjust font size
+
+    # Show the horizontal bar chart
+    # fig.show()
+    return go.Figure(fig)
+
+
 # Viz 12 - available reports by company
 def compute_company_available_reports(df: pd.DataFrame, company: str) -> dict:
     """Compute the number of reports tracked for a specific company and the 

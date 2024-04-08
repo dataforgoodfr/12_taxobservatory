@@ -125,6 +125,19 @@ dsfsdqqfsd
 
 <|chart|figure={breakdown_of_reports_by_sector_fig}|>
 
+## Viz 5 - Breakdown of reports by HQ country (pie chart)
+<|chart|figure={df_reports_per_country_fig}|>
+
+## Viz 6 - Breakdown of reports by sector over time (bar chart)
+
+## Viz 7 - Breakdown of reports by HQ country over time (bar chart)
+
+## Viz 8 - Breakdown of MNC by sector (pie chart - changed to bar chart for more visibility)
+
+## Viz 9 - Breakdown of MNC by HQ country (pie chart - changed to bar chart for more visibility)
+
+## Viz 10/11 - Breakdown of MNC by sector / HQ country
+
 ## 19 what are the tax havens being used by the company 
 
 ### computed data
