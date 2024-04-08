@@ -1,0 +1,20 @@
+
+
+.grey {
+    background-color: darkgrey;
+    -webkit-text-fill-color: darkblue;
+}
+
+.card {
+    background-color:darkblue;
+    border-radius: 20px;
+    -webkit-text-fill-color:ghostwhite;
+}
+
+
+.card-round {
+    background-color: aquamarine;
+    border-radius: 100px;
+}
+
+
