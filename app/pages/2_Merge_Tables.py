@@ -103,6 +103,8 @@ if (
             on_click=save_merge,
             args=(table_extractor,),
         )
+        if validated:
+            st.switch_page("pages/3_Clean_Headers.py")
 
     with col3:
         if merged is True:

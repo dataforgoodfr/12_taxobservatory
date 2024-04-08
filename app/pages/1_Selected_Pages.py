@@ -25,7 +25,7 @@ if "working_file_pdf" in st.session_state:
         number_pages = len(PdfReader(st.session_state["working_file_pdf"]).pages)
         logging.info("got the assets : " + str(st.session_state["assets"]))
         selected_pages = st.multiselect(
-            "Which page of the following pdf contains the table you want to extract ?",
+            "Which page of the following pdf contains the table you want to extract ? Defaults pages are the pages extracted by the decision tree algorithm",
             list(range(1, number_pages + 1)),
             placeholder="Select a page number",
             default=[
