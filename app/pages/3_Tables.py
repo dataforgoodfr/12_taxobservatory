@@ -1,6 +1,7 @@
 import streamlit as st
 from st_aggrid import AgGrid, GridOptionsBuilder, JsCode
-from utils import set_algorithm_name, get_pdf_iframe
+from streamlit_option_menu import option_menu
+from utils import get_pdf_iframe
 
 import sys
 import logging
@@ -40,9 +41,9 @@ def apply_filter(column_name: str, algorithm_name: str) -> None:
         )
 
     if st.session_state[column_name + algorithm_name] is not None:
-        st.session_state["filters_selected" + "_" + algorithm_name][
-            column_name
-        ] = st.session_state[column_name + algorithm_name]
+        st.session_state["filters_selected" + "_" + algorithm_name][column_name] = (
+            st.session_state[column_name + algorithm_name]
+        )
         update_gridoption_cellstyle(column_name, js_code, algorithm_name)
     else:
         del st.session_state["filters_selected" + "_" + algorithm_name][column_name]
@@ -96,18 +97,29 @@ if (
         )
 
     with col4:
-        st.session_state["algorithm_name"] = st.selectbox(
-            "Choose the extracted table you want to see",
-            list(st.session_state.tables.keys()),
-            index=list(st.session_state.tables.keys()).index(
-                st.session_state["algorithm_name"],
-            )
-            if "algorithm_name" in st.session_state
-            else 0,
-            on_change=set_algorithm_name,
-            args=("selectbox2",),
-            key="selectbox2",
+
+        algorithm_index = list(st.session_state.tables.keys()).index(
+            st.session_state["algorithm_name"],
         )
+        selected_algorithm = option_menu(
+            None,
+            list(st.session_state.tables.keys()),
+            default_index=algorithm_index,
+            orientation="horizontal",
+            styles={
+                "container": {"padding": "0!important", "background-color": "#fafafa"},
+                "icon": {"color": "orange", "font-size": "25px"},
+                "nav-link": {
+                    "font-size": "25px",
+                    "text-align": "left",
+                    "margin": "0px",
+                    "--hover-color": "#eee",
+                },
+                "nav-link-selected": {"background-color": "green"},
+            },
+        )
+        st.session_state["algorithm_name"] = selected_algorithm
+
         # if (
         #    "aggrid_" + algorithm_name in st.session_state
         #    and st.session_state["aggrid_" + algorithm_name] is not None
@@ -130,9 +142,9 @@ if (
         ] = {}
         gd = GridOptionsBuilder.from_dataframe(edited_df)
         gd.configure_default_column(editable=True)
-        st.session_state[
-            "grid_options" + "_" + st.session_state["algorithm_name"]
-        ] = gd.build()
+        st.session_state["grid_options" + "_" + st.session_state["algorithm_name"]] = (
+            gd.build()
+        )
 
     col5, col6 = st.columns([1, 3])
     filter_list = ["is_number", "is_negative"]
