@@ -15,14 +15,14 @@ st.subheader(
     "This page will allow you to select the pages containing your tables",
 )
 
-if "original_pdf" in st.session_state:
+if "working_file_pdf" in st.session_state:
 
     col1, col2 = st.columns([1, 1])
 
     with col2:
         # Display the page selector on the right column
-        pdfreader = PdfReader(st.session_state["original_pdf"])
-        number_pages = len(PdfReader(st.session_state["original_pdf"]).pages)
+        pdfreader = PdfReader(st.session_state["working_file_pdf"])
+        number_pages = len(PdfReader(st.session_state["working_file_pdf"]).pages)
         logging.info("got the assets : " + str(st.session_state["assets"]))
         selected_pages = st.multiselect(
             "Which page of the following pdf contains the table you want to extract ?",
@@ -42,7 +42,7 @@ if "original_pdf" in st.session_state:
     selected_pages = sorted(selected_pages)
     logging.info("Filtering the pdf with pages : " + str(selected_pages))
     st.session_state["pdf_before_page_validation"] = keep_pages(
-        st.session_state["original_pdf"].name,
+        st.session_state["working_file_pdf"].name,
         [i - 1 for i in selected_pages],
     )
 
@@ -56,9 +56,11 @@ if "original_pdf" in st.session_state:
     if submitted:
         # Once the submission button is clicked, we commit the selected pages
         # The next pages will work with the pdf_after_page_validation
-        st.session_state["assets"]["pagefilter"]["selected_pages"] = selected_pages
+        st.session_state["assets"]["pagefilter"]["selected_pages"] = [
+            i - 1 for i in selected_pages
+        ]
         st.session_state["pdf_after_page_validation"] = keep_pages(
-            st.session_state["original_pdf"].name,
+            st.session_state["working_file_pdf"].name,
             [i - 1 for i in selected_pages],
         )
         st.switch_page("pages/2_Headers.py")

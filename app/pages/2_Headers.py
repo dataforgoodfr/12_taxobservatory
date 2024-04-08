@@ -52,7 +52,7 @@ if "tables" not in st.session_state:
 
 if (
     st.session_state.get("validate_selected_pages", False)
-    and "original_pdf" in st.session_state
+    and "pdf_after_page_validation" in st.session_state
 ):
     if "tables" not in st.session_state:
         for table_extractor in st.session_state["proc"].table_extractors:
@@ -100,3 +100,6 @@ if (
                 on_click=set_headers,
                 args=(st.session_state["algorithm_name"],),
             )
+
+            if submitted:
+                st.switch_page("pages/3_Tables.py")
