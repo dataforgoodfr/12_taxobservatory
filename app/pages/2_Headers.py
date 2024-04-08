@@ -1,4 +1,5 @@
 import streamlit as st
+from streamlit_option_menu import option_menu
 from utils import get_pdf_iframe, set_validate
 from country_by_country.utils.utils import gather_tables
 
@@ -70,20 +71,28 @@ if (
             unsafe_allow_html=True,
         )
     with col2:
-        st.session_state["algorithm_name"] = st.selectbox(
-            "Choose the extracted table you want to see",
+
+        # Offer the user the possibility to switch between the tables extracted by
+        # the different algorihtms that have been considered
+        # There is one option per table and per algorithm
+        selected_algorithm = option_menu(
+            None,
             list(st.session_state.tables.keys()),
-            index=(
-                list(st.session_state.tables.keys()).index(
-                    st.session_state["algorithm_name"],
-                )
-                if "algorithm_name" in st.session_state
-                else 0
-            ),
-            on_change=set_algorithm_name,
-            args=("selectbox1",),
-            key="selectbox1",
+            default_index=0,
+            orientation="horizontal",
+            styles={
+                "container": {"padding": "0!important", "background-color": "#fafafa"},
+                "icon": {"color": "orange", "font-size": "25px"},
+                "nav-link": {
+                    "font-size": "25px",
+                    "text-align": "left",
+                    "margin": "0px",
+                    "--hover-color": "#eee",
+                },
+                "nav-link-selected": {"background-color": "green"},
+            },
         )
+        st.session_state["algorithm_name"] = selected_algorithm
 
         with st.form(key="my_form"):
             for header in st.session_state.tables[
