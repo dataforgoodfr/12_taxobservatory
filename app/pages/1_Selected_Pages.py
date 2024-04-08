@@ -4,6 +4,7 @@ from country_by_country.utils.utils import keep_pages
 from pypdf import PdfReader
 
 import sys
+import copy
 import logging
 
 logging.basicConfig(stream=sys.stdout, level=logging.INFO, format="%(message)s")
@@ -14,47 +15,52 @@ st.subheader(
     "This page will allow you to select the pages containing your tables",
 )
 
-if "pdf_before_page_validation" in st.session_state:
+if "working_file_pdf" in st.session_state:
 
     col1, col2 = st.columns([1, 1])
-    with col1:
-        st.markdown(
-            get_pdf_iframe(st.session_state["pdf_before_page_validation"]),
-            unsafe_allow_html=True,
-        )
 
-    with col2, st.form(key="selected_pages_form"):
-        number_pages = (
-            len(PdfReader(st.session_state["pdf_before_page_validation"]).pages) + 1
-        )  # Make the index start to 1
-        st.session_state["assets"]["pagefilter"]["selected_pages"] = st.multiselect(
+    with col2:
+        # Display the page selector on the right column
+        pdfreader = PdfReader(st.session_state["working_file_pdf"])
+        number_pages = len(PdfReader(st.session_state["working_file_pdf"]).pages)
+        logging.info("got the assets : " + str(st.session_state["assets"]))
+        selected_pages = st.multiselect(
             "Which page of the following pdf contains the table you want to extract ?",
-            list(range(1, number_pages)),
+            list(range(1, number_pages + 1)),
             placeholder="Select a page number",
-            default=(
-                st.session_state["assets"]["pagefilter"]["selected_pages"]
-                if "assets" in st.session_state
-                else None
-            ),
+            default=[
+                i + 1
+                for i in st.session_state["assets"]["pagefilter"]["selected_pages"]
+            ],
         )
-        # TODO : add a new button in order to use original pdf if the table was not found
-        submitted = st.form_submit_button(
+        submitted = st.button(
             label="Validate your selected pages",
             on_click=set_validate,
             args=("validate_selected_pages",),
         )
 
-    st.session_state["pdf_after_page_validation"] = keep_pages(
-        st.session_state["pdf_before_page_validation"],
-        [
-            item - 1
-            for item in st.session_state["assets"]["pagefilter"]["selected_pages"]
-        ],
+    selected_pages = sorted(selected_pages)
+    logging.info("Filtering the pdf with pages : " + str(selected_pages))
+    st.session_state["pdf_before_page_validation"] = keep_pages(
+        st.session_state["working_file_pdf"].name,
+        [i - 1 for i in selected_pages],
     )
 
-    if (
-        len(st.session_state["assets"]["pagefilter"]["selected_pages"]) != 0
-        and "first_time_selected" not in st.session_state
-    ):
-        st.session_state["first_time_selected"] = False
+    with col1:
+        # Display the filtered pdf on the left column
+        st.markdown(
+            get_pdf_iframe(st.session_state["pdf_before_page_validation"]),
+            unsafe_allow_html=True,
+        )
+
+    if submitted:
+        # Once the submission button is clicked, we commit the selected pages
+        # The next pages will work with the pdf_after_page_validation
+        st.session_state["assets"]["pagefilter"]["selected_pages"] = [
+            i - 1 for i in selected_pages
+        ]
+        st.session_state["pdf_after_page_validation"] = keep_pages(
+            st.session_state["working_file_pdf"].name,
+            [i - 1 for i in selected_pages],
+        )
         st.switch_page("pages/2_Merge_Tables.py")
