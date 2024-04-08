@@ -1,5 +1,5 @@
 import streamlit as st
-from utils import set_algorithm_name, get_pdf_iframe, set_validate
+from utils import get_pdf_iframe, set_validate
 from country_by_country.utils.utils import gather_tables
 
 import sys
