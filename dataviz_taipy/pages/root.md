@@ -1,7 +1,8 @@
 <|toggle|theme|>
 <|layout|columns=1 5fr 1|
-
-![image](data/image.png)
+<[part|
+logo
+]>
 
 <|navbar|>
 
