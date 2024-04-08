@@ -98,13 +98,9 @@ if (
 
     with col4:
 
-        algorithm_index = list(st.session_state.tables.keys()).index(
-            st.session_state["algorithm_name"],
-        )
         selected_algorithm = option_menu(
             None,
             list(st.session_state.tables.keys()),
-            default_index=algorithm_index,
             orientation="horizontal",
             styles={
                 "container": {"padding": "0!important", "background-color": "#fafafa"},
