@@ -30,6 +30,8 @@ with st.sidebar:
         mytmpfile.write(original_pdf.read())
         st.session_state["working_file_pdf"] = mytmpfile
         st.session_state["original_pdf_name"] = original_pdf.name
+
+    if "original_pdf_name" in st.session_state:
         st.markdown(
             "Already loaded file : " + st.session_state["original_pdf_name"],
         )
