@@ -10,7 +10,7 @@ import logging
 
 logging.basicConfig(stream=sys.stdout, level=logging.INFO, format="%(message)s")
 
-st.set_page_config(layout="wide", page_title='Pages selection')  # page_icon="📈"
+st.set_page_config(layout="wide", page_title="Pages selection")  # page_icon="📈"
 st.title("Country by Country Tax Reporting analysis : Selected Pages")
 st.subheader(
     "This page will allow you to select the pages containing your tables",
