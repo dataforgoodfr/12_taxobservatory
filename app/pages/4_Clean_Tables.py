@@ -4,105 +4,68 @@ from utils import set_algorithm_name, get_pdf_iframe
 
 import sys
 import logging
+import pandas as pd
+import numpy as np
 
 logging.basicConfig(stream=sys.stdout, level=logging.INFO, format="%(message)s")
 
 
 def apply_filter(column_name: str, algorithm_name: str) -> None:
 
-    if st.session_state[column_name + algorithm_name] == "is_negative":
-        js_code = JsCode(
-            """
-            function(params) {
-                if (params.value > 0) {
-                    return {backgroundColor: '#abf7b1'}
-                } else {
-                    return {backgroundColor: '#fcccbb'}
-                }
-            }
-            """,
-        )
-
-    if st.session_state[column_name + algorithm_name] == "is_number":
-        js_code = JsCode(
-            """
-            function(params) {
-                if (/[^a-zA-Z0-9]/.test(params.value))
-                {
-                    return {backgroundColor: '#fcccbb'}
-                }
-                else
-                {
-                    return {backgroundColor: '#abf7b1'}
-                }
-            };
-            """,
-        )
-
     if st.session_state[column_name + algorithm_name] is not None:
         st.session_state["filters_selected" + "_" + algorithm_name][
             column_name
         ] = st.session_state[column_name + algorithm_name]
-        update_gridoption_cellstyle(column_name, js_code, algorithm_name)
+        # update_gridoption_cellstyle(column_name, js_code, algorithm_name)
     else:
         del st.session_state["filters_selected" + "_" + algorithm_name][column_name]
-        remove_gridoption_cellstyle(column_name, algorithm_name)
-
-
-def update_gridoption_cellstyle(
-    header_name: str,
-    js_code: str,
-    algorithm_name: str,
-) -> None:
-    # Find the index of the column definition corresponding to the headerName
-    for i, column_def in enumerate(
-        st.session_state["grid_options" + "_" + algorithm_name]["columnDefs"],
-    ):
-        if column_def["headerName"] == header_name:
-            # Update the cellStyle for the found column definition
-            st.session_state["grid_options" + "_" + algorithm_name]["columnDefs"][i][
-                "cellStyle"
-            ] = js_code
-            break
-
-
-def remove_gridoption_cellstyle(header_name: str, algorithm_name: str) -> None:
-    # Find the column definition corresponding to the headerName
-    for column_def in st.session_state["grid_options" + "_" + algorithm_name][
-        "columnDefs"
-    ]:
-        if column_def["headerName"] == header_name:
-            # Check if cellStyle exists, and remove it if it does
-            if "cellStyle" in column_def:
-                del column_def["cellStyle"]
-            break
+        # remove_gridoption_cellstyle(column_name, algorithm_name)
 
 
 def check_last_cell_sum(column):
-    last_cell = column.iloc[-1]  # Get the last cell value
-    result = [""] * (len(column.tolist()) - 1)
+    last_cell = column.iloc[-2]  # Get the last cell value
+    result = [""] * (len(column.tolist()) - 2)
 
-    print("check_last_cell_sum")
-    print(column)
     try:
+        column = column.astype(float)
         sum_except_last = column.iloc[
-            :-1
+            :-2
         ].sum()  # Calculate the sum of all values except the last one
         result.append(
             "background-color: red"
-            if last_cell != sum_except_last
+            if float(last_cell) != sum_except_last
             else "background-color: green"
         )
+        result.append("")
         return result
-    except:
+    except Exception:
         result.append("background-color: red")
+        result.append("")
         return result
 
 
 def column_sum(column):
     try:
+        column = column.astype(float)
         return column.iloc[:-1].sum()
-    except:
+    except Exception:
+        return None
+
+
+def style_negative(v, props=""):
+    try:
+        return props if float(v) < 0 else None
+    except Exception:
+        return None
+
+
+special_characters = "#&()[]@"
+
+
+def style_symbol(v, props=""):
+    try:
+        return props if any(c in special_characters for c in v) else None
+    except Exception:
         return None
 
 
@@ -136,11 +99,6 @@ if (
             args=("selectbox2",),
             key="selectbox2",
         )
-        # if (
-        #    "aggrid_" + algorithm_name in st.session_state
-        #    and st.session_state["aggrid_" + algorithm_name] is not None
-        # ):
-        #    st.session_state.tables[algorithm_name] = pd.DataFrame(
 
         edited_df = st.data_editor(
             st.session_state.tables[st.session_state["algorithm_name"]],
@@ -156,11 +114,6 @@ if (
         st.session_state[
             "filters_selected" + "_" + st.session_state["algorithm_name"]
         ] = {}
-        gd = GridOptionsBuilder.from_dataframe(edited_df)
-        gd.configure_default_column(editable=True)
-        st.session_state[
-            "grid_options" + "_" + st.session_state["algorithm_name"]
-        ] = gd.build()
 
     col5, col6 = st.columns([1, 3])
     filter_list = ["is_number", "is_negative"]
@@ -189,12 +142,44 @@ if (
                 args=(column_name, st.session_state["algorithm_name"]),
             )
 
-    logging.info(
-        f"""Grid Options : {st.session_state["grid_options" + "_" + st.session_state["algorithm_name"]]}""",
-    )
     with col6:
-        st.dataframe(edited_df.style.apply(check_last_cell_sum, axis=0))
+        col7, col8, col9 = st.columns([1, 1, 1])
+        with col7:
+            total = st.checkbox(
+                "Calculate the Total of each columns, excluding the last row"
+            )
+        with col8:
+            negativ = st.checkbox(
+                "Show the negative numbers, for each columns detected as a numerical type"
+            )
+        with col9:
+            symbol = st.checkbox(
+                "Show the cells that contain a special symbol : " + special_characters
+            )
 
-    col6, col7 = st.columns([1, 3])
-    with col7:
-        st.dataframe(edited_df.apply(column_sum, axis=0))
+        if total or negativ or symbol:
+            dataframe = edited_df
+            new_row = edited_df.apply(column_sum, axis=0)
+            new_row.iloc[0] = "Total Calculated"
+            dataframe.loc[-1] = new_row.transpose()
+            dataframe_styler = dataframe.style
+            if total:
+                dataframe_styler = dataframe_styler.apply(
+                    check_last_cell_sum,
+                    subset=pd.IndexSlice[:, dataframe.columns[1:]],
+                    axis=0,
+                )
+            if negativ:
+                numeric_columns = edited_df.select_dtypes(include=np.number).columns
+                dataframe_styler = dataframe_styler.map(
+                    style_negative,
+                    props="color:red;",
+                )
+            if symbol:
+                dataframe_styler = dataframe_styler.map(
+                    style_symbol,
+                    props="color:red;",
+                )
+            st.dataframe(dataframe_styler, use_container_width=True, height=1000)
+        else:
+            st.dataframe(edited_df, use_container_width=True, height=1000)
