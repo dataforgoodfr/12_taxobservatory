@@ -15,7 +15,7 @@ def set_validate() -> None:
     st.session_state["validate_selected_pages"] = True
 
 
-st.set_page_config(layout="wide", page_title='Pages selection')  # page_icon="📈"
+st.set_page_config(layout="wide", page_title="Pages selection")  # page_icon="📈"
 st.title("Country by Country Tax Reporting analysis : Selected Pages")
 st.subheader(
     "This page will allow you to select the pages containing your tables",
