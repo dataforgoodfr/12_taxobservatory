@@ -40,7 +40,7 @@ header_list = [
     remove,
 ]
 
-st.set_page_config(layout="wide", page_title='Pages selection')  # page_icon="📈"
+st.set_page_config(layout="wide", page_title="Pages selection")  # page_icon="📈"
 st.title("Country by Country Tax Reporting analysis : Headers")
 st.subheader(
     "This page will allow you to modify the headers and to remove columns",

@@ -4,9 +4,9 @@ import tempfile
 
 import streamlit as st
 import yaml
+from menu import display_pages_menu
 from pypdf import PdfReader
 from utils import get_pdf_iframe
-from menu import display_pages_menu
 
 from country_by_country.processor import ReportProcessor
 
