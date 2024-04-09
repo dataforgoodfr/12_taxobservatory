@@ -1,6 +1,6 @@
+from menu import display_pages_menu
 import streamlit as st
 from utils import set_algorithm_name, get_pdf_iframe
-from menu import display_pages_menu
 
 import sys
 import logging
@@ -40,7 +40,7 @@ header_list = [
     remove,
 ]
 
-st.set_page_config(layout="wide", page_title="Pages selection")  # page_icon="📈"
+st.set_page_config(layout="wide")  # page_icon="📈"
 st.title("Country by Country Tax Reporting analysis : Headers")
 st.subheader(
     "This page will allow you to modify the headers and to remove columns",
