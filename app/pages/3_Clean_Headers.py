@@ -1,7 +1,6 @@
 import streamlit as st
 from streamlit_option_menu import option_menu
-from utils import get_pdf_iframe, set_validate
-from country_by_country.utils.utils import gather_tables
+from utils import get_pdf_iframe
 
 import sys
 import logging
@@ -55,15 +54,6 @@ if (
     st.session_state.get("validate_selected_pages", False)
     and "pdf_after_page_validation" in st.session_state
 ):
-    if "tables" not in st.session_state:
-        for table_extractor in st.session_state["proc"].table_extractors:
-            new_asset = table_extractor(st.session_state["pdf_after_page_validation"])
-            st.session_state["assets"]["table_extractors"].append(new_asset)
-        tables_extracted_by_name = gather_tables(st.session_state["assets"])
-        logging.info(f"Table extracted : {tables_extracted_by_name}")
-
-        st.session_state["tables"] = tables_extracted_by_name
-
     col1, col2 = st.columns(2)
     with col1:
         st.markdown(
@@ -94,6 +84,10 @@ if (
         )
         st.session_state["algorithm_name"] = selected_algorithm
 
+        st.markdown(
+            "Table shape :"
+            + str(st.session_state.tables[st.session_state["algorithm_name"]].shape)
+        )
         with st.form(key="my_form"):
             for header in st.session_state.tables[
                 st.session_state["algorithm_name"]
@@ -111,4 +105,4 @@ if (
             )
 
             if submitted:
-                st.switch_page("pages/3_Tables.py")
+                st.switch_page("pages/4_Clean_Tables.py")
