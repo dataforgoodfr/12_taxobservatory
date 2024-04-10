@@ -22,6 +22,7 @@
 
 # Local imports
 from .camelot_extractor import Camelot
+from .from_csv import FromCSV
 from .llama_parse_extractor import LlamaParseExtractor
 from .unstructured import Unstructured
 from .unstructured_api import UnstructuredAPI
@@ -34,6 +35,8 @@ def from_config(config: dict) -> Camelot:
         extractor_params = config["params"]
     if extractor_type == "Camelot":
         return Camelot(**extractor_params)
+    elif extractor_type == "FromCSV":
+        return FromCSV(**extractor_params)
     elif extractor_type == "Unstructured":
         return Unstructured(**extractor_params)
     elif extractor_type == "UnstructuredAPI":
@@ -49,5 +52,3 @@ def from_config(config: dict) -> Camelot:
         from .extract_table_api import ExtractTableAPI
 
         return ExtractTableAPI(**extractor_params)
-
-    return None

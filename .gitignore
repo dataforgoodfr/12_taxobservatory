@@ -162,3 +162,9 @@ cython_debug/
 # Precommit hooks: ruff cache
 .ruff_cache
 .DS_Store
+
+# Pickle files
+*.pkl
+
+# Ref data file
+data_step2_before-currency-units.csv

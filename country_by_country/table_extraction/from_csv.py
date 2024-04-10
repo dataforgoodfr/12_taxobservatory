@@ -20,32 +20,42 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
+# Standard imports
+import glob
+import uuid
+from pathlib import Path
+
 # External imports
-import pypdf
+import pandas as pd
 
 
-class CopyAsIs:
-    """
-    Dummy filter just copying the source pdf to a target
-    temporary file
-    """
+class FromCSV:
+    def __init__(self, csv_directory: str) -> None:
+        self.csv_directory = csv_directory
 
-    def __init__(self) -> None:
-        pass
-
-    def __call__(self, pdf_filepath: str, assets: dict) -> None:
+    def __call__(self, pdf_filepath: str) -> dict:
         """
-        Basically keeps all the pages of the original document
-        Writes assets:
-            src_pdf: the original pdf filepath
-            selected_pages : list of selected pages
+        Returns asset that contain:
+
         """
+        # Build the path to the csv of the tables
+        # we expect the csv to be defined as
+        # - given a report /path/to/my_report.pdf
+        # Tables are searched for as
+        # - csv_directory/my_report_1.csv, csv_directory/my_report_2.csv,
+        # csv_directory/my_report_2.csv, ...
+        tables_list = []
+        report_basename = Path(pdf_filepath).stem.split("____")[0]
 
-        reader = pypdf.PdfReader(pdf_filepath)
-        n_pages = len(reader.pages)
+        tables_files = glob.glob(f"{self.csv_directory}/{report_basename}*.csv")
+        tables_list = [pd.read_csv(f) for f in tables_files]
 
-        if assets is not None:
-            assets["pagefilter"] = {
-                "src_pdf": pdf_filepath,
-                "selected_pages": list(range(n_pages)),
-            }
+        # Create asset
+        new_asset = {
+            "id": uuid.uuid4(),
+            "type": "from_csv",
+            "params": {"csv_directory": self.csv_directory},
+            "tables": tables_list,
+        }
+
+        return new_asset

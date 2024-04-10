@@ -21,7 +21,10 @@
 # SOFTWARE.
 
 # Standard imports
+import pathlib
 import tempfile
+
+import pandas as pd
 
 # External imports
 import pypdf
@@ -39,7 +42,19 @@ def keep_pages(pdf_filepath: str, selected_pages: list[int]) -> str:
     for pi in selected_pages:
         writer.add_page(reader.pages[pi])
 
-    filename = tempfile.NamedTemporaryFile(suffix=".pdf", delete=False).name
+    # We add the original pdf name without extension
+    # in the prefix of the temporary file
+    # in order to keep a trace of this name so that the next modules, from table
+    # extraction can make use of this name.
+    # For example, FromCSV makes use of this name to determine the name of the
+    # CSV to load
+    pdf_stem = pathlib.Path(pdf_filepath).stem
+    filename = tempfile.NamedTemporaryFile(
+        prefix=f"{pdf_stem}____",
+        suffix=".pdf",
+        delete=False,
+    ).name
+    print(f"filename {filename}")
     writer.write(filename)
 
     return filename
@@ -56,5 +71,43 @@ def gather_tables(
         elif len(tables) > 1:
             for i in range(len(tables)):
                 tables_by_name[asset["type"] + "_" + str(i)] = tables[i]
+
+    return tables_by_name
+
+
+def check_if_many(assets: dict) -> bool:
+    for asset in assets["table_extractors"]:
+        tables = asset["tables"]
+        if len(tables) > 1:
+            return True
+    return False
+
+
+def filled_table_extractors(assets: dict) -> list:
+    tables_by_name = []
+    print(assets)
+    for asset in assets["table_extractors"]:
+        tables = asset["tables"]
+        if len(tables) > 0:
+            tables_by_name.append(asset["type"])
+    return tables_by_name
+
+
+def gather_tables_with_merge(
+    assets: dict,
+    new_tables: pd.DataFrame,
+    table_extractor: str,
+) -> dict:
+    tables_by_name = {}
+    for asset in assets["table_extractors"]:
+        if asset["type"] == table_extractor:
+            tables_by_name[table_extractor] = new_tables
+        else:
+            tables = asset["tables"]
+            if len(tables) == 1:
+                tables_by_name[asset["type"]] = tables[0]
+            elif len(tables) > 1:
+                for i in range(len(tables)):
+                    tables_by_name[asset["type"] + "_" + str(i)] = tables[i]
 
     return tables_by_name

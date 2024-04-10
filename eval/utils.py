@@ -20,32 +20,35 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-# External imports
-import pypdf
+# Standard imports
+import contextlib
+import re
 
 
-class CopyAsIs:
-    """
-    Dummy filter just copying the source pdf to a target
-    temporary file
-    """
+def append_count_to_duplicates(strings: list[str]) -> list[str]:
+    """Append count to duplicate strings in array"""
+    count_dict = {}
+    for i, string in enumerate(strings):
+        if string in count_dict:
+            count_dict[string] += 1
+            strings[i] = f"{string}_{count_dict[string]}"
+        else:
+            count_dict[string] = 0
+    return strings
 
-    def __init__(self) -> None:
-        pass
 
-    def __call__(self, pdf_filepath: str, assets: dict) -> None:
-        """
-        Basically keeps all the pages of the original document
-        Writes assets:
-            src_pdf: the original pdf filepath
-            selected_pages : list of selected pages
-        """
+def convert_to_str(val: any) -> str:
+    """Convert input to str and remove any trailing zeros for floats"""
+    with contextlib.suppress(Exception):
+        return str(float(val)).rstrip("0").rstrip(".")
+    return str(val)
 
-        reader = pypdf.PdfReader(pdf_filepath)
-        n_pages = len(reader.pages)
 
-        if assets is not None:
-            assets["pagefilter"] = {
-                "src_pdf": pdf_filepath,
-                "selected_pages": list(range(n_pages)),
-            }
+def reformat_str(el: any) -> str:
+    """Normalize input value:
+    - If numerical, convert to string
+    - If contains comma, remove comma
+    - If enclosed in "()", convert to negative value
+    Output string."""
+    el = convert_to_str(el).replace(",", "")
+    return re.sub(r"\((\d+)\)", r"-\1", el)
