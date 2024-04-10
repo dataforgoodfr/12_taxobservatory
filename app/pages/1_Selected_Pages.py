@@ -1,5 +1,5 @@
 import streamlit as st
-from utils import get_pdf_iframe, set_validate
+from utils import get_pdf_iframe
 from country_by_country.utils.utils import keep_pages
 from pypdf import PdfReader
 
@@ -8,6 +8,11 @@ import copy
 import logging
 
 logging.basicConfig(stream=sys.stdout, level=logging.INFO, format="%(message)s")
+
+
+def set_validate() -> None:
+    st.session_state["validate_selected_pages"] = True
+
 
 st.set_page_config(layout="wide")  # page_icon="📈"
 st.title("Country by Country Tax Reporting analysis : Selected Pages")

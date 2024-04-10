@@ -114,10 +114,33 @@ you considered. Every algorithm provides the following assets :
 
 The following table extractors can be considered :
 
+- [ExtractTable][#extracttable]
 - [Camelot](#camelot)
 - [Unstructured API](#unstructured-api)
 - [Unstructured](#unstructured)
 - [Llama parse API](#llama-parse-api)
+
+### ExtractTable
+
+ExtractTable is provided for legacy/benchmarking purpose. The
+[ExtractTable](https://github.com/ExtractTable/ExtractTable-py) python module is
+no more maintained but this was originally the package used to extract data from
+PDF tables.
+
+You can use by specifying in the `config.yaml`:
+
+```
+table_extraction:
+    - type: ExtractTableAPI
+```
+
+It requires an API key to be defined in your `.env` file :
+
+```
+# Required for table exctration with ExtractTable API
+EXTRACTABLE_API_KEY=CHANGE_ME
+
+```
 
 ### Camelot
 
