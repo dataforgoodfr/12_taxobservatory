@@ -5,15 +5,15 @@ from argparse import ArgumentParser
 from datetime import datetime
 from pathlib import Path
 from time import time
-from typing import Any
 
 import pandas as pd
 import requests
 import yaml
-from logger import FileLogger, StdoutLogger
 from pypdf import PdfReader
 from pypdf.errors import PdfStreamError
 from tqdm import tqdm
+
+from .logger import FileLogger, StdoutLogger
 
 # default logger printing to stdout ; if run as main, a file+stdout logger is used instead
 logger = StdoutLogger()
@@ -203,7 +203,7 @@ def get_content_length(r: requests.models.Response) -> int | None:
     return content_length
 
 
-def timeout_handler(signum: Any, frame: Any) -> None:
+def timeout_handler(signum: any, frame: any) -> None:
     """Raises a TimeoutError upon calling."""
     raise TimeoutError
 

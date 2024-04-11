@@ -1,5 +1,5 @@
 import unittest
-from pathlib import PosixPath
+from pathlib import Path, PosixPath
 from unittest.mock import MagicMock, mock_open, patch
 
 from collecte import pdf_downloader
@@ -57,15 +57,17 @@ class TestCBCRScript(unittest.TestCase):
         # Call the function
         result = pdf_downloader.download_pdf(
             self.pdf_url,
-            "collecte/data/pdf_downloads",
+            Path("collecte/data/pdf_downloads"),
             self.company_name,
+            fetch_timeout_s=60,
+            check_pdf_integrity=True,
         )
 
         # Assert the calls and result
         assert result == expected_filename
         mock_file.assert_called_once_with(PosixPath(expected_filename), "wb")
         mock_exists.assert_any_call(PosixPath(expected_filename))
-        mock_get.assert_called_once_with(self.pdf_url, stream=True)
+        mock_get.assert_called_once_with(self.pdf_url, stream=True, timeout=(3.05, 10))
 
 
 if __name__ == "__main__":
