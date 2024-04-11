@@ -54,7 +54,6 @@ def keep_pages(pdf_filepath: str, selected_pages: list[int]) -> str:
         suffix=".pdf",
         delete=False,
     ).name
-    print(f"filename {filename}")
     writer.write(filename)
 
     return filename
@@ -67,9 +66,26 @@ def gather_tables(
     for asset in assets["table_extractors"]:
         tables = asset["tables"]
         if len(tables) == 1:
+            for column in tables[0].columns:
+                if (
+                    tables[0][column].dtype == "object"
+                ):  # Check if the column contains string data
+                    tables[0][column] = tables[0][column].replace("", None)
+                    tables[0][column] = tables[0][column].str.replace(
+                        ",",
+                        ".",
+                    )  # else we wont be able to convert to float
+                    tables[0][column] = tables[0][column].str.replace(".", "")
             tables_by_name[asset["type"]] = tables[0]
         elif len(tables) > 1:
             for i in range(len(tables)):
+                for column in tables[i].columns:
+                    if (
+                        tables[i][column].dtype == "object"
+                    ):  # Check if the column contains string data
+                        tables[i][column] = tables[i][column].replace("", None)
+                        tables[i][column] = tables[i][column].str.replace(",", ".")
+                        tables[i][column] = tables[i][column].str.replace(".", "")
                 tables_by_name[asset["type"] + "_" + str(i)] = tables[i]
 
     return tables_by_name
@@ -85,7 +101,6 @@ def check_if_many(assets: dict) -> bool:
 
 def filled_table_extractors(assets: dict) -> list:
     tables_by_name = []
-    print(assets)
     for asset in assets["table_extractors"]:
         tables = asset["tables"]
         if len(tables) > 0:
