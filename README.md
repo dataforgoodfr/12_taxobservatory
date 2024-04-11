@@ -12,6 +12,27 @@ source venv/bin/activate
 python3 -m pip install git+https://github.com/dataforgoodfr/12_taxobservatory.git
 ```
 
+## Running the PDF downloader
+
+To run the report downloader from the command line, you can invoke the `pdf_downloader` module:
+
+```
+python3 -m pdf_downloader company_names.csv googleapi_credentials.yaml
+```
+
+In addition, multiple optional parameters can be tuned. To know how to use them, you can check the help manual:
+```
+python -m pdf_downloader --help
+```
+
+The execution of this module requires a Google JSON API key, provided in a YAML-like file contaning the following fields:
+```
+# This is the content of my google JSON API file
+api_key: my_api_key
+cse_id: my_cse_id
+```
+
+
 ## Running the pipeline from the command line
 
 To run the pipeline from the command line, once installed, you can invoke the
