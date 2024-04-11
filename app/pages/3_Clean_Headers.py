@@ -10,6 +10,9 @@ logging.basicConfig(stream=sys.stdout, level=logging.INFO, format="%(message)s")
 keep = "keep the extracted value"
 remove = "remove this column"
 
+def transpose_current_table():
+    st.session_state.tables[st.session_state["algorithm_name"]] = st.session_state.tables[st.session_state["algorithm_name"]].transpose()
+
 
 def set_headers(algorithm_name: str) -> None:
     for header in st.session_state.tables[algorithm_name].columns.values.tolist():
@@ -81,6 +84,9 @@ if (
             "Table shape :"
             + str(st.session_state.tables[st.session_state["algorithm_name"]].shape)
         )
+        
+        st.button("Transpose table", on_click=transpose_current_table)
+        
         with st.form(key="my_form"):
             for header in st.session_state.tables[
                 st.session_state["algorithm_name"]
