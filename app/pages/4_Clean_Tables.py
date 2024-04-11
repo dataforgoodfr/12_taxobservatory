@@ -6,6 +6,7 @@ import sys
 import logging
 import pandas as pd
 import numpy as np
+import re
 
 logging.basicConfig(stream=sys.stdout, level=logging.INFO, format="%(message)s")
 
@@ -13,9 +14,7 @@ logging.basicConfig(stream=sys.stdout, level=logging.INFO, format="%(message)s")
 def check_last_cell_sum(column):
     last_cell = column.iloc[-2]  # Get the last cell value
     result = [""] * (len(column.tolist()) - 2)
-
     try:
-        column = column.astype(float)
         sum_except_last = column.iloc[
             :-2
         ].sum()  # Calculate the sum of all values except the last one
@@ -34,7 +33,6 @@ def check_last_cell_sum(column):
 
 def column_sum(column):
     try:
-        column = column.astype(float)
         return column.iloc[:-1].sum()
     except Exception:
         return None
@@ -45,6 +43,15 @@ def style_negative(v, props=""):
         return props if float(v) < 0 else None
     except Exception:
         return None
+
+
+def convert_dataframe(dataframe: pd.DataFrame) -> pd.DataFrame:
+    for column_name in dataframe.columns:
+        try:
+            dataframe[column_name] = dataframe[column_name].astype(float)
+        except Exception:
+            pass
+    return dataframe
 
 
 special_characters = "#&()[]@"
@@ -68,6 +75,11 @@ if (
     st.session_state.get("validate_selected_pages", False)
     and "pdf_after_page_validation" in st.session_state
 ):
+
+    st.session_state.tables[st.session_state["algorithm_name"]] = convert_dataframe(
+        st.session_state.tables[st.session_state["algorithm_name"]]
+    )
+
     col3, col4 = st.columns(2)
     with col3:
         st.markdown(
@@ -101,6 +113,7 @@ if (
         total = st.checkbox(
             "Calculate the Total of each columns, excluding the last row"
         )
+
     with col8:
         negativ = st.checkbox(
             "Show the negative numbers, for each columns detected as a numerical type"
@@ -109,30 +122,41 @@ if (
         symbol = st.checkbox(
             "Show the cells that contain a special symbol : " + special_characters
         )
+        remove_symbols = st.checkbox("Remove the special symbols")
 
-    if total or negativ or symbol:
-        dataframe = edited_df
-        new_row = edited_df.apply(column_sum, axis=0)
+    dataframe = edited_df
+
+    if remove_symbols:
+        pattern = "[" + re.escape(special_characters) + "]|\(.*?\)"
+        for column in dataframe.columns:
+            dataframe[column] = dataframe[column].apply(
+                lambda x: re.sub(pattern, "", str(x))
+            )
+        dataframe = convert_dataframe(dataframe)
+
+    if total:
+        new_row = dataframe.apply(column_sum, axis=0)
         new_row.iloc[0] = "Total Calculated"
         dataframe.loc[-1] = new_row.transpose()
-        dataframe_styler = dataframe.style
-        if total:
-            dataframe_styler = dataframe_styler.apply(
-                check_last_cell_sum,
-                subset=pd.IndexSlice[:, dataframe.columns[1:]],
-                axis=0,
-            )
-        if negativ:
-            numeric_columns = edited_df.select_dtypes(include=np.number).columns
-            dataframe_styler = dataframe_styler.map(
-                style_negative,
-                props="color:red;",
-            )
-        if symbol:
-            dataframe_styler = dataframe_styler.map(
-                style_symbol,
-                props="color:red;",
-            )
-        st.dataframe(dataframe_styler, use_container_width=True, height=1000)
-    else:
-        st.dataframe(edited_df, use_container_width=True, height=1000)
+
+    dataframe_styler = dataframe.style
+
+    if total:
+        dataframe_styler = dataframe_styler.apply(
+            check_last_cell_sum,
+            subset=pd.IndexSlice[:, dataframe.columns[1:]],
+            axis=0,
+        )
+
+    if negativ:
+        dataframe_styler = dataframe_styler.map(
+            style_negative,
+            props="color:red;",
+        )
+    if symbol:
+        dataframe_styler = dataframe_styler.map(
+            style_symbol,
+            props="color:red;",
+        )
+
+    st.dataframe(dataframe_styler, use_container_width=True, height=1000)
