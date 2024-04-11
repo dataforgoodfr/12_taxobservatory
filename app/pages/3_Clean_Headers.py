@@ -113,3 +113,11 @@ if (
 
             if submitted:
                 st.switch_page("pages/4_Clean_Tables.py")
+
+    df = st.data_editor(
+        st.session_state.tables[st.session_state["algorithm_name"]],
+        num_rows="dynamic",
+        width=900,
+        height=900,
+        disabled=True,
+    )
