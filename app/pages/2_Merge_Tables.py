@@ -11,6 +11,7 @@ from country_by_country.utils.utils import (
     filled_table_extractors,
     gather_tables_with_merge,
 )
+from menu import display_pages_menu
 
 
 def merge_table(table_extractor: str) -> None:
@@ -36,11 +37,13 @@ def save_merge(table_extractor: str) -> None:
     st.session_state["algorithm_name"] = table_extractor
 
 
-st.set_page_config(layout="wide")  # page_icon="📈"
+st.set_page_config(layout="wide", page_title="Merge Tables")  # page_icon="📈"
 st.title("Country by Country Tax Reporting analysis : Headers")
 st.subheader(
     "This page will allow you to modify the headers and to remove columns",
 )
+display_pages_menu()
+
 if "tables" not in st.session_state:
     st.markdown(
         "# !! Don't change the page while the algorithms are runing, else they will start again"
