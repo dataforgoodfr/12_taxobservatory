@@ -1,5 +1,6 @@
 import streamlit as st
 from utils import set_algorithm_name, get_pdf_iframe
+from menu import display_pages_menu
 
 import sys
 import logging
@@ -56,11 +57,12 @@ def style_symbol(v, props=""):
         return None
 
 
-st.set_page_config(layout="wide")  # page_icon="📈"
+st.set_page_config(layout="wide", page_title="Tables customization")  # page_icon="📈"
 st.title("Country by Country Tax Reporting analysis : Tables")
 st.subheader(
     "This page will allow you to clean the extracted tables",
 )
+display_pages_menu()
 
 if (
     st.session_state.get("validate_selected_pages", False)

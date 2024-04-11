@@ -1,3 +1,4 @@
+from menu import display_pages_menu
 import streamlit as st
 from utils import set_algorithm_name, get_pdf_iframe
 
@@ -44,6 +45,8 @@ st.title("Country by Country Tax Reporting analysis : Headers")
 st.subheader(
     "This page will allow you to modify the headers and to remove columns",
 )
+display_pages_menu()
+
 if "tables" not in st.session_state:
     st.markdown(
         "# !! Don't change the page while the algorithms are runing, else they will start again"
