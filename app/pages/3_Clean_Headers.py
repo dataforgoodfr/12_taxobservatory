@@ -24,6 +24,14 @@ def set_headers(algorithm_name: str) -> None:
             )
 
 
+def transpose_table(algorithm_name: str) -> None:
+    """
+    This function allows to transpose the table.
+    Sometimes, the CbCR contains tables where the juridictions are in rows and not in columns.
+    """
+    st.session_state.tables[algorithm_name] = st.session_state.tables[algorithm_name].T
+
+
 header_list = [
     keep,
     "jurisdiction",
@@ -81,6 +89,12 @@ if (
             "Table shape :"
             + str(st.session_state.tables[st.session_state["algorithm_name"]].shape)
         )
+        transpose = st.checkbox(
+            "Transpose the table",
+            on_change=transpose_table,
+            args=(st.session_state["algorithm_name"],),
+        )
+
         with st.form(key="my_form"):
             for header in st.session_state.tables[
                 st.session_state["algorithm_name"]
