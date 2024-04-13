@@ -1,7 +1,8 @@
 import streamlit as st
 from utils import set_algorithm_name, get_pdf_iframe
 from menu import display_pages_menu
-
+from country_by_country.utils.constants import JURIDICTIONS
+from Levenshtein import distance
 import sys
 import logging
 import pandas as pd
@@ -64,6 +65,26 @@ def style_symbol(v, props=""):
         return None
 
 
+def style_specific_cells(dataframe: pd.DataFrame, index_list: list):
+
+    color = "background-color: lightgreen"
+    df1 = pd.DataFrame("", index=dataframe.index, columns=dataframe.columns)
+    for index in index_list:
+        df1.iloc[index, 0] = color
+    return df1
+
+
+def most_similar_string(input_string: str) -> str:
+    min_distance = float("inf")
+    most_similar = None
+    for string in JURIDICTIONS.keys():
+        dist = distance(input_string, string)
+        if dist < min_distance:
+            min_distance = dist
+            most_similar = string
+    return most_similar
+
+
 st.set_page_config(layout="wide", page_title="Tables customization")  # page_icon="📈"
 st.title("Country by Country Tax Reporting analysis : Tables")
 st.subheader(
@@ -111,8 +132,9 @@ if (
     col7, col8, col9 = st.columns([1, 1, 1])
     with col7:
         total = st.checkbox(
-            "Calculate the Total of each columns, excluding the last row"
+            "Calculate the Total of each columns, excluding the last row", value=True
         )
+        country = st.checkbox("Activate the country filter", value=True)
 
     with col8:
         negativ = st.checkbox(
@@ -120,11 +142,12 @@ if (
         )
     with col9:
         symbol = st.checkbox(
-            "Show the cells that contain a special symbol : " + special_characters
+            "Show the cells that contain a special symbol : " + special_characters,
+            value=True,
         )
         remove_symbols = st.checkbox("Remove the special symbols")
 
-    dataframe = edited_df
+    dataframe = edited_df.copy()
 
     if remove_symbols:
         pattern = "[" + re.escape(special_characters) + "]|\(.*?\)"
@@ -135,9 +158,15 @@ if (
         dataframe = convert_dataframe(dataframe)
 
     if total:
+        dataframe = convert_dataframe(dataframe)
         new_row = dataframe.apply(column_sum, axis=0)
         new_row.iloc[0] = "Total Calculated"
         dataframe.loc[-1] = new_row.transpose()
+
+    if country:
+        dataframe.iloc[:-2, 0] = dataframe.iloc[:-2, 0].apply(
+            lambda x: most_similar_string(x)
+        )
 
     dataframe_styler = dataframe.style
 
@@ -159,4 +188,23 @@ if (
             props="color:red;",
         )
 
+    if country:
+        index_list = []
+        for index, (val1, val2) in enumerate(
+            zip(dataframe.iloc[:-1, 0], edited_df.iloc[:-1, 0])
+        ):
+            if val1 != val2:
+                index_list.append(index)
+        dataframe_styler = dataframe_styler.apply(
+            lambda x: style_specific_cells(x, index_list), axis=None
+        )
+
     st.dataframe(dataframe_styler, use_container_width=True, height=1000)
+
+    validated = st.button(
+        "Sauver le tableau ci dessus",
+    )
+    if validated:
+        st.session_state.tables[
+            st.session_state["algorithm_name"]
+        ] = dataframe_styler.data
