@@ -79,11 +79,13 @@ if (
         st.session_state["algorithm_name"] = st.selectbox(
             "Choose the extracted table you want to see",
             list(st.session_state.tables.keys()),
-            index=list(st.session_state.tables.keys()).index(
-                st.session_state["algorithm_name"],
-            )
-            if "algorithm_name" in st.session_state
-            else 0,
+            index=(
+                list(st.session_state.tables.keys()).index(
+                    st.session_state["algorithm_name"],
+                )
+                if "algorithm_name" in st.session_state
+                else 0
+            ),
             on_change=set_algorithm_name,
             args=("selectbox2",),
             key="selectbox2",
