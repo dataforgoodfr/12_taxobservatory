@@ -122,7 +122,7 @@ if (
             key="selectbox2",
         )
 
-        edited_df = st.data_editor(
+        st.session_state.tables[st.session_state["algorithm_name"]] = st.data_editor(
             st.session_state.tables[st.session_state["algorithm_name"]],
             num_rows="dynamic",
             width=800,
@@ -147,10 +147,10 @@ if (
         )
         remove_symbols = st.checkbox("Remove the special symbols")
 
-    dataframe = edited_df.copy()
+    dataframe = st.session_state.tables[st.session_state["algorithm_name"]].copy()
 
     if remove_symbols:
-        pattern = "[" + re.escape(special_characters) + "]|\(.*?\)"
+        pattern = "\(.*?\)" + "|[" + re.escape(special_characters) + "]"
         for column in dataframe.columns:
             dataframe[column] = dataframe[column].apply(
                 lambda x: re.sub(pattern, "", str(x))
@@ -191,7 +191,12 @@ if (
     if country:
         index_list = []
         for index, (val1, val2) in enumerate(
-            zip(dataframe.iloc[:-1, 0], edited_df.iloc[:-1, 0])
+            zip(
+                dataframe.iloc[:-1, 0],
+                st.session_state.tables[st.session_state["algorithm_name"]].iloc[
+                    :-1, 0
+                ],
+            )
         ):
             if val1 != val2:
                 index_list.append(index)

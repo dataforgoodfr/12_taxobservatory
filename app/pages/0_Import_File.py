@@ -47,7 +47,7 @@ pagefilter:
     modelfile: random_forest_model_low_false_positive.joblib
 
 table_extraction:
-#  - type: LLamaParse
+  - type: LLamaParse
   - type: Unstructured
     params:
       hi_res_model_name: "yolox"
