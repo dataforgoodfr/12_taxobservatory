@@ -22,6 +22,9 @@ display_pages_menu()
 mytmpfile = tempfile.NamedTemporaryFile(suffix=".pdf", delete=False)
 
 with st.sidebar:
+
+    st.markdown("# Configuration")
+
     original_pdf = st.file_uploader(
         "Upload a pdf document containing financial table : ",
     )
