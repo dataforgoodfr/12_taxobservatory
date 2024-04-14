@@ -7,7 +7,7 @@ def display_pages_menu() -> None:
         st.markdown("Click the button below to reset the app")
         if st.button("Reset", type="primary"):
             st.session_state.clear()
-            st.switch_page("PDF_visualisation.py")
+            st.switch_page("index.py")
 
         st.markdown("# Pipeline steps")
         st.page_link("pages/0_Import_File.py", label="Upload PDF")
