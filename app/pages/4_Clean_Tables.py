@@ -1,5 +1,5 @@
 import streamlit as st
-from utils import set_algorithm_name, get_pdf_iframe
+from utils import set_algorithm_name, get_pdf_iframe, to_csv_file, update_df_csv_to_save
 from menu import display_pages_menu
 
 import sys
@@ -91,9 +91,29 @@ if (
             key="selectbox2",
         )
 
+        if "algorithm_name" in st.session_state:
+            st.session_state["df_csv_to_save"] = to_csv_file(
+                st.session_state.tables[st.session_state["algorithm_name"]]
+            )
+        st.download_button(
+            label="📥 Download Current Table",
+            data=(
+                st.session_state["df_csv_to_save"]
+                if "df_csv_to_save" in st.session_state
+                else None
+            ),
+            disabled="df_csv_to_save" not in st.session_state,
+            file_name=(
+                f"{st.session_state['original_pdf_name']}.csv"
+                if "original_pdf_name" in st.session_state
+                else "table.csv"
+            ),
+        )
+
         edited_df = st.data_editor(
             st.session_state.tables[st.session_state["algorithm_name"]],
             num_rows="dynamic",
+            on_change=update_df_csv_to_save,
             width=800,
             height=900,
         )
