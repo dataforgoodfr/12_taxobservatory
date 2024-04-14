@@ -75,13 +75,26 @@ def style_specific_cells(dataframe: pd.DataFrame, index_list: list):
 
 
 def most_similar_string(input_string: str) -> str:
+    def update_min(string, min_distance, most_similar, input_string=input_string):
+        dist = distance(input_string, string)
+        if dist < min_distance:
+            return dist, string
+        else:
+            return min_distance, most_similar
+
     min_distance = float("inf")
     most_similar = None
     for string in JURIDICTIONS.keys():
-        dist = distance(input_string, string)
-        if dist < min_distance:
-            min_distance = dist
-            most_similar = string
+        # Compute the distance with the juridiction name
+        min_distance, most_similar = update_min(string, min_distance, most_similar)
+        # Compute the distance with the Alpha-2 code
+        min_distance, most_similar = update_min(
+            JURIDICTIONS[string]["Alpha-2 code"], min_distance, most_similar
+        )
+        # Compute the distance with the Alpha-3 code
+        min_distance, most_similar = update_min(
+            JURIDICTIONS[string]["Alpha-3 code"], min_distance, most_similar
+        )
     return most_similar
 
 
@@ -112,11 +125,13 @@ if (
         st.session_state["algorithm_name"] = st.selectbox(
             "Choose the extracted table you want to see",
             list(st.session_state.tables.keys()),
-            index=list(st.session_state.tables.keys()).index(
-                st.session_state["algorithm_name"],
-            )
-            if "algorithm_name" in st.session_state
-            else 0,
+            index=(
+                list(st.session_state.tables.keys()).index(
+                    st.session_state["algorithm_name"],
+                )
+                if "algorithm_name" in st.session_state
+                else 0
+            ),
             on_change=set_algorithm_name,
             args=("selectbox2",),
             key="selectbox2",
