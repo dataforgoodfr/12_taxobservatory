@@ -1,8 +1,9 @@
 import base64
-from pathlib import Path
-from io import BytesIO
 import gzip
+from io import BytesIO
+from pathlib import Path
 
+import pandas as pd
 import streamlit as st
 
 
@@ -19,7 +20,7 @@ def set_algorithm_name(my_key: str) -> None:
     st.session_state["algorithm_name"] = st.session_state[my_key]
 
 
-def to_csv_file(df):
+def to_csv_file(df: pd.DataFrame) -> bytes:
     output = BytesIO()
     with gzip.open(output, "wt") as f:
         df.to_csv(f, index=False)
@@ -29,5 +30,5 @@ def to_csv_file(df):
 
 def update_df_csv_to_save() -> None:
     st.session_state["df_csv_to_save"] = to_csv_file(
-        st.session_state.tables[st.session_state["algorithm_name"]]
+        st.session_state.tables[st.session_state["algorithm_name"]],
     )
