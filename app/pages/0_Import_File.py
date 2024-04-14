@@ -50,12 +50,7 @@ pagefilter:
     modelfile: random_forest_model_low_false_positive.joblib
 
 table_extraction:
-  - type: Camelot
-    params:
-      flavor: stream
-  - type: Camelot
-    params:
-      flavor: lattice
+  - type: LLamaParse
   - type: Unstructured
     params:
       hi_res_model_name: "yolox"
