@@ -160,6 +160,10 @@ cython_debug/
 .ruff_cache
 .DS_Store
 
+# Pycharm
+
+.idea
+
 # Pickle files
 *.pkl
 
