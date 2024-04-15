@@ -1,32 +1,186 @@
 
-   
-# Country explorer  (1 page) 
+<|part|class_name=p4 header|
+
+search for a country
+
+<|part|class_name=h1 fr align-columns-center|
+Pick a country to dive into their report
+|>
+|>
+
+<|layout|columns=1 1fr 1|class_name=p4 align-columns-center align-columns-stretch|
+
+<| |>
+
+note about if a country is absent + link to contact page to 
+
+<| |>
+
+|>
+
+
+<|layout|columns=1 1fr 1|class_name=p4 align-columns-center align-columns-stretch|
+
+<| |>
+
+<| {selected_country} |>
+
+<| |>
+
+<| sector |>
+
+<| headquarter |>
+
+<| CbC reports tracked |>
+
+<| Energy |>
+
+<| USA |>
+
+<| 4 |>
+
+<| |>
 
 <|{selected_country}|selector|lov={selector_country}|on_change=on_change_country|dropdown|label=Country|>   
 
-<|{df_selected_country}|table|page_size=10|>
+<| |>
 
-objectives : analyze cbcr data from companies headquartered in a country   
-e.g., analywe data from French companies  
-note : exact same section as page on publication trends to minimize work  
-    
-    
-SELECT BOX “HQ COUNTRY” (show all countries, even those with no reports)  
+|>
 
-Evolution of reports over time  
-note : same block as in page “publication trends” to minimize work  
-number of reports over time  
-number of MNEs with at least one report over time  
-comparison with total MNE that will be subject to the directive   
-quality of the reports (multiple ways to assess : % with all OECD var, % with all GRI var, % with country-level data, aggregated transparency score, or just boolean on whether specific var are disclosed)  
-cloud of available companies with number of reports / transparency score displayed when hovering   
 
-Analysis of CbCRs published  
-SELECT BOX “FISCAL YEAR”  
-are %country% companies using tax havens plot companies of the selected country based on % profit in TH and % employee in TH  
-link to FAQ on tax havens  
-3.    Link to download data  
-4.    Links to other exploration tools  
-publication trends  
-companies  
-countries  
+<|layout|columns=1 1|class_name=p4|gap=5rem
+
+<|card|
+<|part|class_name=h2 
+Key Info
+|>
+
+Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.  
+
+
+<|{df_selected_country}|table|page_size=5|>
+
+|>
+
+<|card|
+
+<|part|class_name=h2 
+Main locations
+|>
+
+Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.  
+
+<|{df_count_country}|chart|type=bar|x=year|y[1]=mnc|>
+
+|>
+
+|>
+
+
+
+[//]: <> (Where does Total declare profits ?)
+
+<|layout|columns=1|class_name=p4 align-columns-center|
+
+<|part|class_name=h1|
+Where does Total declare profits ?
+|>
+
+Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.  
+Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.  
+Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.  
+Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.  
+
+<| |>
+
+<|layout|columns=1 1|class_name=align-columns-center|gap=5rem
+
+<|{df_count_country}|chart|type=bar|x=year|y[1]=mnc|>
+
+<|{df_count_country}|chart|type=bar|x=year|y[1]=mnc|>
+
+|>
+
+|>
+
+
+
+[//]: <> (Total’s use of tax heavens)
+<|layout|columns=1|class_name=p4 align-columns-center|
+
+<|layout|columns=1fr 1|class_name=align-columns-center|gap=5rem
+
+<|part|class_name=h1|
+Total’s use of tax heavens
+|>
+
+<|button|active|label="Download the complete data"|>
+
+|>
+
+
+<|part|class_name=spacing2|
+Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.  
+Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.  
+Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.  
+Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.  
+|>
+
+<|layout|columns=1 1|class_name=align-columns-center|gap=5rem
+
+<|{df_count_country}|chart|type=bar|x=year|y[1]=mnc|>
+
+<|{df_count_country}|chart|type=bar|x=year|y[1]=mnc|>
+
+|>
+
+<|{df_count_country}|table|>
+
+|>
+
+<|layout|columns=1 1|class_name=align-columns-center|gap=5rem
+
+<|part|
+Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.  
+Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.  
+Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.  
+Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.  
+|>
+
+<|{df_count_country}|chart|type=bar|x=year|y[1]=mnc|>
+
+|>
+
+
+[//]: <> (Total’s tax rate by jurisdiction)
+<|layout|columns=1fr|class_name=p4 align-columns-center|gap=5rem
+
+<|part|class_name=h1|
+Total’s tax rate by jurisdiction
+|>
+
+<|layout|columns=1 1|class_name=align-columns-center|gap=5rem
+
+<|{df_count_country}|chart|type=bar|x=year|y[1]=mnc|>
+
+<|part|
+Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.  
+Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.  
+Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.  
+Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.  
+|>
+
+|>
+
+|>
+
+[//]: <> (Evolution over time)
+<|layout|columns=1fr|class_name=p4 align-columns-center|gap=5rem
+
+<|part|class_name=h1|
+Evolution over time
+|>
+
+<|{df_count_country}|chart|type=bar|x=year|y[1]=mnc|>
+
+|> [//]: <> (Evolution over time)

@@ -2,33 +2,42 @@ import pandas as pd
 import numpy as np
 import plotly.express as px
 import plotly.graph_objects as go
+import humanize
 
+# TODO add viz comment
+# Viz 1 -
 def number_of_tracked_reports(df):
     number_of_tracked_reports = len(df.groupby(["year", "mnc"])["mnc"])
     return number_of_tracked_reports
 
+# TODO add viz comment
 def number_of_tracked_reports_company(df_selected_company):
     number_of_tracked_reports_company = len(
         df_selected_company.groupby(["year"])["year"]
     )
     return number_of_tracked_reports_company
 
+# TODO add viz comment
 def number_of_tracked_reports_sector(df_selected_sector):
     number_of_tracked_reports_sector = len(
             df_selected_sector.groupby(["year", "mnc"])["year"]
         )
     return number_of_tracked_reports_sector
 
+# TODO add viz comment
 def number_of_tracked_reports_country(df_selected_country):    
     number_of_tracked_reports_country = len(
         df_selected_country.groupby(["year", "mnc"])["year"]
     )
     return number_of_tracked_reports_country
 
+# TODO add viz comment
+# Viz 2 - Number of tracked reports over time
 def number_of_tracked_reports_over_time(df):
     df_count = df.groupby(["year"])["mnc"].nunique().reset_index()
     return df_count
 
+# TODO add viz comment
 def number_of_tracked_reports_over_time_company(df_selected_company):
     df_count_company = (
         df_selected_company.groupby(["year"])["mnc"].nunique().reset_index()
@@ -43,6 +52,7 @@ def number_of_tracked_reports_over_time_company(df_selected_company):
     # )
     return df_count_company
 
+# TODO add viz comment
 def number_of_tracked_reports_over_time_sector(df_selected_sector):
     df_count_sector = (
         df_selected_sector.groupby(["year"])["mnc"].nunique().reset_index()
@@ -60,6 +70,7 @@ def number_of_tracked_reports_over_time_sector(df_selected_sector):
     # )
     return df_count_sector
 
+# TODO add viz comment
 def number_of_tracked_reports_over_time_country(df_selected_country):
     df_count_country = (
         df_selected_country.groupby(["year"])["mnc"].nunique().reset_index()
@@ -71,8 +82,7 @@ def number_of_tracked_reports_over_time_country(df_selected_country):
     # row[5].line_chart(df_count_all_country, x="year", y="mnc", color="jur_name")
     return df_count_country
 
-    
-    
+# TODO add viz comment
 # what are the tax havens being used by the company
 # to test but could be a table with one row per jurisdiction (filtering on TH) with
 # % profit
@@ -80,7 +90,6 @@ def number_of_tracked_reports_over_time_country(df_selected_country):
 # profit per employee
 # % related party revenue
 #  for domestic vs tax havens vs. non havens
-
 def tax_haven_used_by_company(df_selected_company):
     company_upe_code = df_selected_company['upe_code'].unique()[0]
     pc_list = ['employees', 'profit_before_tax', 'related_revenues']
@@ -116,7 +125,7 @@ def tax_haven_used_by_company(df_selected_company):
 
     return df_selected_company, df_selected_company_th_agg
 
-
+# TODO add viz comment
 # complete table table showing for all jurisdictions revenues, profits, employees, taxes with % of total for each (color code for tax havens)
 def company_table(df_selected_company):
     company_upe_code = df_selected_company['upe_code'].unique()[0]
@@ -229,10 +238,32 @@ def breakdown_of_reports_by_hq_country_viz(df_reports_per_country):
     # fig.show()
     return go.Figure(fig)
 
+## Viz 6 - Breakdown of reports by sector over time (bar chart)
+def breakdown_of_reports_by_sector_over_time(df):
+    df_reports_per_sector_over_time = df
+    return df_reports_per_sector_over_time
+# def breakdown_of_reports_by_sector_over_time(df_reports_per_sector_over_time):
+    # return fig
+
+
+## Viz 7 - Breakdown of reports by HQ country over time (bar chart)
+# TODO add code
+
+## Viz 8 - Breakdown of MNC by sector (pie chart - changed to bar chart for more visibility)
+# TODO add code
+
+## Viz 9 - Breakdown of MNC by HQ country (pie chart - changed to bar chart for more visibility)
+# TODO add code
+
+## Viz 10/11 - Breakdown of MNC by sector
+# TODO add code
+
+## Viz 11 - Breakdown of MNC by HQ country
+# TODO add code
 
 # Viz 12 - available reports by company
 def compute_company_available_reports(df: pd.DataFrame, company: str) -> dict:
-    """Compute the number of reports tracked for a specific company and the 
+    """Compute the number of reports tracked for a specific company and the
     available fiscal years.
 
     Args:
@@ -247,7 +278,7 @@ def compute_company_available_reports(df: pd.DataFrame, company: str) -> dict:
 
     # Convert type of items from 'int' to 'str' in available years list
     years_string_list = [str(year) for year in available_years]
-    
+
     # Summarize all available years in one string
     if len(years_string_list) == 1:
         years_string = years_string_list[0]
@@ -263,3 +294,101 @@ def compute_company_available_reports(df: pd.DataFrame, company: str) -> dict:
     }
 
     return data
+
+def display_company_available_reports(
+        df: pd.DataFrame, company: str, hide_company: bool = True) -> pd.DataFrame:
+    """Display the number of reports tracked for a specific company and the
+    available fiscal years.
+
+    Args:
+        df (pd.DataFrame): CbCRs database.
+        company (str): company name.
+        hide_company (bool, optional): hide company name in final table. Defaults to True.
+
+    Returns:
+        pd.DataFrame: numbers of reports and fiscal years.
+    """
+
+    # Compute data
+    data = compute_company_available_reports(df=df, company=company)
+
+    # Create the table
+    df = pd.DataFrame.from_dict(data=data, orient='index')
+
+    if hide_company:
+        return df[1:].style.hide(axis='columns')
+
+    return df.style.hide(axis='columns')
+
+
+# Viz 13 - company key financials kpis
+def compute_company_key_financials_kpis(
+        df: pd.DataFrame, company: str, year: int = None) -> dict:
+    """Compute key financial KPIs for a company.
+
+    Args:
+        df (pd.DataFrame): CbCRs database.
+        company (str): Company name
+        year (int, optional): fiscal year to filter the results with. Defaults to None.
+
+    Returns:
+        dict: company key financial KPIs.
+    """
+
+    kpis_list = ['total_revenues', 'unrelated_revenues', 'related_revenues',
+                 'profit_before_tax', 'tax_paid', 'employees']
+
+    years_list = df.loc[df['mnc'] == company, 'year'].unique()
+
+    # Compute sum of kpis
+    if not year or year not in years_list:
+        df = (df.loc[df['mnc'] == company]
+              .groupby(['year', 'upe_name'], as_index=False)[kpis_list]
+              .sum()
+              )
+    else:
+        df = (df.loc[(df['mnc'] == company) & (df['year'] == year)]
+              .groupby(['year', 'upe_name'], as_index=False)[kpis_list]
+              .sum())
+
+    df = df.set_index('year')
+
+    # Make financial numbers easily readable with 'humanize' package
+    for column in df.columns:
+        if column not in ['employees', 'upe_name']:
+            df[column] = df[column].apply(
+                lambda x: humanize.intword(x) if isinstance(x, (int, float)) else x)
+            df[column] = '€ ' + df[column]
+        elif column == 'employees':
+            df[column] = df[column].astype(int)
+
+    # Clean columns string
+    df = df.rename(columns={'upe_name': 'headquarter'})
+    df.columns = df.columns.str.replace('_', ' ').str.capitalize()
+
+    # Create a dictionnary with the results
+    data = df.to_dict(orient='index')
+
+    return data
+
+
+def display_company_key_financials_kpis(
+        df: pd.DataFrame, company: str, year: int = None) -> pd.DataFrame:
+    """Display key financial KPIs for a company.
+
+    Args:
+        df (pd.DataFrame): CbCRs database.
+        company (str): Company name
+        year (int, optional): fiscal year to filter the results with. Defaults to None.
+
+    Returns:
+        pd.DataFrame: company key financial KPIs.
+    """
+
+    # Compute data
+    data = compute_company_key_financials_kpis(df=df, company=company, year=year)
+
+    # Create the table
+    df = pd.DataFrame.from_dict(data)
+
+    return df

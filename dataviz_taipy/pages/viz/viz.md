@@ -119,7 +119,6 @@ dsfsdqqfsd
 
 |>
 
-
 ## Viz 4 - Breakdown of reports by sector (pie chart)
 [//]: # (<|{df_reports_per_sector_year}|chart|x=percent|y=sector|title=Breakdown of Reports by Sector &#40;All Years&#41;|type[1]=bar|orientation=h|>)
 <|chart|figure={breakdown_of_reports_by_sector_fig}|>

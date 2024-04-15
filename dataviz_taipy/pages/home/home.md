@@ -1,134 +1,183 @@
-<|layout|columns=1|class_name=p4 align-columns-center|
+<home|layout|columns=1|class_name=align-columns-center|
+
+<world_map|part|class_name=world_map|
 
 [//]: <> (header)
-<|part|class_name=h1 header p4|
-Explore our Country-by-country reports tracker
-|>
+<header|part|class_name=h1 p4|
+Multinationals under the spotlight
+|header>
 [//]: <> (end header)
 
+<subheader|part|class_name=p4 subheader|
+This platform provides unprecedented insights into 
+how large corporations approach taxes across borders. 
+Explore country-by-country financial reports published 
+by multinationals to see where they declare profits 
+and revenues, identify potential uses of tax havens 
+or loopholes and analyze tax payments versus actual 
+operations.  
+While some multinationals now publish detailed 
+country data, the reports remain scattered and 
+difficult to analyze collectively. Our tool compiles 
+this information into an accessible, user-friendly 
+format. Start exploring the tax footprints of major 
+multinationals today and unlock key insights into an 
+often opaque aspect of global business operations.
+|subheader>
 
-
-<|part|class_name=p4 subheader|
-This tool collects and explores public Country-by-Country Reports (CbCRs) published by multinational companies and provides **transparent** and **accessible** data on companies’ country-level distribution of revenues, profits, taxes and more
-|>
-
-<|layout|columns=1 1 1|gap=5rem|
 
 [//]: <> (layout card)
-<|layout|columns=1 1 1|class_name=p4|gap=5rem|
-<|card|
-See where companies declare profits and how much tax they pay : fake dataviz
-|>
-
-<|card|
-Detect suspicious behavior by looking at countries with high profits but few employees / high profit per employee : fake data viz
-|>
-
-<|card|
-Analyze presence in countries considered tax havens : fake data viz
-|>
-
-|>
+<layoutcard|layout|columns=1 1 1|class_name=p4|gap=5rem|
+  <|card|
+  <|part|class_name=h1
+  Explore companies
+  |>
+  Search and filter to find reports   
+  for specific multinationals. Review their declared 
+  profits, taxes paid, employee counts and more for 
+  each country over multiple years.
+  |>    
+  <|card|
+  <|part|class_name=h1
+  Spot reporting trends
+  |>
+  Visualize how tax reporting practices from the 
+  world's largest corporations are evolving across
+  industries, regions and over time through 
+  interactive charts and analysis.
+  |>   
+  <|card|
+  <|part|class_name=h1
+  Gain Expert Insights
+  |>
+  Access our ongoing research examining 
+  multinational tax behavior based on this 
+  country-by-country data, including case 
+  studies, risk scoring and more.
+  |>
+|layoutcard>
 [//]: <> (end layout card)
 
-<|part|
+|world_map>
+[//]: <> (end world map)
 
+<content|part|clas_name=mycontent|
 
-<|part|class_name=h2 p4|
-add CTAs to company, sector, country here ?
-|>
-
-[//]: <> (Once upon a time... )
-<|part|class_name=blue_section p4|
-
+<|layout|columns=1 1fr 1|clas_name=p4 align-columns-center|
 <|part|class_name=h2|
-Once upon a time... in the Bahamas
+Our database is growing 
 |>
-
-[//]: <> (layout)
-<|layout|columns=1 2|gap=3rem|class_name=p4 align-columns-center|
-[//]: <> (first column)
-<| static text to illustrate the viz |>
-[//]: <> (second column)
-<|
-![image](images/bahamas.png)
-|>
-
-|>
-[//]: <> (end layout)
-
-[//]: <> (button)
-<|layout|columns=1 1 1|gap=3rem|
-
 <|part|
 |>
+<|button|active|label=More on reporting trends ->|>
+|>
 
-<|button|active|label="More key stories"|>
+
+
+[//]: <> (row viz)
+<viz_row|layout|columns=1 1 1|gap=4rem|clas_name=fr p6 align-columns-center|
+
+<first2viz|layout|columns=1|gap=4rem|clas_name=fr align-columns-center|
+
+[//]: <> (a viz 1)
+<viz_card|part|class_name=viz|
+
+<headers|layout|columns=2fr 1|
+<title|part|
+<|{viz1.title}|>
+|title>
+<download_button|part|
+<|{download_icon_path}|image|class_name=download_button|on_action={viz1.on_action}|>
+|download_button>
+|headers>
+<sub_title|
+<|{viz1.sub_title}|>
+|sub_title>
+<data_viz|part|class_name=round|
+<|{viz1.data}|>
+|data_viz>
+|viz_card>
+
+[//]: <> (a viz 3)
+<viz_card|part|class_name=viz|
+<headers|layout|columns=2fr 1|
+<title|part|
+<|{viz3.title}|>
+|title>
+<download_button|part|
+<|{download_icon_path}|image|class_name=download_button|on_action={viz3.on_action}|>
+|download_button>
+|headers>
+<sub_title|
+<|{viz3.sub_title}|>
+|sub_title>
+<data_viz|part|class_name=round|
+<|{viz3.data}|>
+|data_viz>
+|viz_card>
+[//]: <> (end of a viz 3)
+
+|first2viz>
+
+
+[//]: <> (a viz 2)
+<|part|class_name=viz|
+<|layout|columns=2fr 1|
+<|part|
+<|{viz2.title}|>
+|>                     
+  
+<|part|
+<|{download_icon_path}|image|class_name=download_button|on_action={viz2.on_action}|>
+|>
+|>
+<|{viz2.sub_title}|>  
+<|{viz2.data}|chart|type=bar|x=year|y[1]=mnc|line[1]=dash|>
+|>
+[//]: <> (end of a viz 2)
+
 
 <|part|
+<|{original_image}|image|>
 |>
-|>
-[//]: <> (end button)
 
-|>
-[//]: <> (end Once upon a time... )
+|viz_row>
 
-[//]: <> (A growing database)
-<|part|class_name=p4 blue_section|
 
+
+<rowheader|layout|columns=1fr  1|clas_name=p4 align-columns-center|
 <|part|class_name=h2|
-A growing database
+And there are a lot of stories to tell
 |>
-
-<|layout|columns=1 2|gap=3rem|class_name=align-columns-center
-
-<|layout|columns=1
-<|
-XXX reports tracked in 2023
-+X% vs 2022
-
-X% average transparency score
-+X% vs 2022
- 
-|>
-
-<|button|active|label="More on reporting trends"|>
-
-|>
-
-![image](images/tag_cloud.png)
-
-|>
-
-|>
-[//]: <> (end A growing database)
+<|button|active|label=More key stories |>
+|rowheader>
 
 
-[//]: <> (Why building a tracker)
-<|part|
-<|part|class_name=h2|
-Why building a tracker
-|>
+<bluesection|layout|columns=1  1|clas_name=p4 align-columns-center|
+<firstblue|part|class_name=blue_section|
+European banks love tax havens
 
-<|layout|columns=1 |gap=3rem||class_name=align-columns-center|
+Analysing 7 years of country-by-country data published 
+by European banks, we show that EU banks have been consistently present in tax havens with around 14% of their profits booked in tax havens annually. Implementing 
+a 15% minimum tax rate could generate EUR 3-5 billion annually for European countries.
 
-<|layout|columns=1 1 1|gap=3rem||class_name=align-columns-center|
-<|cardround|
-CbCRs data is instrumental for analyzing companies' tax practices
-|>
-<|cardround|
-CbCRs data is public but not centralized/standardized, hence difficult to access
-|>
-<|cardround|
-Difficulty to access and analyze will grow as  more reports get expected
-|>
+Read more ->
+|firstblue>
 
-|>
 
-<|button|class_name=primary|label="Methodology"|>
+<secondblue|part|class_name=blue_section|
+Tracking CbCR's Fragmented Uptake
 
-|>
-|>
-[//]: <> (end Why building a tracker)
+Overall CbCR publishing rates are low (97 reports for 2020), 
+but increasing rapidly. CbCR publishing is concentrated in European countries and in the extractive sector. Last, there remains significant room for progress on the completion of the information provided 
+and the accessibility of these reports: 55% of the reports
+do not include all the recommended variables and reports are published in a wide variety of documents.
 
-|>
+Read more ->
+|secondblue>
+
+|bluesection>
+
+|content>
+
+|home>

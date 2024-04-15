@@ -1,53 +1,49 @@
+@import url("viz.css");
 
 :root {
     background-color:#e8e9ec;
     background:#e8e9ec;
 }
 
-/* .MuiBox-root {
-    background-color:#e8e9ec;
-    background:#e8e9ec;
-} */
-
 .blue_section {
     background-color:#02198D;
     -webkit-text-fill-color:ghostwhite;
+    border-radius: 20px;
+    padding:30px;
 }
-
 
 .card {
-    background-color:#02198D;
+    background-color:#ffffff;
     border-radius: 20px;
-    -webkit-text-fill-color:ghostwhite;
+    -webkit-text-fill-color:#02198D;
     font-size: 24px;
 }
 
-
-.cardround {
-    background: #021978;
-    gap: 10px;
-    -webkit-text-fill-color:ghostwhite;    
-    width: 370px; 
-    height: 370px;
-    border-radius: 50%;
-    display: flex; /* or inline-flex */
-    align-items: center; 
-    justify-content: center;  
+.card:hover {
+    background-color:#02198D;
+    border-radius: 20px;
+    -webkit-text-fill-color:#ffffff;
     font-size: 24px;
-    align-items: center;
-    text-align: center;
 }
 
 
 .header {
     background-color:#E8E9EC;
     -webkit-text-fill-color:#02198D;
+}
+
+.world_map {
+    background-image: url("../../images/world_map.png");
+    -webkit-text-fill-color:#FFFFFF;
+}
+
+.header h1{
     font-size: 64px;
 }
 
 .subheader {    
-    -webkit-text-fill-color:#02198D;
-    font-size: 25px;
+    -webkit-text-fill-color:#FFFFFF;
+    font-size: 17px;
 }
 
 .footer {
@@ -55,3 +51,8 @@
     -webkit-text-fill-color:#02198D;
     
 }
+
+
+
+
+

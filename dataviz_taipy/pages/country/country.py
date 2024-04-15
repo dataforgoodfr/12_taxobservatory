@@ -3,6 +3,8 @@ import pandas as pd
 
 from taipy.gui import Markdown
 
+import algo
+
 from data.data import data
 
 selected_country = 'Mauritius'
@@ -12,6 +14,7 @@ colname_country = 'jur_name'
 selector_country = list(np.sort(data[colname_country].astype(str).unique()))
 
 df_selected_country = data[data["jur_name"]==selected_country] 
+df_count_country = algo.number_of_tracked_reports_over_time_country(df_selected_country)
 
 def on_change_country(state):
     # state contains all the Gui variables and this is through this state variable
@@ -24,5 +27,5 @@ def on_change_country(state):
         
     # state.pie_chart = pd.DataFrame({"labels": ["Deaths", "Recovered", "Confirmed"],
     #                                 "values": [state.data_country_date.iloc[-1, 6], state.data_country_date.iloc[-1, 5], state.data_country_date.iloc[-1, 4]]})
-    
+    state.df_count_country = algo.number_of_tracked_reports_over_time_country(state.df_selected_country)
     # convert_density(state)

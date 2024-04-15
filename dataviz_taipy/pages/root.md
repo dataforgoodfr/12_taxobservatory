@@ -1,15 +1,20 @@
 <|toggle|theme|>
-<|layout|columns=1 5fr 1|
-<[part|
+
+<|layout|columns=1 1 5fr 1|
+
+<|part|
 logo
-]>
+|>
+
+<|part|
+Taxplorer
+|>
 
 <|navbar|>
 
 <|button|active|label=download|>
 
 |>
-
 
 <|content|>
 

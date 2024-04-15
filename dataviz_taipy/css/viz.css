@@ -1,0 +1,46 @@
+.viz {
+    background-color:#ffffff;
+    border-radius: 20px;
+    -webkit-text-fill-color:#02198D;
+    font-size: 24px;
+    align-items: center;
+
+}
+.parent {
+    width:100%;
+    display: flex;
+}
+.child{
+    display: inline-block;
+    align-items: center;
+}
+
+.download_button {
+    width: 20px;
+    display:
+    inline-flex;
+    vertical-align: middle;
+}
+
+.round {
+    background: #B8BEDB;
+    gap: 10px;
+    -webkit-text-fill-color:#021978;
+    width: 70px;
+    height: 70px;
+    border-radius: 50%;
+    display: flex; /* or inline-flex */
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+    align-items: center;
+    text-align: center;
+}
+
+.mycontent {
+    width: 95%;
+    padding-top: 50px;
+    padding-right: 30px;
+    padding-bottom: 50px;
+    padding-left: 80px;
+}

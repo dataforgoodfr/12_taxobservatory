@@ -1,19 +1,17 @@
 
-<|part|class_name=p4 fr header|
-
-search for a company
+<|part|class_name=p4 header|
+search for a sector
 
 <|part|class_name=h1 fr align-columns-center|
-Pick a company to dive into their report
+Pick a sector to dive into their report
 |>
-
 |>
 
 <|layout|columns=1 1fr 1|class_name=p4 align-columns-center align-columns-stretch|
 
 <| |>
 
-note about if a company is absent + link to contact page to 
+note about if a sector is absent + link to contact page to 
 
 <| |>
 
@@ -24,7 +22,7 @@ note about if a company is absent + link to contact page to
 
 <| |>
 
-<| Shell |>
+<| {selected_sector} |>
 
 <| |>
 
@@ -42,7 +40,7 @@ note about if a company is absent + link to contact page to
 
 <| |>
 
-<|{selected_company}|selector|lov={selector_company}|on_change=on_change_company|dropdown|label=Company|>   
+<|{selected_sector}|selector|lov={selector_sector}|on_change=on_change_sector|dropdown|label=Sector|>   
 
 <| |>
 
@@ -59,7 +57,7 @@ Key Info
 Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.  
 
 
-<|{df_selected_company}|table|page_size=10|>
+<|{df_selected_sector}|table|page_size=5|>
 
 |>
 
@@ -71,7 +69,7 @@ Main locations
 
 Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.  
 
-<|{df_count_company}|chart|type=bar|x=year|y[1]=mnc|>
+<|{df_count_sector}|chart|type=bar|x=year|y[1]=mnc|>
 
 |>
 
@@ -96,9 +94,9 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor i
 
 <|layout|columns=1 1|class_name=align-columns-center|gap=5rem
 
-<|{df_count_company}|chart|type=bar|x=year|y[1]=mnc|>
+<|{df_count_sector}|chart|type=bar|x=year|y[1]=mnc|>
 
-<|{df_count_company}|chart|type=bar|x=year|y[1]=mnc|>
+<|{df_count_sector}|chart|type=bar|x=year|y[1]=mnc|>
 
 |>
 
@@ -129,13 +127,13 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor i
 
 <|layout|columns=1 1|class_name=align-columns-center|gap=5rem
 
-<|{df_count_company}|chart|type=bar|x=year|y[1]=mnc|>
+<|{df_count_sector}|chart|type=bar|x=year|y[1]=mnc|>
 
-<|{df_count_company}|chart|type=bar|x=year|y[1]=mnc|>
+<|{df_count_sector}|chart|type=bar|x=year|y[1]=mnc|>
 
 |>
 
-<|{df_count_company}|table|>
+<|{df_count_sector}|table|>
 
 |>
 
@@ -148,7 +146,7 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor i
 Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.  
 |>
 
-<|{df_count_company}|chart|type=bar|x=year|y[1]=mnc|>
+<|{df_count_sector}|chart|type=bar|x=year|y[1]=mnc|>
 
 |>
 
@@ -162,7 +160,7 @@ Total’s tax rate by jurisdiction
 
 <|layout|columns=1 1|class_name=align-columns-center|gap=5rem
 
-<|{df_count_company}|chart|type=bar|x=year|y[1]=mnc|>
+<|{df_count_sector}|chart|type=bar|x=year|y[1]=mnc|>
 
 <|part|
 Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.  
@@ -182,6 +180,6 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor i
 Evolution over time
 |>
 
-<|{df_count_company}|chart|type=bar|x=year|y[1]=mnc|>
+<|{df_count_sector}|chart|type=bar|x=year|y[1]=mnc|>
 
 |> [//]: <> (Evolution over time)
