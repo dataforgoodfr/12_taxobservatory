@@ -12,6 +12,10 @@ source venv/bin/activate
 python3 -m pip install git+https://github.com/dataforgoodfr/12_taxobservatory.git
 ```
 
+## Download the reports locally
+
+To download the reports, you can use the script `collecte/pdf_downloader.py`. You will need a [Google API key](https://developers.google.com/custom-search/v1/introduction) as well as a search engine ID (or [CX code](https://www.google.com/cse/all)).  
+
 ## Running the pipeline from the command line
 
 To run the pipeline from the command line, once installed, you can invoke the
