@@ -81,7 +81,6 @@ Our database is growing
 
 [//]: <> (a viz 1)
 <viz_card|part|class_name=viz|
-
 <headers|layout|columns=2fr 1|
 <title|part|
 <|{viz1.title}|>
