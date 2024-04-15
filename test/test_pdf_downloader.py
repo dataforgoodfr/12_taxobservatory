@@ -52,12 +52,12 @@ class TestCBCRScript(unittest.TestCase):
         mock_response.iter_content.return_value = [b"test data"]
 
         # Expected filename
-        expected_filename = "collecte/data/pdf_downloads/TestCompany/report.pdf"
+        expected_filename = "collecte_results/data/pdf_downloads/TestCompany/report.pdf"
 
         # Call the function
         result = pdf_downloader.download_pdf(
             self.pdf_url,
-            Path("collecte/data/pdf_downloads"),
+            Path("collecte_results/data/pdf_downloads"),
             self.company_name,
             fetch_timeout_s=60,
             check_pdf_integrity=True,

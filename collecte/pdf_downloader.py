@@ -48,14 +48,15 @@ def cbcr_finder(
     return pdf_urls
 
 
-def pdf_is_valid(filepath: str | Path) -> bool:
-    with open(filepath, "rb") as f:
+def pdf_is_valid(filepath: Path) -> bool:
+    with filepath.open("rb") as f:
         try:
             pdf = PdfReader(f)
             info = pdf.metadata
-            return bool(info)
+            is_valid = bool(info)
         except PdfStreamError:
-            return False
+            is_valid = False
+        return is_valid
 
 
 def download_pdf(
@@ -121,12 +122,12 @@ def download_pdf(
                 logger.logger.info(f"Downloaded '{local_filename}'")
                 if check_pdf_integrity and not pdf_is_valid(local_filename):
                     logger.logger.error(
-                        f"PDF file '{local_filename}' seems broken and will be erased",
+                        f"PDF file '{local_filename}' seems broken and will be discarded",
                     )
                     local_filename.unlink(missing_ok=True)
 
-        except requests.RequestException as e:
-            logger.logger.error(f"Failed to download {url}: {e!s}")
+        except requests.RequestException:
+            logger.logger.exception(f"Failed to download {url}")
             local_filename.unlink(missing_ok=True)
     else:
         logger.logger.warning(
@@ -136,7 +137,7 @@ def download_pdf(
 
 
 def find_and_download_pdfs(
-    csv_path: str,
+    csv_path: Path,
     api_key: str,
     cse_id: str,
     keywords: str,
@@ -151,26 +152,42 @@ def find_and_download_pdfs(
         url_cache_filepath = Path("pdf_url_cache.pkl")
 
     if url_cache_filepath.exists():
-        with open(url_cache_filepath, "rb") as f:
-            all_urls = pickle.load(f)
+        with url_cache_filepath.open("rb") as f:
+            cache_keywords, all_urls = pickle.load(f)
+
+    if url_cache_filepath.exists() and cache_keywords == keywords:
         logger.logger.warning(
             f"Loaded pdf URLs list from cache file' {url_cache_filepath}'",
         )
+
     else:
+        if url_cache_filepath.exists() and cache_keywords != keywords:
+            logger.logger.warning(
+                f"URL cache file found but cache query differs from user input query: "
+                f"'{cache_keywords}' != '{keywords}'",
+            )
+            logger.logger.warning(
+                f"A new campaign of queries is launched, results will be cached to "
+                f"'{url_cache_filepath}'",
+            )
+
         df = pd.read_csv(csv_path)
         all_urls = []
-
+        n_queries = len(df["name_normalized"].unique())
+        logger.logger.warning(f"Starting a query campaign ({n_queries} queries)..")
+        pbar_query = tqdm(total=n_queries)
         for company_name in df["name_normalized"].unique():
             pdf_urls = cbcr_finder(company_name, keywords, api_key, cse_id)
             for url in pdf_urls:
                 all_urls.append((company_name, url))
+            pbar_query.update(1)
 
-        with open(url_cache_filepath, "wb") as f:
-            pickle.dump(all_urls, f)
+        with url_cache_filepath.open("wb") as f:
+            pickle.dump((keywords, all_urls), f)
         logger.logger.warning(f"Cached pdf URLs list to file '{url_cache_filepath}'")
 
     downloaded_files = set()
-    pbar = tqdm(total=len(all_urls))
+    pbar_download = tqdm(total=len(all_urls))
     for company_name, url in all_urls:
         if url not in downloaded_files:
             download_pdf(
@@ -183,7 +200,7 @@ def find_and_download_pdfs(
             downloaded_files.add(url)
         else:
             logger.logger.warning(f"URL '{url}' already downloaded, URL ignored")
-        pbar.update(1)
+        pbar_download.update(1)
 
 
 def get_content_length(r: requests.models.Response) -> int | None:
@@ -203,7 +220,7 @@ def get_content_length(r: requests.models.Response) -> int | None:
     return content_length
 
 
-def timeout_handler(signum: any, frame: any) -> None:
+def timeout_handler(signum: any, frame: any) -> None:  # noqa: ARG001
     """Raises a TimeoutError upon calling."""
     raise TimeoutError
 
@@ -213,12 +230,12 @@ if __name__ == "__main__":
     parser = ArgumentParser(description="Run the PDF downloader")
     parser.add_argument(
         "src_filepath",
-        type=str,
+        type=Path,
         help="The CSV file storing the company names to target",
     )
     parser.add_argument(
         "googleapi_filepath",
-        type=str,
+        type=Path,
         help="The YAML-like file storing the Google JSON API credentials",
     )
     parser.add_argument(
@@ -229,13 +246,13 @@ if __name__ == "__main__":
     )
     parser.add_argument(
         "--dest_dirpath",
-        type=str,
-        default="collection/data/pdf_downloads",
+        type=Path,
+        default=Path("collection/data/pdf_downloads"),
         help="The directory where the downloaded PDFs are saved",
     )
     parser.add_argument(
         "--url_cache_filepath",
-        type=str,
+        type=Path,
         default=None,
         help="The pickled file where fetched URLs are cached for reruns",
     )
@@ -259,24 +276,21 @@ if __name__ == "__main__":
     )
 
     args = parser.parse_args()
-    with open(args.googleapi_filepath) as f:
+    with args.googleapi_filepath.open("r") as f:
         googleapi_credentials = yaml.full_load(f)
         api_key, cx = googleapi_credentials["api_key"], googleapi_credentials["cse_id"]
-    dest_dirpath = Path(args.dest_dirpath)
-    url_cache_filepath = args.url_cache_filepath
-    if url_cache_filepath is not None:
-        url_cache_filepath = Path(url_cache_filepath)
 
-    Path.mkdir(dest_dirpath, parents=True, exist_ok=True)
+    Path.mkdir(args.dest_dirpath, parents=True, exist_ok=True)
     logger = FileLogger(
         str(
-            dest_dirpath
+            args.dest_dirpath
             / f"run_pdf_downloader_{datetime.now().strftime('%d_%m_%Y_%H_%M_%S')}.log",
         ),
     )
     if args.debug:
         logging.basicConfig(level=logging.DEBUG)
         logging.getLogger("requests").setLevel(logging.INFO)
+        logging.getLogger("urllib3").setLevel(logging.INFO)
     else:
         logging.basicConfig(level=logging.WARNING)
 
@@ -285,8 +299,8 @@ if __name__ == "__main__":
         api_key=api_key,
         cse_id=cx,
         keywords=args.search_keywords,
-        download_folder=dest_dirpath,
-        url_cache_filepath=url_cache_filepath,
+        download_folder=args.dest_dirpath,
+        url_cache_filepath=args.url_cache_filepath,
         fetch_timeout_s=args.fetch_timeout_s,
         check_pdf_integrity=not args.keep_broken_pdf,
     )

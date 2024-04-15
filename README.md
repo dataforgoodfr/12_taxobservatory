@@ -17,12 +17,18 @@ python3 -m pip install git+https://github.com/dataforgoodfr/12_taxobservatory.gi
 To run the report downloader from the command line, you can invoke the `pdf_downloader` module:
 
 ```
-python3 -m pdf_downloader company_names.csv googleapi_credentials.yaml
+python3 -m collecte.pdf_downloader company_names.csv googleapi_credentials.yaml
 ```
 
 In addition, multiple optional parameters can be tuned. To know how to use them, you can check the help manual:
 ```
-python -m pdf_downloader --help
+python3 -m collecte.pdf_downloader --help
+```
+
+A more complete example could be
+
+```
+python3 -m collecte.pdf_downloader company_names.csv googleapi_credentials.yaml  --search_keywords "tax country by country reporting GRI 207-4" --dest_dirpath try_pdf_downloads --url_cache_filepath pdf_url_cache.pkl --fetch_timeout_s 60 --debug
 ```
 
 The execution of this module requires a Google JSON API key, provided in a YAML-like file contaning the following fields:
