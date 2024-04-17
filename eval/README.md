@@ -6,7 +6,8 @@ To run the evaluation script, we need some additional requirements that are not
 listed in the project dependencies.
 
 ```
-python3 -m pip install pdfkit streamlit_option_menu
+apt-get install wkhtmltopdf
+python3 -m pip install pdfkit streamlit_option_menu streamlit-pdf-viewer
 ```
 
 ## Qualitative evaluation
