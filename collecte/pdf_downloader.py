@@ -10,7 +10,7 @@ import pandas as pd
 import requests
 import yaml
 from pypdf import PdfReader
-from pypdf.errors import PdfStreamError
+from pypdf.errors import PdfReadError, PdfStreamError
 from tqdm import tqdm
 
 from .logger import FileLogger, StdoutLogger
@@ -54,7 +54,7 @@ def pdf_is_valid(filepath: Path) -> bool:
             pdf = PdfReader(f)
             info = pdf.metadata
             is_valid = bool(info)
-        except PdfStreamError:
+        except (PdfReadError, PdfStreamError):
             is_valid = False
         return is_valid
 
