@@ -41,7 +41,7 @@ def from_config(config: dict) -> Camelot:
         return Unstructured(**extractor_params)
     elif extractor_type == "UnstructuredAPI":
         return UnstructuredAPI(**extractor_params)
-    elif extractor_type == "LLamaParse":
+    elif extractor_type == "LlamaParse":
         return LlamaParseExtractor(**extractor_params)
     elif extractor_type == "ExtractTableAPI":
         # This is for legacy support
