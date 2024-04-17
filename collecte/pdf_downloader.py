@@ -9,9 +9,17 @@ from time import time
 import pandas as pd
 import requests
 import yaml
-from pypdf import PdfReader
-from pypdf.errors import PdfReadError, PdfStreamError
+#from pypdf import PdfReader
+#from pypdf.errors import PdfReadError, PdfStreamError
+
+from PyPDF2 import PdfReader
+from PyPDF2.errors import PdfReadError
+from PyPDF2.errors import PdfStreamError
+
+import tqdm
 from tqdm import tqdm
+
+from urllib.parse import urlparse
 
 from .logger import FileLogger, StdoutLogger
 
@@ -31,6 +39,8 @@ def cbcr_finder(
         "key": api_key,
         "cx": cse_id,
         "q": search_query,
+        "dateRestrict": "y2", #restrict search to the specified number of past years
+        "fileType": "pdf",  # Search only for PDF files
     }
     response = requests.get(url, params=params)
     result = response.json()
@@ -66,9 +76,17 @@ def download_pdf(
     fetch_timeout_s: int,
     check_pdf_integrity: bool,
 ) -> str:
+    
+    # Extract the hostname from the URL
+    parsed_url = urlparse(url)
+    website_name = parsed_url.hostname.split(".")[-2]  # Extract the second-level domain name
 
     # Create a sanitized version of the company name for the directory
-    company_folder = download_folder / "".join(e for e in company_name if e.isalnum())
+    company_folder = download_folder / website_name
+
+
+    # Create a sanitized version of the company name for the directory
+    #company_folder = download_folder / "".join(e for e in company_name if e.isalnum())
 
     Path.mkdir(company_folder, parents=True, exist_ok=True)
     local_filename = Path(company_folder) / url.split("/")[-1]
