@@ -55,7 +55,7 @@ class TestCBCRScript(unittest.TestCase):
         expected_filename = "collecte_results/data/pdf_downloads/TestCompany/report.pdf"
 
         # Call the function
-        result = pdf_downloader.download_pdf(
+        exception_status = pdf_downloader.download_pdf(
             self.pdf_url,
             Path("collecte_results/data/pdf_downloads"),
             self.company_name,
@@ -64,7 +64,7 @@ class TestCBCRScript(unittest.TestCase):
         )
 
         # Assert the calls and result
-        assert result == expected_filename
+        assert exception_status is None
         mock_file.assert_called_once_with(PosixPath(expected_filename), "wb")
         mock_exists.assert_any_call(PosixPath(expected_filename))
         mock_get.assert_called_once_with(self.pdf_url, stream=True, timeout=(3.05, 10))

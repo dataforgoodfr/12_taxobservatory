@@ -62,6 +62,7 @@ def download_pdf(
 
     Path.mkdir(company_folder, parents=True, exist_ok=True)
     local_filename = Path(company_folder) / url.split("/")[-1]
+    exception_status = None
 
     if not Path.exists(local_filename):
 
@@ -120,8 +121,6 @@ def download_pdf(
                             f"PDF file '{local_filename}' seems broken and will be discarded",
                         )
                         local_filename.unlink(missing_ok=True)
-                    else:
-                        exception_status = None
 
         except requests.RequestException as e:
             logger.logger.exception(f"Failed to download {url}")
@@ -131,7 +130,6 @@ def download_pdf(
         logger.logger.warning(
             f"File '{local_filename}' already exists, download ignored",
         )
-        exception_status = None
 
     return exception_status
 
