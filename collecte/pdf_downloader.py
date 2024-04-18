@@ -2,6 +2,7 @@ import logging
 import pickle
 import signal
 from argparse import ArgumentParser
+from dataclasses import asdict, dataclass
 from datetime import datetime
 from pathlib import Path
 from time import time
@@ -48,24 +49,13 @@ def cbcr_finder(
     return pdf_urls
 
 
-def pdf_is_valid(filepath: Path) -> bool:
-    with filepath.open("rb") as f:
-        try:
-            pdf = PdfReader(f)
-            info = pdf.metadata
-            is_valid = bool(info)
-        except (PdfReadError, PdfStreamError):
-            is_valid = False
-        return is_valid
-
-
 def download_pdf(
     url: str,
     download_folder: Path,
     company_name: str,
     fetch_timeout_s: int,
     check_pdf_integrity: bool,
-) -> str:
+) -> None | Exception:
 
     # Create a sanitized version of the company name for the directory
     company_folder = download_folder / "".join(e for e in company_name if e.isalnum())
@@ -114,26 +104,36 @@ def download_pdf(
                                 f"({fetch_timeout_s} s)\n",
                             )
                             local_filename.unlink(missing_ok=True)
+                            exception_status = TimeoutError
                             break
                         if content_length is not None:
                             pbar_content.update(1)
 
             if Path.exists(local_filename):
                 logger.logger.info(f"Downloaded '{local_filename}'")
-                if check_pdf_integrity and not pdf_is_valid(local_filename):
-                    logger.logger.error(
-                        f"PDF file '{local_filename}' seems broken and will be discarded",
+                if check_pdf_integrity:
+                    current_pdf_is_valid, exception_status = pdf_is_valid(
+                        local_filename,
                     )
-                    local_filename.unlink(missing_ok=True)
+                    if not current_pdf_is_valid:
+                        logger.logger.error(
+                            f"PDF file '{local_filename}' seems broken and will be discarded",
+                        )
+                        local_filename.unlink(missing_ok=True)
+                    else:
+                        exception_status = None
 
-        except requests.RequestException:
+        except requests.RequestException as e:
             logger.logger.exception(f"Failed to download {url}")
             local_filename.unlink(missing_ok=True)
+            exception_status = type(e)
     else:
         logger.logger.warning(
             f"File '{local_filename}' already exists, download ignored",
         )
-    return str(local_filename)
+        exception_status = None
+
+    return exception_status
 
 
 def find_and_download_pdfs(
@@ -147,50 +147,20 @@ def find_and_download_pdfs(
     url_cache_filepath: Path | None = None,
 ) -> None:
 
-    # Cache URLs queried with the Google API to avoid excessive costly queries when debugging
-    if url_cache_filepath is None:
-        url_cache_filepath = Path("pdf_url_cache.pkl")
-
-    if url_cache_filepath.exists():
-        with url_cache_filepath.open("rb") as f:
-            cache_keywords, all_urls = pickle.load(f)
-
-    if url_cache_filepath.exists() and cache_keywords == keywords:
-        logger.logger.warning(
-            f"Loaded pdf URLs list from cache file' {url_cache_filepath}'",
-        )
-
-    else:
-        if url_cache_filepath.exists() and cache_keywords != keywords:
-            logger.logger.warning(
-                f"URL cache file found but cache query differs from user input query: "
-                f"'{cache_keywords}' != '{keywords}'",
-            )
-            logger.logger.warning(
-                f"A new campaign of queries is launched, results will be cached to "
-                f"'{url_cache_filepath}'",
-            )
-
-        df = pd.read_csv(csv_path)
-        all_urls = []
-        n_queries = len(df["name_normalized"].unique())
-        logger.logger.warning(f"Starting a query campaign ({n_queries} queries)..")
-        pbar_query = tqdm(total=n_queries)
-        for company_name in df["name_normalized"].unique():
-            pdf_urls = cbcr_finder(company_name, keywords, api_key, cse_id)
-            for url in pdf_urls:
-                all_urls.append((company_name, url))
-            pbar_query.update(1)
-
-        with url_cache_filepath.open("wb") as f:
-            pickle.dump((keywords, all_urls), f)
-        logger.logger.warning(f"Cached pdf URLs list to file '{url_cache_filepath}'")
+    all_urls, df_no_url = fetch_pdf_urls(
+        csv_path,
+        api_key,
+        cse_id,
+        keywords,
+        url_cache_filepath,
+    )
 
     downloaded_files = set()
+    failed_downloads = []
     pbar_download = tqdm(total=len(all_urls))
     for company_name, url in all_urls:
         if url not in downloaded_files:
-            download_pdf(
+            exception_status = download_pdf(
                 url,
                 download_folder,
                 company_name,
@@ -198,9 +168,92 @@ def find_and_download_pdfs(
                 check_pdf_integrity,
             )
             downloaded_files.add(url)
+            if exception_status is not None:
+                failed_downloads.append((company_name, url, exception_status))
         else:
             logger.logger.warning(f"URL '{url}' already downloaded, URL ignored")
         pbar_download.update(1)
+
+    df_failed_downloads = pd.DataFrame(
+        failed_downloads,
+        columns=["company_name", "url", "exception"],
+    )
+    df_fail = pd.concat((df_no_url, df_failed_downloads))
+    missing_data_filepath = download_folder / "missing_data.csv"
+    if missing_data_filepath.exists():
+        df_fail = pd.concat(
+            (df_fail, pd.read_csv(missing_data_filepath)),
+        ).drop_duplicates(["company_name", "url"])
+    df_fail = df_fail.sort_values(["company_name", "url"])
+    df_fail.index = range(len(df_fail))
+    df_fail.to_csv(missing_data_filepath, index=False)
+
+
+def fetch_pdf_urls(
+    csv_path: Path,
+    api_key: str,
+    cse_id: str,
+    keywords: str,
+    url_cache_filepath: Path | None,
+) -> (list[tuple[str, str]], pd.DataFrame):
+
+    df_company = pd.read_csv(csv_path)
+    company_names = set(df_company["name_normalized"].unique())
+
+    query = Query(company_names, keywords)
+
+    # Cache URLs queried with the Google API to avoid excessive costly queries when debugging
+    if url_cache_filepath is None:
+        url_cache_filepath = Path("pdf_url_cache.pkl")
+
+    if url_cache_filepath.exists():
+        with url_cache_filepath.open("rb") as f:
+            cache_query, all_urls = pickle.load(f)
+
+    if url_cache_filepath.exists() and cache_query == query:
+        logger.logger.warning(
+            f"Loaded pdf URLs list from cache file' {url_cache_filepath}'",
+        )
+
+    else:
+        if url_cache_filepath.exists() and cache_query != query:
+
+            for (param_name, param_query), param_cache in zip(
+                asdict(query).items(),
+                asdict(cache_query).values(),
+                strict=True,
+            ):
+                if param_query != param_cache:
+                    logger.logger.warning(
+                        f"User input query value for '{param_name}' differs from cache query "
+                        f"value: '{param_query}' != '{param_cache}'",
+                    )
+            logger.logger.warning(
+                f"A new campaign of queries is launched, results will be cached to "
+                f"'{url_cache_filepath}'",
+            )
+
+        all_urls = []
+        n_queries = len(query.company_names)
+        logger.logger.warning(f"Starting a query campaign ({n_queries} queries)..")
+        pbar_query = tqdm(total=n_queries)
+
+        for company_name in query.company_names:
+            pdf_urls = cbcr_finder(company_name, query.keywords, api_key, cse_id)
+            for url in pdf_urls:
+                all_urls.append((company_name, url))
+            pbar_query.update(1)
+
+        with url_cache_filepath.open("wb") as f:
+            pickle.dump((query, all_urls), f)
+        logger.logger.warning(f"Cached pdf URLs list to file '{url_cache_filepath}'")
+
+    company_names_no_url = company_names.difference({result[0] for result in all_urls})
+    df_no_url = pd.DataFrame(company_names_no_url, columns=["company_name"])
+    df_no_url["url"] = "No URL found"
+    df_no_url["exception"] = None
+
+    return all_urls, df_no_url
 
 
 def get_content_length(r: requests.models.Response) -> int | None:
@@ -218,6 +271,25 @@ def get_content_length(r: requests.models.Response) -> int | None:
 
     signal.alarm(0)
     return content_length
+
+
+@dataclass
+class Query:
+    company_names: set[str]
+    keywords: str
+
+
+def pdf_is_valid(filepath: Path) -> (bool, None | PdfReadError | PdfStreamError):
+    with filepath.open("rb") as f:
+        try:
+            pdf = PdfReader(f)
+            info = pdf.metadata
+            is_valid = bool(info)
+            exception_status = None
+        except (PdfReadError, PdfStreamError) as e:
+            is_valid = False
+            exception_status = type(e)
+        return is_valid, exception_status
 
 
 def timeout_handler(signum: any, frame: any) -> None:  # noqa: ARG001
