@@ -21,11 +21,16 @@
 # SOFTWARE.
 
 # Local imports
+import logging
+import sys
+
 from .camelot_extractor import Camelot
 from .from_csv import FromCSV
 from .llama_parse_extractor import LlamaParseExtractor
 from .unstructured import Unstructured
 from .unstructured_api import UnstructuredAPI
+
+logging.basicConfig(stream=sys.stdout, level=logging.INFO, format="%(message)s")
 
 
 def from_config(config: dict) -> Camelot:
@@ -52,3 +57,5 @@ def from_config(config: dict) -> Camelot:
         from .extract_table_api import ExtractTableAPI
 
         return ExtractTableAPI(**extractor_params)
+    else:
+        logging.info(f"There are no extractors of the type : {extractor_type}")
