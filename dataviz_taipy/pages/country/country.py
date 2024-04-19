@@ -28,15 +28,12 @@ df_selected_sector = data[data[colname_sector]==selected_sector]
 df_count_sector = algo.number_of_tracked_reports_over_time_sector(df_selected_sector)
 
 
-
-
 def on_change_sector(state):
     print("Chosen sector: ", state.selected_sector)
     state.df_selected_sector = data[data[colname_sector]==state.selected_sector]
     state.tracked_reports_sector = \
         algo.number_of_tracked_reports_sector(state.df_selected_sector)
     state.df_count_sector = algo.number_of_tracked_reports_over_time_sector(state.df_selected_sector)
-
 
 
 def on_change_country(state):
@@ -61,8 +58,6 @@ def download_el(state, viz):
     else:
         buffer.write(state["sub_title"] + "\n" + str(data))
     download(state, content=bytes(buffer.getvalue(), "UTF-8"), name="data.csv")
-# <|{download_icon_path}|image|class_name=download|on_action=on_click|properties={viz}>
-
 
 
 data_viz_2 = algo.number_of_tracked_reports_over_time(data)

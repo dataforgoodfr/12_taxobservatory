@@ -16,8 +16,9 @@ df = data.head()
 
 
 def download_viz1(state): download_el(state,viz1)
-def download_viz2(state): download_el(state,viz2)
+def download_viz_2(state): download_el(state,viz_2)
 def download_viz3(state): download_el(state,viz3)
+
 df_viz1 = algo.number_of_tracked_reports(data)
 viz1 = {
     'data': df_viz1,
@@ -34,13 +35,25 @@ viz3 = {
     'on_action': download_viz3
 }
 
-df_viz2 = algo.number_of_tracked_reports_over_time(data)
-viz2 = {
-    'data': df_viz2,
+df_viz_2 = algo.number_of_tracked_reports_over_time(data)
+viz_2 = {
+    'data': df_viz_2,
     'title': "Evolution of reports over time",
     'sub_title': "CbC reports tracked",
-    'on_action': download_viz2
+    'on_action': download_viz_2
 }
+
+data_viz_24 = algo.viz_24_compute_data(data)
+data_viz_24_fig = algo.viz_24_viz(data_viz_24)
+def download_viz_24(state):download_el(state,viz_24)
+viz_24 = {
+    'fig': data_viz_24_fig,
+    'data': data_viz_24,
+    'title': "Multinationals available",
+    'sub_title': "with 1+ report tracked",
+    'on_action': download_viz_24
+}
+
 
 
 # Generate the digits, save them in a CSV file content, and trigger a download action

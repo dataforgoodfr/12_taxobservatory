@@ -123,21 +123,37 @@ Our database is growing
 <|part|class_name=viz|
 <|layout|columns=2fr 1|
 <|part|
-<|{viz2.title}|>
+<|{viz_2.title}|>
 |>                     
   
 <|part|
-<|{download_icon_path}|image|class_name=download_button|on_action={viz2.on_action}|>
+<|{download_icon_path}|image|class_name=download_button|on_action={viz_2.on_action}|>
 |>
 |>
-<|{viz2.sub_title}|>  
-<|{viz2.data}|chart|type=bar|x=year|y[1]=mnc|line[1]=dash|>
+<|{viz_2.sub_title}|>  
+<|{viz_2.data}|chart|type=bar|x=year|y[1]=mnc|line[1]=dash|>
 |>
 [//]: <> (end of a viz 2)
 
 
 <|part|
-<|{original_image}|image|>
+Viz 24
+<viz_card|part|class_name=viz|
+<headers|layout|columns=2fr 1|
+<title|part|
+<|{viz_24.title}|>
+|title>
+<download_button|part|
+<|{download_icon_path}|image|class_name=download_button|on_action={viz_24.on_action}|>
+|download_button>
+|headers>
+<sub_title|
+<|{viz_24.sub_title}|>
+|sub_title>
+<data_viz|part|
+<|chart|figure={data_viz_24_fig}|>
+|data_viz>
+|viz_card>
 |>
 
 |viz_row>
