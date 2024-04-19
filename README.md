@@ -41,6 +41,7 @@ cse_id: my_cse_id
 If the pipeline runs successfully, the results folder should contain the following elements:
 - a collection of company-named folders, each containing one or multiple PDFs
 - a log file 'run_pdf_downloader_DD_MM_YYYY_hh_mm_ss.log' storing all the runtime logging entries
+- a CSV file 'download_data.csv' listing all the downloaded company reports and their URLs
 - a CSV file 'missing_data.csv' listing all the missing company reports and their URLs (if some were found), plus the type of error that prevented their download
 
 

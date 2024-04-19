@@ -6,18 +6,14 @@ from dataclasses import asdict, dataclass
 from datetime import datetime
 from pathlib import Path
 from time import time
+from urllib.parse import urlparse
 
 import pandas as pd
 import requests
 import yaml
 from pypdf import PdfReader
 from pypdf.errors import PdfReadError, PdfStreamError
-
-
-import tqdm
 from tqdm import tqdm
-
-from urllib.parse import urlparse
 
 from .logger import FileLogger, StdoutLogger
 
@@ -37,8 +33,9 @@ def cbcr_finder(
         "key": api_key,
         "cx": cse_id,
         "q": search_query,
-        "dateRestrict": "y2", #restrict search to the specified number of past years
+        "dateRestrict": "y2",  # restrict search to the specified number of past years
         "fileType": "pdf",  # Search only for PDF files
+        "exactTerms": company_name,
     }
     response = requests.get(url, params=params)
     result = response.json()
@@ -50,6 +47,9 @@ def cbcr_finder(
             link = item["link"]
             if link.endswith(".pdf"):
                 pdf_urls.append(link)
+        logger.logger.debug(f"\nURLs found for company '{company_name}':")
+        for url in pdf_urls:
+            logger.logger.debug(f"{url}")
     else:
         logger.logger.error(f"No results found for query '{search_query}'")
 
@@ -59,14 +59,10 @@ def cbcr_finder(
 def download_pdf(
     url: str,
     download_folder: Path,
-    company_name: str,
+    website_name: str,
     fetch_timeout_s: int,
     check_pdf_integrity: bool,
-) -> None | Exception:
-
-    # Extract the hostname from the URL
-    parsed_url = urlparse(url)
-    website_name = parsed_url.hostname.split(".")[-2]  # Extract the second-level domain name
+) -> (str, None | Exception):
 
     # Create a sanitized version of the company name for the directory
     company_folder = download_folder / website_name
@@ -142,7 +138,7 @@ def download_pdf(
             f"File '{local_filename}' already exists, download ignored",
         )
 
-    return exception_status
+    return local_filename, exception_status
 
 
 def find_and_download_pdfs(
@@ -165,27 +161,37 @@ def find_and_download_pdfs(
     )
 
     downloaded_files = set()
-    failed_downloads = []
+    successful_downloads, failed_downloads = [], []
     pbar_download = tqdm(total=len(all_urls))
-    for company_name, url in all_urls:
+    for searched_company_name, url in all_urls:
         if url not in downloaded_files:
-            exception_status = download_pdf(
+            # Extract the hostname from the URL
+            parsed_url = urlparse(url)
+            website_name = parsed_url.hostname.split(".")[
+                -2
+            ]  # Extract the second-level domain name
+            local_filename, exception_status = download_pdf(
                 url,
                 download_folder,
-                company_name,
+                website_name,
                 fetch_timeout_s,
                 check_pdf_integrity,
             )
             downloaded_files.add(url)
+            successful_downloads.append(
+                (searched_company_name, website_name, url, local_filename),
+            )
             if exception_status is not None:
-                failed_downloads.append((company_name, url, exception_status))
+                failed_downloads.append(
+                    (searched_company_name, website_name, url, exception_status),
+                )
         else:
             logger.logger.warning(f"URL '{url}' already downloaded, URL ignored")
         pbar_download.update(1)
 
     df_failed_downloads = pd.DataFrame(
         failed_downloads,
-        columns=["company_name", "url", "exception"],
+        columns=["company_name", "website_name", "url", "exception"],
     )
     df_fail = pd.concat((df_no_url, df_failed_downloads))
     missing_data_filepath = download_folder / "missing_data.csv"
@@ -196,6 +202,19 @@ def find_and_download_pdfs(
     df_fail = df_fail.sort_values(["company_name", "url"])
     df_fail.index = range(len(df_fail))
     df_fail.to_csv(missing_data_filepath, index=False)
+
+    df_downloads = pd.DataFrame(
+        successful_downloads,
+        columns=["company_name", "website_name", "url", "local_filename"],
+    )
+    download_data_filepath = download_folder / "download_data.csv"
+    if download_data_filepath.exists():
+        df_downloads = pd.concat(
+            (df_downloads, pd.read_csv(download_data_filepath)),
+        ).drop_duplicates(["company_name", "url"])
+    df_downloads = df_downloads.sort_values(["company_name", "url"])
+    df_downloads.index = range(len(df_downloads))
+    df_downloads.to_csv(download_data_filepath, index=False)
 
 
 def fetch_pdf_urls(
