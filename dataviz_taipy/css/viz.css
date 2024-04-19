@@ -5,6 +5,8 @@
     -webkit-text-fill-color:#02198D;
     font-size: 24px;
     align-items: center;
+    margin: 10px;
+    padding:10px;
 }
 .parent {
     width:100%;
@@ -20,6 +22,7 @@
     display:
     inline-flex;
     vertical-align: middle;
+    margin:auto;
 }
 
 .round {

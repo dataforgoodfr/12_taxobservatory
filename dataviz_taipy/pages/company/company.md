@@ -44,7 +44,7 @@ Reach with this contact form if you found it
 <sub_title|
 <|{viz1.sub_title}|>
 |sub_title>
-<data_viz|part|class_name=round|
+<data_viz|part|
 <|{viz1.data}|>
 |data_viz>
 |viz_card>
@@ -60,7 +60,7 @@ Reach with this contact form if you found it
 <sub_title|
 <|{viz2.sub_title}|>
 |sub_title>
-<data_viz|part|class_name=round|
+<data_viz|part|
 <|{viz2.data}|>
 |data_viz>
 |viz_card>
@@ -102,6 +102,9 @@ Reach with this contact form if you found it
 
 <cntent1|part|
 
+[//]: # (###########################################")
+[//]: # (Financial Reporting Overview)
+[//]: # (###########################################")
 <header|layout|columns=1fr 1|clas_name=p4 align-columns-center|
 <|part|class_name=h2|
 Financial Reporting Overview
@@ -109,6 +112,8 @@ Financial Reporting Overview
 <|{selected_year}|selector|lov={selector_year}|on_change=on_change_year|dropdown|label=Fiscal Year|>
 |header>
 
+[//]: # (###########################################")
+[//]: # (Tax transparency)
 <header|part|class_name=h3|
 Tax transparency
 |header>
@@ -169,6 +174,8 @@ below. When the variables are not available it will not be
 possible to calculate all of the indicators.
 |blabla>
 
+[//]: # (###########################################")
+[//]: # (Financial profile)
 <header|part|class_name=h3|
 Financial profile
 |header>
@@ -178,77 +185,79 @@ Financial profile
 <viz_card|part|class_name=viz|
 <headers|layout|columns=2fr 1|
 <title|part|
-<|{viz7.title}|>
+<|{viz_13_key_metric.title}|>
 |title>
 <download_button|part|
-<|{download_icon_path}|image|class_name=download_button|on_action={viz7.on_action}|>
+<|{download_icon_path}|image|class_name=download_button|on_action={viz_13_key_metric.on_action}|>
 |download_button>
 |headers>
 <sub_title|
-<|{viz7.sub_title}|>
+<|{viz_13_key_metric.sub_title}|>
 |sub_title>
 <data_viz|part||
-<|{viz7.data}|table|>
+<|{viz_13_key_metric.data}|table|>
 |data_viz>
 |viz_card>
 
 <viz_card|part|class_name=viz|
 <headers|layout|columns=2fr 1|
 <title|part|
-<|{viz8.title}|>
+<|{viz_14.title}|>
 |title>
 <download_button|part|
-<|{download_icon_path}|image|class_name=download_button|on_action={viz8.on_action}|>
+<|{download_icon_path}|image|class_name=download_button|on_action={viz_14.on_action}|>
 |download_button>
 |headers>
 <sub_title|
-<|{viz8.sub_title}|>
+<|{viz_14.sub_title}|>
 |sub_title>
-<data_viz|part|class_name=round|
-<|{viz8.data}|>
+<data_viz|part|
+<|{viz_14.data}|chart|orientation=h|type=bar|x=total_revenues_%|y=jur_name|>
 |data_viz>
 |viz_card>
 
 |datarow>
 
-
+[//]: # (###########################################")
+[//]: # (Distribution of profits vs. employees)
 <header|part|class_name=h3|
 Distribution of profits vs. employees
 |header>
 
-<datarow|layout|columns=1 1|class_name=p4 align-columns-center align-columns-stretch|
+<datarow|layout|columns=1 1|class_name=p4 align-columns-center|
 
 <viz_card|part|class_name=viz|
 <headers|layout|columns=2fr 1|
 <title|part|
-<|{viz9.title}|>
+<|{viz_15.title}|>
 |title>
 <download_button|part|
-<|{download_icon_path}|image|class_name=download_button|on_action={viz9.on_action}|>
+<|{download_icon_path}|image|class_name=download_button|on_action={viz_15.on_action}|>
 |download_button>
 |headers>
 <sub_title|
-<|{viz9.sub_title}|>
+<|{viz_15.sub_title}|>
 |sub_title>
-<data_viz|part|class_name=round|
-<|{viz9.data}|>
+<data_viz|part|
+[//]: # (<|{viz_15.data}|chart|orientation=h|type=bar|x[1]=employees_%|x[2]=profit_before_tax_%|y=jur_name|>)
+<|{viz_15.data}|chart|type=bar|properties={properties}|>
 |data_viz>
 |viz_card>
 
 <viz_card|part|class_name=viz|
 <headers|layout|columns=2fr 1|
 <title|part|
-<|{viz10.title}|>
+<|{viz_16.title}|>
 |title>
 <download_button|part|
-<|{download_icon_path}|image|class_name=download_button|on_action={viz10.on_action}|>
+<|{download_icon_path}|image|class_name=download_button|on_action={viz_16.on_action}|>
 |download_button>
 |headers>
 <sub_title|
-<|{viz10.sub_title}|>
+<|{viz_16.sub_title}|>
 |sub_title>
 <data_viz|part|class_name=round|
-<|{viz10.data}|>
+<|{viz_16.data}|>
 |data_viz>
 |viz_card>
 |datarow>
@@ -264,6 +273,11 @@ shifting activities where strong misalignment are observed.
 
 |cntent1>
 
+
+
+[//]: # (###########################################")
+[//]: # (Use of tax havens)
+[//]: # (###########################################")
 <cntent2|layout|columns=1=|gap=4rem|clas_name=p4 align-columns-center|
 
 <header|layout|columns=1fr 1|clas_name=p4 align-columns-center|
@@ -279,22 +293,22 @@ tax rates are observed, in this section, we rely on official
 lists of tax havens (see methodology)
 |blabla>
 
-<datarow|layout|columns=1 1|clas_name=p4 align-columns-center|
+<datarow|layout|columns=1 1|gap=5rem|clas_name=p4 align-columns-center|
 
 <viz_card|part|class_name=viz|
 <headers|layout|columns=2fr 1|
 <title|part|
-<|{viz11.title}|>
+<|{viz_17.title}|>
 |title>
 <download_button|part|
-<|{download_icon_path}|image|class_name=download_button|on_action={viz11.on_action}|>
+<|{download_icon_path}|image|class_name=download_button|on_action={viz_17.on_action}|>
 |download_button>
 |headers>
 <sub_title|
-<|{viz11.sub_title}|>
+<|{viz_17.sub_title}|>
 |sub_title>
-<data_viz|part|class_name=round|
-<|{viz11.data}|>
+<data_viz|part|
+<|{viz_17.data}|table|>
 |data_viz>
 <blabla|part|
 This charts shows the percentage of profits booked in each 
@@ -308,17 +322,18 @@ are in XXX color.
 <viz_card|part|class_name=viz|
 <headers|layout|columns=2fr 1|
 <title|part|
-<|{viz12.title}|>
+<|{viz_18.title}|>
 |title>
 <download_button|part|
-<|{download_icon_path}|image|class_name=download_button|on_action={viz12.on_action}|>
+<|{download_icon_path}|image|class_name=download_button|on_action={viz_18.on_action}|>
 |download_button>
 |headers>
 <sub_title|
-<|{viz12.sub_title}|>
+<|{viz_18.sub_title}|>
 |sub_title>
-<data_viz|part|class_name=round|
-<|{viz12.data}|>
+<data_viz|part|
+[//]: # (<|{viz_18.data}|table|>)
+<|{viz_18.data}|chart|type=bar|x=index|y[1]=unrelated_revenues_percentage|y[2]=related_revenues_percentage|layout={layout}|>
 |data_viz>
 <blabla|part|
 Related party revenues arise when the company trades 
@@ -334,38 +349,67 @@ pricing manipulations.
 <viz_card|part|class_name=viz|
 <headers|layout|columns=2fr 1|
 <title|part|
-<|{viz13.title}|>
+<|{viz_19.title}|>
 |title>
 <download_button|part|
-<|{download_icon_path}|image|class_name=download_button|on_action={viz13.on_action}|>
+<|{download_icon_path}|image|class_name=download_button|on_action={viz_19.on_action}|>
 |download_button>
 |headers>
 <sub_title|
-<|{viz13.sub_title}|>
+<|{viz_19.sub_title}|>
 |sub_title>
-<data_viz|part|class_name=round|
-<|{viz13.data}|>
+<data_viz|part|
+<|{viz_19.data}|table|page_size=8|>
 |data_viz>
 |viz_card>
 
 <viz_card|part|class_name=viz|
 <headers|layout|columns=2fr 1|
 <title|part|
-<|{viz14.title}|>
+<|{viz_21.title}|>
 |title>
 <download_button|part|
-<|{download_icon_path}|image|class_name=download_button|on_action={viz14.on_action}|>
+<|{download_icon_path}|image|class_name=download_button|on_action={viz_21.on_action}|>
 |download_button>
 |headers>
 <sub_title|
-<|{viz14.sub_title}|>
+<|{viz_21.sub_title}|>
 |sub_title>
-<data_viz|part|class_name=round|
-<|{viz14.data}|>
+<data_viz|part|
+<|{viz_21.data}|chart|mode=lines|x=year|y[1]=tax_havens_profit_%|y[2]=tax_havens_employees_%|line[1]=dash|>
 |data_viz>
 |viz_card>
 
 |cntent2>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 <cntent3|layout|columns=1=|gap=4rem|clas_name=blue_sectionp4 align-columns-center|
 
