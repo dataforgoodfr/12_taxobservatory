@@ -10,7 +10,8 @@ from pages.country.country import country_md
 from pages.company.company import company_md
 from pages.sector.sector import sector_md
 from pages.keystories.keystories import keystories_md
-
+from pages.methodology.methodology import methodology_md
+from pages.contact.contact import contact_md
 # from pages.world.world import world_md
 # from pages.map.map import map_md
 # from pages.predictions.predictions import predictions_md, selected_scenario
@@ -30,8 +31,9 @@ pages = {
     'KeyStories': keystories_md,
     'Company': company_md,
     'Sector/Country': country_md,
-    'Sector': sector_md,
-
+    # 'Sector': sector_md,
+    'Methodology': methodology_md,
+    'Contact': contact_md,
     # "Country": country_md,
     # "World": world_md,
     # "Map": map_md,
