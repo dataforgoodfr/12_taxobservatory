@@ -25,23 +25,41 @@ from config.config import Config
 
 pages = {
     '/': root,
-    'Viz': viz_md,
+    # 'Viz': viz_md,
     'Home': home_md,
-    'Company': company_md,
-    'Country': country_md,
-    'Sector': sector_md,
     'KeyStories': keystories_md,
+    'Company': company_md,
+    'Sector/Country': country_md,
+    'Sector': sector_md,
+
     # "Country": country_md,
     # "World": world_md,
     # "Map": map_md,
     # "Predictions": predictions_md
 }
 
+
 gui_multi_pages = Gui(
     pages=pages,
-    libraries=[VizLibrary()],
-    css_file="css/style.css")
+    # libraries=[VizLibrary()],
+    css_file="css/style.css",
+    )
+
+
+stylekit = {
+    #BADA55
+  "color_primary": "#FF462B",
+  "color_secondary": "#C0FFE",
+  "color_paper_light":"#FFFFFF",
+  "color_background_light":"#F2F2F2",
+  # "color-contrast-light":rgba(0, 0, 0, 0.87),
+  "font_family": "Manrope"
+}
 
 if __name__ == '__main__':
     tp.Core().run()
-    gui_multi_pages.run(title="taxobservatory")
+    gui_multi_pages.run(
+        # theme=my_theme,
+        stylekit=stylekit,
+        title="taxobservatory"
+    )
