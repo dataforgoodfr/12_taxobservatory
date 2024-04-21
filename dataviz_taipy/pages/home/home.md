@@ -3,12 +3,12 @@
 <world_map|part|class_name=world_map|
 
 [//]: <> (header)
-<header|part|class_name=h1 p4|
+<header|part|class_name=title|
 Multinationals under the spotlight
 |header>
 [//]: <> (end header)
 
-<subheader|part|class_name=p4 subheader|
+<subheader|part|class_name=subheader|
 This platform provides unprecedented insights into 
 how large corporations approach taxes across borders. 
 Explore country-by-country financial reports published 
@@ -27,33 +27,39 @@ often opaque aspect of global business operations.
 
 
 [//]: <> (layout card)
-<layoutcard|layout|columns=1 1 1|class_name=p4|gap=5rem|
+<layoutcard|layout|columns=1 1 1|gap=5rem|
   <|card|
-  <|part|class_name=h1
+  <|part|class_name=cardtitle
   Explore companies
   |>
+  <|part|class_name=cardtext|
   Search and filter to find reports   
   for specific multinationals. Review their declared 
   profits, taxes paid, employee counts and more for 
   each country over multiple years.
+  |>
   |>    
   <|card|
-  <|part|class_name=h1
+  <|part|class_name=cardtitle
   Spot reporting trends
   |>
+  <|part|class_name=cardtext|
   Visualize how tax reporting practices from the 
   world's largest corporations are evolving across
   industries, regions and over time through 
   interactive charts and analysis.
+  |>
   |>   
   <|card|
-  <|part|class_name=h1
+  <|part|class_name=cardtitle
   Gain Expert Insights
   |>
+  <|part|class_name=cardtext|
   Access our ongoing research examining 
   multinational tax behavior based on this 
   country-by-country data, including case 
   studies, risk scoring and more.
+  |>
   |>
 |layoutcard>
 [//]: <> (end layout card)
@@ -61,15 +67,15 @@ often opaque aspect of global business operations.
 |world_map>
 [//]: <> (end world map)
 
-<content|part|clas_name=mycontent|
+<pagecontent|part|class_name=pagecontent|
 
-<|layout|columns=1 1fr 1|clas_name=p4 align-columns-center|
-<|part|class_name=h2|
+<|layout|columns=1 1fr 1|clas_name=align-columns-center|
+<|part|class_name=sectiontitle|
 Our database is growing 
 |>
 <|part|
 |>
-<|button|active|label=More on reporting trends ->|>
+<|button|active|label=More on reporting trends ->|class_name=buttonsection|>
 |>
 
 
@@ -160,11 +166,13 @@ Viz 24
 
 
 
-<rowheader|layout|columns=1fr  1|clas_name=p4 align-columns-center|
-<|part|class_name=h2|
+<rowheader|layout|columns=2 1fr 1|class_name=align-columns-stretch|
+<|part|class_name=sectiontitle|
 And there are a lot of stories to tell
 |>
-<|button|active|label=More key stories |>
+<|part|
+|>
+<|button|label=More key stories|class_name=buttonsection|>
 |rowheader>
 
 
@@ -193,6 +201,6 @@ Read more ->
 
 |bluesection>
 
-|content>
+|pagecontent>
 
 |home>
