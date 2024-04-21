@@ -10,12 +10,12 @@ import dataviz_taipy.algo as algo
 header_right_image_path = 'images/pexels-ingo-joseph-1880351.png'
 download_icon_path = 'images/Vector.svg'
 
-selected_company = 'ACCIONA'
+# selected_company = 'ACCIONA'
 selected_company = 'SHELL'
 
 company_md = Markdown("pages/company/company.md")
 
-df_selected_company = data[data["mnc"]==selected_company]
+df_selected_company = data[data["mnc"] == selected_company]
 
 colname_company = 'mnc'
 selector_company = list(np.sort(data[colname_company].astype(str).unique()))
@@ -26,11 +26,10 @@ selector_year = list(np.sort(data[colname_year].astype(str).unique()))
 
 df_count_company = algo.number_of_tracked_reports_over_time_company(df_selected_company)
 
-
-number_of_tracked_reports_company = algo.number_of_tracked_reports_company(df_selected_company)
-
 company_sector = list(df_selected_company["sector"].unique())[0]
 company_upe_code = df_selected_company['upe_code'].unique()[0]
+number_of_tracked_reports_company = algo.number_of_tracked_reports_company(df_selected_company)
+
 
 def download_viz1(state): download_el(state,viz1)
 viz1 = {
@@ -82,10 +81,11 @@ viz6 = {
 
 # Viz 13
 data_key_metric = algo.compute_company_key_financials_kpis(
-    data, selected_company,selected_year)
+    data, selected_company,int(selected_year))
+data_viz_13 = pd.DataFrame.from_dict(data_key_metric).reset_index()
 def download_viz_13_key_metric(state): download_el(state,viz_13_key_metric)
 viz_13_key_metric = {
-    'data': pd.DataFrame.from_dict(data_key_metric).reset_index(),
+    'data': data_viz_13,
     'title': "Key metrics",
     'sub_title': "Selected fiscal year",
     'on_action': download_viz_13_key_metric
@@ -93,13 +93,14 @@ viz_13_key_metric = {
 
 # Viz 14
 data_viz_14 = algo.compute_top_jurisdictions_revenue(
-    data, selected_company,selected_year)
-# fig_viz_14 = algo.display_jurisdictions_top_revenue(
-#     data, selected_company,selected_year
-# )
+    data, selected_company, int(selected_year))
+fig_viz_14 = algo.display_jurisdictions_top_revenue(
+    data, selected_company, int(selected_year)
+)
 
 def download_viz_14(state): download_el(state,viz_14)
 viz_14 = {
+    'fig': fig_viz_14,
     'data': data_viz_14,
     'title': "Distribution of revenues across partner jurisdictions",
     'sub_title': "Selected fiscal year",
@@ -107,7 +108,9 @@ viz_14 = {
 }
 
 data_viz_15 = algo.compute_pretax_profit_and_employees_rank(
-        data, selected_company, selected_year)
+        data, selected_company, int(selected_year))
+fig_viz_15 = algo.display_pretax_profit_and_employees_rank(
+        data, selected_company, int(selected_year))
 
 def download_viz_15(state): download_el(state,viz_15)
 properties = {
@@ -159,6 +162,7 @@ properties = {
 #     }
 # }
 viz_15 = {
+    'fig': fig_viz_15,
     'data': data_viz_15,
     'title': "% profit and employees by partner jurisdiction",
     'sub_title': "CbC reports tracked",
@@ -183,14 +187,18 @@ viz_17 = {
 }
 
 data_viz_18_dict = algo.compute_related_and_unrelated_revenues_breakdown(
-    data, selected_company, selected_year)
-
+    data, selected_company, int(selected_year))
 data_viz_18 = pd.DataFrame.from_dict(data_viz_18_dict, orient='index').reset_index()
+fig_viz_18 = algo.display_related_and_unrelated_revenues_breakdown(
+    data, selected_company, int(selected_year)
+)
+
 layout={ "barmode": "stack" }
-print (data_viz_18)
+
 # algo.display_related_and_unrelated_revenues_breakdown(data, selected_company, selected_year)
 def download_viz_18(state): download_el(state,viz_18)
 viz_18 = {
+    'fig': fig_viz_18,
     'data': data_viz_18,
     'title': "Breakdown of revenue between unrelated and related revenue",
     'sub_title': "domestic vs. havens vs. non havens, selected fiscal year",
@@ -226,11 +234,96 @@ viz_21 = {
 
 def on_change_company(state):
     print("Chosen company: ", state.selected_company)
-    state.df_selected_company = data[data["mnc"]==state.selected_company]
+
+    state.df_selected_company = data[data["mnc"] == state.selected_company]
     state.df_count_company = algo.number_of_tracked_reports_over_time_company(state.df_selected_company)
+
+    state.company_sector = list(state.df_selected_company["sector"].unique())[0]
+    state.company_upe_code = state.df_selected_company['upe_code'].unique()[0]
+    state.number_of_tracked_reports_company = (
+        algo.number_of_tracked_reports_company(state.df_selected_company))
+
+    data_key_metric = algo.compute_company_key_financials_kpis(
+        state.data, state.selected_company, int(state.selected_year))
+    data_viz_13 = pd.DataFrame.from_dict(data_key_metric)
+
+    data_viz_14 = algo.compute_top_jurisdictions_revenue(
+        state.data, state.selected_company, int(state.selected_year))
+    fig_viz_14 = algo.display_jurisdictions_top_revenue(
+        state.data, state.selected_company, int(state.selected_year)
+    )
+
+    data_viz_15 = algo.compute_pretax_profit_and_employees_rank(
+        state.data, state.selected_company, int(state.selected_year))
+    fig_viz_15 = algo.display_pretax_profit_and_employees_rank(
+        state.data, state.selected_company, int(state.selected_year))
+
+    data_viz_18_dict = algo.compute_related_and_unrelated_revenues_breakdown(
+        state.data, state.selected_company, int(state.selected_year))
+    data_viz_18 = pd.DataFrame.from_dict(data_viz_18_dict, orient='index').reset_index()
+    fig_viz_18 = algo.display_related_and_unrelated_revenues_breakdown(
+        state.data, state.selected_company, int(state.selected_year)
+    )
+
+    df_selected_company, df_selected_company_th_agg = (
+        algo.tax_haven_used_by_company(state.df_selected_company))
+    data_viz_19 = df_selected_company_th_agg
+
+    data_viz_21_dict = algo.compute_tax_havens_use_evolution(
+        df=state.data, company=state.selected_company)
+    data_viz_21 = pd.DataFrame.from_dict(data_viz_21_dict)
+
+    state.viz1['data'] = state.company_sector
+    state.viz2['data'] = state.company_upe_code
+    state.viz3['data'] = state.number_of_tracked_reports_company
+    state.viz4['data'] = state.number_of_tracked_reports_company
+    state.viz5['data'] = state.number_of_tracked_reports_company
+    state.viz6['data'] = state.number_of_tracked_reports_company
+    state.viz_13_key_metric['data'] = data_viz_13
+    state.viz_14['fig'] = fig_viz_14
+    state.viz_14['data'] = data_viz_14
+    state.viz_15['fig'] = fig_viz_15
+    state.viz_15['data'] = data_viz_15
+    state.viz_18['fig'] = fig_viz_18
+    state.viz_18['data'] = data_viz_18
+    state.viz_19['data'] = data_viz_19
+    state.viz_21['data'] = data_viz_21
+
+
 
 def on_change_year(state):
     print("Chosen year: ", state.selected_year)
+
+    data_key_metric = algo.compute_company_key_financials_kpis(
+        state.data, state.selected_company, int(state.selected_year))
+    data_viz_13 = pd.DataFrame.from_dict(data_key_metric).reset_index()
+    state.viz_13_key_metric['data'] = data_viz_13
+
+    data_viz_14 = algo.compute_top_jurisdictions_revenue(
+        state.data, state.selected_company, int(state.selected_year))
+    print('data_viz_14')
+    print(data_viz_14)
+    fig_viz_14 = algo.display_jurisdictions_top_revenue(
+        state.data, state.selected_company, int(state.selected_year)
+    )
+    state.viz_14['fig'] = fig_viz_14
+    state.viz_14['data'] = data_viz_14
+
+    data_viz_15 = algo.compute_pretax_profit_and_employees_rank(
+        state.data, state.selected_company, int(state.selected_year))
+    fig_viz_15 = algo.display_pretax_profit_and_employees_rank(
+        state.data, state.selected_company, int(state.selected_year))
+    state.viz_15['fig'] = fig_viz_15
+    state.viz_15['data'] = data_viz_15
+
+    data_viz_18_dict = algo.compute_related_and_unrelated_revenues_breakdown(
+        state.data, state.selected_company, int(state.selected_year))
+    data_viz_18 = pd.DataFrame.from_dict(data_viz_18_dict, orient='index').reset_index()
+    fig_viz_18 = algo.display_related_and_unrelated_revenues_breakdown(
+        state.data, state.selected_company, int(state.selected_year)
+    )
+    state.viz_18['fig'] = fig_viz_18
+    state.viz_18['data'] = data_viz_18
 
 def download_el(state, viz):
     buffer = io.StringIO()

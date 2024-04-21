@@ -212,7 +212,9 @@ Financial profile
 <|{viz_14.sub_title}|>
 |sub_title>
 <data_viz|part|
-<|{viz_14.data}|chart|orientation=h|type=bar|x=total_revenues_%|y=jur_name|>
+<|chart|figure={viz_14.fig}|>
+[//]: # (<|{viz_14.data}|chart|orientation=h|type=bar|x=total_revenues_%|y=jur_name|>)
+
 |data_viz>
 |viz_card>
 
@@ -240,7 +242,8 @@ Distribution of profits vs. employees
 |sub_title>
 <data_viz|part|
 [//]: # (<|{viz_15.data}|chart|orientation=h|type=bar|x[1]=employees_%|x[2]=profit_before_tax_%|y=jur_name|>)
-<|{viz_15.data}|chart|type=bar|properties={properties}|>
+[//]: # (<|{viz_15.data}|chart|type=bar|properties={properties}|>)
+<|chart|figure={viz_15.fig}|>
 |data_viz>
 |viz_card>
 
@@ -332,8 +335,9 @@ are in XXX color.
 <|{viz_18.sub_title}|>
 |sub_title>
 <data_viz|part|
-[//]: # (<|{viz_18.data}|table|>)
-<|{viz_18.data}|chart|type=bar|x=index|y[1]=unrelated_revenues_percentage|y[2]=related_revenues_percentage|layout={layout}|>
+
+[//]: # (<|{viz_18.data}|chart|type=bar|x=index|y[1]=unrelated_revenues_percentage|y[2]=related_revenues_percentage|layout={layout}|>)
+<|chart|figure={viz_18.fig}|>
 |data_viz>
 <blabla|part|
 Related party revenues arise when the company trades 
