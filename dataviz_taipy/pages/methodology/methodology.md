@@ -1,3 +1,5 @@
+<|part|class_name=pagecontent|
+
 # Methodology
 
 Taxplorer was created to collect, aggregate and analyze data from country-by-country reports published by multinationals.
@@ -90,3 +92,5 @@ We created the transparency score metric to assess how transparent multinational
 Yet, some companies do not disclose all variables. We wanted to reflect this in the transparency score.
 
 **Calculation behind Component II** : We calculate the score based on the weighted share of variables available in the report (i.e., for which the company provides at least 1 datapoint). The weight is 2 for Pre-tax profits and Taxes paid, and 1 for other variables (reflecting the importance of the first two for tax behavior analysis)
+
+|>
