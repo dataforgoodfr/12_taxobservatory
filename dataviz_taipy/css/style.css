@@ -1,9 +1,10 @@
 @import url("viz.css");
 
-:root {
-    background-color:#e8e9ec;
-    background:#e8e9ec;
-    padding:30px;
+.pagecontent {
+    padding-left:10%;
+    padding-top:5%;
+    padding-right:10%;
+    padding-bottom:5%;
 }
 
 .blue_section {
@@ -36,15 +37,136 @@
 .world_map {
     background-image: url("../../images/world_map.png");
     -webkit-text-fill-color:#FFFFFF;
+    padding-left:10%;
+    padding-top:5%;
+    padding-right:10%;
+    padding-bottom:5%;
 }
+
+.title {
+    /* Title */
+
+    /*width: 1037px;
+    height: 55px;*/
+
+    /* Grand titre */
+    font-family: 'Manrope';
+    font-style: normal;
+    font-weight: 700;
+    font-size: 40px;
+    line-height: 55px;
+    /* identical to box height */
+    display: flex;
+    align-items: center;
+
+    /* f9fbfe */
+    color: #F9FBFE;
+
+
+    /* Inside auto layout */
+    flex: none;
+    order: 0;
+    flex-grow: 0;
+}
+
+.cardtitle {
+    /* Title */
+
+    /*width: 354px;
+    height: 38px;*/
+
+    font-family: 'Manrope';
+    font-style: normal;
+    font-weight: 500;
+    font-size: 35px;
+    line-height: 48px;
+    display: flex;
+    align-items: center;
+
+    /* 021978 */
+    color: #021978;
+
+
+    /* Inside auto layout */
+    flex: none;
+    order: 0;
+    flex-grow: 0;
+}
+
+.cardtext{
+    /* Title */
+
+    /*width: 301.64px;
+    height: 106px;*/
+
+    font-family: 'Manrope';
+    font-style: normal;
+    font-weight: 400;
+    font-size: 17px;
+    line-height: 23px;
+    display: flex;
+    align-items: center;
+
+    /* 000000 */
+    color: #000000;
+
+
+    /* Inside auto layout */
+    flex: none;
+    order: 0;
+    flex-grow: 0;
+}
+
+.sectiontitle {
+    /* Title */
+
+    /*width: 473.51px;
+    height: 57.28px;*/
+
+    font-family: 'Manrope';
+    font-style: normal;
+    font-weight: 500;
+    font-size: 35px;
+    line-height: 48px;
+    display: flex;
+    align-items: center;
+
+    /* 021978 */
+    color: #021978;
+
+
+    /* Inside auto layout */
+    flex: none;
+    order: 0;
+    flex-grow: 0;
+
+}
+
 
 .header h1{
     font-size: 64px;
 }
 
-.subheader {    
-    -webkit-text-fill-color:#FFFFFF;
+.subheader {
+    /* Subtitle */
+
+    /*width: 1170px;
+    height: 163px;*/
+
+    font-family: 'Manrope';
+    font-style: normal;
+    font-weight: 700;
     font-size: 17px;
+    line-height: 23px;
+
+    /* f9fbfe */
+    color: #F9FBFE;
+
+
+    /* Inside auto layout */
+    flex: none;
+    order: 1;
+    flex-grow: 0;
 }
 
 .footer {
@@ -53,7 +175,28 @@
     
 }
 
+.buttonsection {
+    /* Button */
+    /*width: 264px;
+    height: 50px;*/
+    /* Inside auto layout */
+    flex: none;
+    order: 1;
+    flex-grow: 0;
 
+    -webkit-text-fill-color:#FFFFFF;
 
+    background: #021978;
+    border-radius: 5px;
+
+    font-family: 'Roboto';
+    font-style: normal;
+    font-weight: 800;
+    font-size: 18px;
+    line-height: 21px;
+    display: flex;
+    align-items: center;
+    text-align: center;
+}
 
 
