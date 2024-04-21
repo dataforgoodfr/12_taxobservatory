@@ -65,7 +65,12 @@ class TestCBCRScript(unittest.TestCase):
         assert result == expected_filename
         mock_file.assert_called_once_with(PosixPath(expected_filename), "wb")
         mock_exists.assert_any_call(PosixPath(expected_filename))
-        mock_get.assert_called_once_with(self.pdf_url, stream=True)
+        mock_get.assert_called_once_with(
+            self.pdf_url,
+            stream=True,
+            timeout=10,
+            headers=None,
+        )
 
 
 if __name__ == "__main__":

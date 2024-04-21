@@ -10,11 +10,6 @@ load_dotenv()
 keywords = "tax country by country reporting GRI 207-4"
 api_key = os.getenv("GOOGLE_API_KEY")
 cx = os.getenv("GOOGLE_CX")
-if api_key is None or cx is None:
-    raise KeyError(  # noqa: TRY003
-        "Please set GOOGLE_API_KEY and GOOGLE_CX environment variables.",
-    )
-
 # Define a header designed to mimic a request from a web browser.
 HEADERS = {
     "User-Agent": (
@@ -76,7 +71,7 @@ def _download_pdf(
     try:
         with requests.get(url, stream=True, timeout=10, headers=headers) as r:
             r.raise_for_status()
-            with local_filename.open("wb") as f:
+            with Path.open(local_filename, "wb") as f:
                 for chunk in r.iter_content(chunk_size=8192):
                     f.write(chunk)
         print(f"Downloaded: {local_filename}")
