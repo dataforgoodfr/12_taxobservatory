@@ -1,20 +1,18 @@
-<|toggle|theme|>
 
-<|layout|columns=1 1 5fr 1|
-
-<|part|
-logo
+<|layout|columns=1fr auto 1fr|class_name=container align-columns-top|
+<|part|class_name=pt_half pb_half|
+<|Taxplorer|text|class_name=align-center|>
+|>
+<|part|class_name=align_item_stretch|
+<|navbar|class_name=fullheight|>
+|>
+<|part|class_name=text_right|
+<|button|label=download|class_nanme=align-center|>
+<|toggle|theme|class_name=relative nolabel|>
+|>
 |>
 
-<|part|
-Taxplorer
-|>
 
-<|navbar|>
-
-<|button|active|label=download|>
-
-|>
 
 <|content|>
 
