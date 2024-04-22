@@ -1,5 +1,5 @@
 import streamlit as st
-from utils import set_algorithm_name, get_pdf_iframe
+from utils import set_algorithm_name, get_pdf_iframe, to_csv_file, update_df_csv_to_save
 from menu import display_pages_menu
 from country_by_country.utils.constants import JURIDICTIONS
 from Levenshtein import distance
@@ -135,9 +135,29 @@ if (
             key="selectbox2",
         )
 
+        if "algorithm_name" in st.session_state:
+            st.session_state["df_csv_to_save"] = to_csv_file(
+                st.session_state.tables[st.session_state["algorithm_name"]]
+            )
+        st.download_button(
+            label="📥 Download Current Table",
+            data=(
+                st.session_state["df_csv_to_save"]
+                if "df_csv_to_save" in st.session_state
+                else None
+            ),
+            disabled="df_csv_to_save" not in st.session_state,
+            file_name=(
+                f"{st.session_state['original_pdf_name']}.csv"
+                if "original_pdf_name" in st.session_state
+                else "table.csv"
+            ),
+        )
+
         st.session_state.tables[st.session_state["algorithm_name"]] = st.data_editor(
             st.session_state.tables[st.session_state["algorithm_name"]],
             num_rows="dynamic",
+            on_change=update_df_csv_to_save,
             width=800,
             height=900,
         )
@@ -220,9 +240,20 @@ if (
     st.dataframe(dataframe_styler, use_container_width=True, height=1000)
 
     validated = st.button(
-        "Sauver le tableau ci dessus",
+        "Save the table above",
     )
     if validated:
         st.session_state.tables[
             st.session_state["algorithm_name"]
         ] = dataframe_styler.data
+        # This does not work
+        # Update the csv file to download as well
+        # print("clicked")
+        # st.session_state["df_csv_to_save"] = to_csv_file(
+        #     st.session_state.tables[st.session_state["algorithm_name"]]
+        # )
+        # We rather rerun , which reloads the page and updates the data
+        # to be downloaded
+        # Otherwise, if you click the download button, you get the previous data
+        # the first time and then the right data on the second click
+        st.rerun()
