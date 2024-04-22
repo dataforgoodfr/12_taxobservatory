@@ -100,6 +100,10 @@ def most_similar_string(input_string: str) -> str:
     return most_similar
 
 
+def validate(data: pd.DataFrame) -> None:
+    st.session_state.tables[st.session_state["algorithm_name"]] = data
+
+
 st.set_page_config(layout="wide", page_title="Tables customization")  # page_icon="📈"
 st.title("Country by Country Tax Reporting analysis : Tables")
 st.subheader(
@@ -239,21 +243,8 @@ if (
 
     st.dataframe(dataframe_styler, use_container_width=True, height=1000)
 
-    validated = st.button(
+    st.button(
         "Save the table above",
+        on_click=validate,
+        args=(dataframe_styler.data,),
     )
-    if validated:
-        st.session_state.tables[
-            st.session_state["algorithm_name"]
-        ] = dataframe_styler.data
-        # This does not work
-        # Update the csv file to download as well
-        # print("clicked")
-        # st.session_state["df_csv_to_save"] = to_csv_file(
-        #     st.session_state.tables[st.session_state["algorithm_name"]]
-        # )
-        # We rather rerun , which reloads the page and updates the data
-        # to be downloaded
-        # Otherwise, if you click the download button, you get the previous data
-        # the first time and then the right data on the second click
-        st.rerun()
