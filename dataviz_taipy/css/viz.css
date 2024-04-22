@@ -2,23 +2,24 @@
 .viz {
     background-color:#ffffff;
     border-radius: 20px;
-    -webkit-text-fill-color:#02198D;
     font-size: 24px;
     align-items: center;
-    margin: 10px;
-    padding:10px;
+    padding:5%;
+    justify-content: center;
 }
+/*
 .parent {
     width:100%;
     display: flex;
 }
-.child{
+
+.child {
     display: inline-block;
     align-items: center;
-}
+}*/
 
 .download_button {
-    width: 20px;
+    width: 15px;
     display:
     inline-flex;
     vertical-align: middle;
@@ -38,12 +39,46 @@
     font-size: 24px;
     align-items: center;
     text-align: center;
+    margin:auto;
 }
 
-.mycontent {
-    width: 95%;
-    padding-top: 50px;
-    padding-right: 30px;
-    padding-bottom: 50px;
-    padding-left: 80px;
+.viz_title{
+
+    /* Title */
+    font-family: 'Manrope';
+    font-style: normal;
+    font-weight: 400;
+    font-size: 17px;
+    line-height: 23px;
+    display: flex;
+    align-items: center;
+
+    /* 000000 */
+    color: #000000;
+    -webkit-text-fill-color:#000000;
+
+    /* Inside auto layout */
+    flex: none;
+    order: 0;
+    flex-grow: 0;
+}
+
+.viz_subtitle {
+    /* Title */
+    font-family: 'Manrope';
+    font-style: normal;
+    font-weight: 300;
+    font-size: 15px;
+    line-height: 20px;
+    display: flex;
+    align-items: center;
+
+    /* 000000 */
+    color: #000000;
+
+
+    /* Inside auto layout */
+    flex: none;
+    order: 1;
+    flex-grow: 0;
 }
