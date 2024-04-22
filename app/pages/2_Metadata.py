@@ -28,8 +28,22 @@ if "pdf_after_page_validation" in st.session_state:
         )
     with col2:
         with st.form("metadata_form"):
-            company_name = st.text_input("Company name")
-            year = st.text_input("Year")
+            if "metadata" in st.session_state:
+                company_name = st.session_state["metadata"]["company_name"]
+                year = st.session_state["metadata"]["year"]
+                currency = st.session_state["metadata"]["currency"]
+                unit = st.session_state["metadata"]["unit"]
+                headquarter = st.session_state["metadata"]["headquarter"]
+                print(company_name, year, currency, unit, headquarter)
+            else:
+                company_name = ""
+                year = ""
+                currency = ""
+                unit = None
+                headquarter = ""
+
+            company_name = st.text_input("Company name", value=company_name)
+            year = st.text_input("Year", value=year)
 
             currencies = {
                 (
@@ -40,14 +54,22 @@ if "pdf_after_page_validation" in st.session_state:
             }
             currencies = sorted(currencies, key=lambda x: x[0])
             currencies = [f"{currency[0]} - {currency[1]}" for currency in currencies]
-            currency = st.selectbox("Currency", currencies)
-            unit = st.selectbox(
-                "Unit",
-                ("thousands", "millions", "10 millions", "100 millions", "billions"),
+            currency = st.selectbox(
+                "Currency",
+                currencies,
+                index=currencies.index(currency) if currency else 0,
             )
+
+            units = ["thousands", "millions", "10 millions", "100 millions", "billions"]
+            unit = st.selectbox("Unit", units, index=units.index(unit) if unit else 0)
+
+            headquarters = list(JURIDICTIONS.keys())
             headquarter = st.selectbox(
-                "Headquarter location", list(JURIDICTIONS.keys())
+                "Headquarter location",
+                headquarters,
+                index=headquarters.index(headquarter) if headquarter else 0,
             )
+
             submitted = st.form_submit_button(
                 label="Submit",
             )
