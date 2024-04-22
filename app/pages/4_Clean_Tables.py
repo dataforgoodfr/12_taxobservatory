@@ -1,5 +1,5 @@
 import streamlit as st
-from utils import set_algorithm_name, get_pdf_iframe, to_csv_file, update_df_csv_to_save
+from utils import set_algorithm_name, get_pdf_iframe, to_csv_file
 from menu import display_pages_menu
 from country_by_country.utils.constants import JURIDICTIONS
 from Levenshtein import distance
@@ -104,6 +104,18 @@ def validate(data: pd.DataFrame) -> None:
     st.session_state.tables[st.session_state["algorithm_name"]] = data
 
 
+def update_df_csv_to_save() -> None:
+    for idx, change in st.session_state.changes["edited_rows"].items():
+        for label, value in change.items():
+            st.session_state.tables[st.session_state["algorithm_name"]].loc[
+                idx, label
+            ] = value
+
+    st.session_state["df_csv_to_save"] = to_csv_file(
+        st.session_state.tables[st.session_state["algorithm_name"]],
+    )
+
+
 st.set_page_config(layout="wide", page_title="Tables customization")  # page_icon="📈"
 st.title("Country by Country Tax Reporting analysis : Tables")
 st.subheader(
@@ -158,10 +170,11 @@ if (
             ),
         )
 
-        st.session_state.tables[st.session_state["algorithm_name"]] = st.data_editor(
+        st.data_editor(
             st.session_state.tables[st.session_state["algorithm_name"]],
             num_rows="dynamic",
             on_change=update_df_csv_to_save,
+            key="changes",
             width=800,
             height=900,
         )
