@@ -111,10 +111,8 @@ if (
 
     st.markdown("# Current extraction")
     st.markdown("The extracted table is displaye below")
-    df = st.data_editor(
+    st.dataframe(
         st.session_state.tables[st.session_state["algorithm_name"]],
-        num_rows="dynamic",
         width=900,
         height=900,
-        disabled=True,
     )
