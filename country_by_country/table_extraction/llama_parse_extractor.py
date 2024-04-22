@@ -55,6 +55,16 @@ class LlamaParseExtractor:
         for page in json_objs[0]["pages"]:
             for item in page["items"]:
                 if item["type"] == "table":
+                    # If the number of columns in the header row is greater than the data rows
+                    header_length = len(item["rows"][0])
+
+                    for i in range(1, len(item["rows"])):
+                        while len(item["rows"][i]) < header_length:
+                            item["rows"][i].append("No Extract ")
+                        while len(item["rows"][i]) > header_length:
+                            item["rows"][0].append("No Extract ")
+                            header_length = len(item["rows"][0])
+
                     df = pd.DataFrame(item["rows"][1:], columns=item["rows"][0])
                     tables_list.append(df)
 

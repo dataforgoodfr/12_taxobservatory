@@ -55,7 +55,7 @@ def convert_dataframe(dataframe: pd.DataFrame) -> pd.DataFrame:
     return dataframe
 
 
-special_characters = "#&()[]@"
+special_characters = "#&()[]@©"
 
 
 def style_symbol(v, props=""):
@@ -82,6 +82,8 @@ def most_similar_string(input_string: str) -> str:
         else:
             return min_distance, most_similar
 
+    if input_string == None:
+        return "None"
     min_distance = float("inf")
     most_similar = None
     for string in JURIDICTIONS.keys():
@@ -109,10 +111,6 @@ if (
     st.session_state.get("validate_selected_pages", False)
     and "pdf_after_page_validation" in st.session_state
 ):
-
-    st.session_state.tables[st.session_state["algorithm_name"]] = convert_dataframe(
-        st.session_state.tables[st.session_state["algorithm_name"]]
-    )
 
     col3, col4 = st.columns(2)
     with col3:
@@ -164,6 +162,11 @@ if (
 
     dataframe = st.session_state.tables[st.session_state["algorithm_name"]].copy()
 
+    if country:
+        dataframe.iloc[:-2, 0] = dataframe.iloc[:-2, 0].apply(
+            lambda x: most_similar_string(x)
+        )
+
     if remove_symbols:
         pattern = "\(.*?\)" + "|[" + re.escape(special_characters) + "]"
         for column in dataframe.columns:
@@ -177,11 +180,6 @@ if (
         new_row = dataframe.apply(column_sum, axis=0)
         new_row.iloc[0] = "Total Calculated"
         dataframe.loc[-1] = new_row.transpose()
-
-    if country:
-        dataframe.iloc[:-2, 0] = dataframe.iloc[:-2, 0].apply(
-            lambda x: most_similar_string(x)
-        )
 
     dataframe_styler = dataframe.style
 

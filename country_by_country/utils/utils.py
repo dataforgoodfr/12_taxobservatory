@@ -65,28 +65,21 @@ def gather_tables(
     tables_by_name = {}
     for asset in assets["table_extractors"]:
         tables = asset["tables"]
-        if len(tables) == 1:
-            for column in tables[0].columns:
+        for i in range(len(tables)):
+            for label, _content in tables[i].items():
+                if isinstance(tables[i][label], pd.DataFrame):
+                    tables[i].columns = [
+                        "No Extract " + str(i + 1) for i in range(tables[i].shape[1])
+                    ]
+                    break
+            for label, content in tables[i].items():
                 if (
-                    tables[0][column].dtype == "object"
+                    content.dtype == "object"
                 ):  # Check if the column contains string data
-                    tables[0][column] = tables[0][column].replace("", None)
-                    tables[0][column] = tables[0][column].str.replace(
-                        ",",
-                        ".",
-                    )  # else we wont be able to convert to float
-                    tables[0][column] = tables[0][column].str.replace(".", "")
-            tables_by_name[asset["type"]] = tables[0]
-        elif len(tables) > 1:
-            for i in range(len(tables)):
-                for column in tables[i].columns:
-                    if (
-                        tables[i][column].dtype == "object"
-                    ):  # Check if the column contains string data
-                        tables[i][column] = tables[i][column].replace("", None)
-                        tables[i][column] = tables[i][column].str.replace(",", ".")
-                        tables[i][column] = tables[i][column].str.replace(".", "")
-                tables_by_name[asset["type"] + "_" + str(i)] = tables[i]
+                    tables[i][label] = tables[i][label].replace("", None)
+                    tables[i][label] = tables[i][label].str.replace(".", "")
+                    tables[i][label] = tables[i][label].str.replace(",", ".")
+            tables_by_name[asset["type"] + "_" + str(i)] = tables[i]
 
     return tables_by_name
 

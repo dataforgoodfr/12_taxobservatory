@@ -16,16 +16,19 @@ from dotenv import load_dotenv
 
 
 def merge_table(table_extractor: str) -> None:
-    for asset in st.session_state["assets"]["table_extractors"]:
-        if asset["type"] == table_extractor:
-            first_df_columns = asset["tables"][0].columns
+    first_df_columns = pd.Series([])
+    table_list = []
+    for key, table in st.session_state["tables"].items():
+        if table_extractor in key:
+            if first_df_columns.empty:
+                first_df_columns = table.columns
             # Replace column names for all DataFrames in the list
-            for df in asset["tables"]:
-                df.columns = first_df_columns
+            table.columns = first_df_columns
+            table_list.append(table)
 
-            st.session_state["new_tables"] = pd.concat(
-                asset["tables"], ignore_index=True, sort=False
-            )
+    st.session_state["new_tables"] = pd.concat(
+        table_list, ignore_index=True, sort=False
+    )
 
 
 def save_merge(table_extractor: str) -> None:
@@ -83,16 +86,13 @@ if (
         )
 
         if table_extractor is not None:
-            for asset in st.session_state["assets"]["table_extractors"]:
-                i = 0
-                if asset["type"] == table_extractor:
-                    for table in asset["tables"]:
-                        st.markdown("Table shape :" + str(table.shape))
-                        st.markdown("Table index : _" + str(i))
-                        i += 1
-                        st.dataframe(
-                            table,
-                        )
+            for key, table in st.session_state["tables"].items():
+                if table_extractor in key:
+                    st.markdown("Table shape :" + str(table.shape))
+                    st.markdown("Table name : " + key)
+                    st.dataframe(
+                        table,
+                    )
 
     with col2:
         st.markdown(
