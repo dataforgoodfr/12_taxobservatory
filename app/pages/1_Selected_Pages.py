@@ -70,4 +70,4 @@ if "working_file_pdf" in st.session_state:
             st.session_state["working_file_pdf"].name,
             [i - 1 for i in selected_pages],
         )
-        st.switch_page("pages/5_Metadata.py")
+        st.switch_page("pages/2_Metadata.py")

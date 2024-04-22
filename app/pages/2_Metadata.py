@@ -59,4 +59,4 @@ if "pdf_after_page_validation" in st.session_state:
                     "unit": unit,
                     "headquarter": headquarter,
                 }
-                st.switch_page("pages/2_Merge_Tables.py")
+                st.switch_page("pages/3_Merge_Tables.py")

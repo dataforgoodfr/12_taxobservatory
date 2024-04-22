@@ -12,9 +12,9 @@ remove = "remove this column"
 
 
 def transpose_current_table():
-    st.session_state.tables[
-        st.session_state["algorithm_name"]
-    ] = st.session_state.tables[st.session_state["algorithm_name"]].transpose()
+    st.session_state.tables[st.session_state["algorithm_name"]] = (
+        st.session_state.tables[st.session_state["algorithm_name"]].transpose()
+    )
 
 
 def set_headers(algorithm_name: str) -> None:
@@ -107,7 +107,7 @@ if (
             )
 
             if submitted:
-                st.switch_page("pages/4_Clean_Tables.py")
+                st.switch_page("pages/5_Clean_Tables.py")
 
     st.markdown("# Current extraction")
     st.markdown("The extracted table is displaye below")
