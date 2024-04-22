@@ -69,6 +69,34 @@
     flex-grow: 0;
 }
 
+.title_blue {
+    /* Title */
+
+    /*width: 1037px;
+    height: 55px;*/
+
+    /* Grand titre */
+    font-family: 'Manrope';
+    font-style: normal;
+    font-weight: 700;
+    font-size: 40px;
+    line-height: 55px;
+    /* identical to box height */
+    display: flex;
+    align-items: center;
+
+    /* f9fbfe */
+    color: #021978;
+
+
+    /* Inside auto layout */
+    flex: none;
+    order: 0;
+    flex-grow: 0;
+}
+
+
+
 .cardtitle {
     /* Title */
 
@@ -143,9 +171,6 @@
 }
 
 
-.header h1{
-    font-size: 64px;
-}
 
 .subheader {
     /* Subtitle */
