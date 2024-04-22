@@ -1,6 +1,4 @@
 import base64
-import gzip
-from io import BytesIO
 from pathlib import Path
 
 import pandas as pd
@@ -20,12 +18,9 @@ def set_algorithm_name(my_key: str) -> None:
     st.session_state["algorithm_name"] = st.session_state[my_key]
 
 
+@st.cache_data
 def to_csv_file(df: pd.DataFrame) -> bytes:
-    output = BytesIO()
-    with gzip.open(output, "wt") as f:
-        df.to_csv(f, index=False)
-    processed_data = output.getvalue()
-    return processed_data
+    return df.to_csv(index=False).encode("utf-8")
 
 
 def update_df_csv_to_save() -> None:

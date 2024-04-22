@@ -248,3 +248,14 @@ if (
         st.session_state.tables[st.session_state["algorithm_name"]] = (
             dataframe_styler.data
         )
+        # This does not work
+        # Update the csv file to download as well
+        # print("clicked")
+        # st.session_state["df_csv_to_save"] = to_csv_file(
+        #     st.session_state.tables[st.session_state["algorithm_name"]]
+        # )
+        # We rather rerun , which reloads the page and updates the data
+        # to be downloaded
+        # Otherwise, if you click the download button, you get the previous data
+        # the first time and then the right data on the second click
+        st.rerun()
