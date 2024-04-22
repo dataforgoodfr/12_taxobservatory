@@ -12,6 +12,7 @@ from country_by_country.utils.utils import (
     gather_tables_with_merge,
 )
 from menu import display_pages_menu
+from dotenv import load_dotenv
 
 
 def merge_table(table_extractor: str) -> None:
@@ -43,6 +44,8 @@ st.subheader(
     "This page will allow you to modify the headers and to remove columns",
 )
 display_pages_menu()
+load_dotenv()
+
 
 if "tables" not in st.session_state:
     st.markdown(

@@ -82,9 +82,9 @@ def find_and_download_pdfs(
 
 if __name__ == "__main__":
     find_and_download_pdfs(
-        csv_path="collection/data/orbis_d4g_sample.csv",
+        csv_path="collecte/data/orbis_d4g_sample.csv",
         api_key=api_key,
         cse_id=cx,
         keywords=keywords,
-        download_folder="collection/data/pdf_downloads",
+        download_folder="collecte/data/pdf_downloads",
     )

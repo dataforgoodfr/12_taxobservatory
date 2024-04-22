@@ -22,6 +22,9 @@ display_pages_menu()
 mytmpfile = tempfile.NamedTemporaryFile(suffix=".pdf", delete=False)
 
 with st.sidebar:
+
+    st.markdown("# Configuration")
+
     original_pdf = st.file_uploader(
         "Upload a pdf document containing financial table : ",
     )
@@ -47,12 +50,7 @@ pagefilter:
     modelfile: random_forest_model_low_false_positive.joblib
 
 table_extraction:
-  - type: Camelot
-    params:
-      flavor: stream
-  - type: Camelot
-    params:
-      flavor: lattice
+  - type: LLamaParse
   - type: Unstructured
     params:
       hi_res_model_name: "yolox"

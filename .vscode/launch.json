@@ -1,0 +1,14 @@
+{
+    "version": "0.1.0",
+    "configurations": [
+        {
+            "name": "streamlit debug",
+            "type": "debugpy",
+            "request": "launch",
+            "module": "streamlit",
+            "args": ["run", "app/index.py", "--server.port", "8502"],
+
+            "justMyCode": true,
+        }
+    ]
+    }

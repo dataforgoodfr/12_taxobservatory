@@ -136,9 +136,6 @@ venv.bak/
 .spyderproject
 .spyproject
 
-# VS Code
-.vscode
-
 # Rope project settings
 .ropeproject
 
@@ -162,6 +159,10 @@ cython_debug/
 # Precommit hooks: ruff cache
 .ruff_cache
 .DS_Store
+
+# Pycharm
+
+.idea
 
 # Pickle files
 *.pkl

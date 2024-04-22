@@ -11,6 +11,12 @@ keep = "keep the extracted value"
 remove = "remove this column"
 
 
+def transpose_current_table():
+    st.session_state.tables[
+        st.session_state["algorithm_name"]
+    ] = st.session_state.tables[st.session_state["algorithm_name"]].transpose()
+
+
 def set_headers(algorithm_name: str) -> None:
     for header in st.session_state.tables[algorithm_name].columns.values.tolist():
         if st.session_state["widget" + str(header)] == remove:
@@ -81,6 +87,9 @@ if (
             "Table shape :"
             + str(st.session_state.tables[st.session_state["algorithm_name"]].shape)
         )
+
+        st.button("Transpose table", on_click=transpose_current_table)
+
         with st.form(key="my_form"):
             for header in st.session_state.tables[
                 st.session_state["algorithm_name"]
@@ -99,3 +108,13 @@ if (
 
             if submitted:
                 st.switch_page("pages/4_Clean_Tables.py")
+
+    st.markdown("# Current extraction")
+    st.markdown("The extracted table is displaye below")
+    df = st.data_editor(
+        st.session_state.tables[st.session_state["algorithm_name"]],
+        num_rows="dynamic",
+        width=900,
+        height=900,
+        disabled=True,
+    )
