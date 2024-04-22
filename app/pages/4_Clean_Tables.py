@@ -242,7 +242,7 @@ if (
     st.dataframe(dataframe_styler, use_container_width=True, height=1000)
 
     validated = st.button(
-        "Sauver le tableau ci dessus",
+        "Save the table above",
     )
     if validated:
         st.session_state.tables[st.session_state["algorithm_name"]] = (
