@@ -1,6 +1,7 @@
 
+<|part|class_name=pagecontent|
 
-<header|part|class_name=p4 header|
+<header|part|class_name=header p4|
 
 <|part|class_name=h1 fr align-columns-center|
 Country-by-Country publishing trends
@@ -294,49 +295,73 @@ Viz 27
 
 
 
-<cntent3|layout|columns=1=|gap=4rem|clas_name=blue_sectionp4 align-columns-center|
+<nav_footer|part|class_name=blue_section align-item-center|
 
+<|layout|columns=2 1 2|
+<|part|
+|>
 <button|part|
 <|button|active|label=Download data|>
 |button>
+<|part|
+|>
+|>
 
+
+<|layout|columns=1 auto 1|
+<|part|
+|>
 <blabla|part|class_name=h1 align-columns-center|
 Would you like to learn more?
 |blabla>
+<|part|
+|>
+|>
+
 
 
 <layoutcard|layout|columns=1 1 1|class_name=p4|gap=5rem|
   <|card|
-  <|part|class_name=h1
-  Publication trends
-  |>
+  
+Publication trends
+{: .cardtitle}
+
   Visualize how tax reporting practices from the world's 
   largest corporations are evolving across industries, 
   regions and over time through interactive charts and 
   analysis.
+{: .cardtext .pb1}
 
-  <|button|active|label=Publication trends ->|>
+
+  <|button|active|label=Publication trends ->|class_name=buttonsection|>
   |>    
 
   <|card|
-  <|part|class_name=h1
-  Methodology
-  |>
-  text
+  
+Methodology
+{: .cardtitle}
 
-  <|button|active|label=Our methodology ->|>
+  text
+{: .cardtext .pb1}
+
+  <|button|active|label=Our methodology ->|class_name=buttonsection|>
   |>   
   <|card|
-  <|part|class_name=h1
-  Key stories
-  |>
+
+Key stories
+{: .cardtitle}
+
   Access our ongoing research examining multinational tax 
   behavior based on this country-by-country data, including 
   case studies, risk scoring and more.
+{: .cardtext .pb1 }
 
-  <|button|active|label=Key stories ->|>
+  <|button|active|label=Key stories ->|class_name=buttonsection|>
+
   |>
 |layoutcard>
 [//]: <> (end layout card)
 
-|cntent3>
+|nav_footer>
+
+|>

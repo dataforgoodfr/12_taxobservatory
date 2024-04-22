@@ -3,9 +3,9 @@ import pandas as pd
 import io
 from taipy.gui import Markdown,Gui, download
 
-from dataviz_taipy.data.data import data
+import algo # from dataviz_taipy import algo
+from data.data import data #from dataviz_taipy.data.data import data
 
-import dataviz_taipy.algo as algo
 
 header_right_image_path = 'images/pexels-ingo-joseph-1880351.png'
 download_icon_path = 'images/Vector.svg'

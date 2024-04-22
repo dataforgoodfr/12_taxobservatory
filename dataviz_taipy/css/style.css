@@ -1,5 +1,25 @@
 @import url("viz.css");
 
+.logo {
+    width: 45.26px;
+    height: 53.81px;
+    top: 6.41px;
+    left: 1.74px;
+    gap: 0px;
+    opacity: 0px;
+}
+
+.logotitle {
+    /* Grand titre */
+    font-family: 'Manrope';
+    font-style: normal;
+    font-weight: 700;
+    font-size: 40px;
+    line-height: 55px;
+
+    color: #000000;
+}
+
 .pagecontent {
     padding-left:10%;
     padding-top:5%;
@@ -68,6 +88,9 @@
     order: 0;
     flex-grow: 0;
 }
+
+
+
 
 .title_blue {
     /* Title */
@@ -200,7 +223,7 @@
     background-color: #B8BEDB;
     -webkit-text-fill-color:#02198D;
     padding-left:10%;
-    padding-top:5%;
+    padding-top:0%;
     padding-right:10%;
     padding-bottom:5%;
     

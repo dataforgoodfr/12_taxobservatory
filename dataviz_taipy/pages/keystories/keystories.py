@@ -3,9 +3,9 @@ import pandas as pd
 
 from taipy.gui import Markdown
 
-from data.data import data
+import algo # from dataviz_taipy import algo
+from data.data import data #from dataviz_taipy.data.data import data
 
-import algo as algo
 
 keystories_md = Markdown("pages/keystories/keystories.md")
 

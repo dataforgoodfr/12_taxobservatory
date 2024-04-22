@@ -1,14 +1,25 @@
 
-<|layout|columns=1fr auto 1fr|class_name=container align-columns-top|
+<|layout|columns=1 1 1fr auto 1 1fr|class_name=container align-columns-top align_item_stretch|
+<|{taxplorer_logo_path}|image|class_name=logo|>
 <|part|class_name=pt_half pb_half|
-<|Taxplorer|text|class_name=align-center|>
+<|part|class_name=logotitle|
+Taxplorer
+|>
+|>
+<|part|
 |>
 <|part|class_name=align_item_stretch|
 <|navbar|class_name=fullheight|>
 |>
+
+<|part|
+|>
+
+
 <|part|class_name=text_right|
 <|button|label=download|class_nanme=align-center|>
-<|toggle|theme|class_name=relative nolabel|>
+
+[//]: # (<|toggle|theme|class_name=relative nolabel|>)
 |>
 |>
 
@@ -19,7 +30,6 @@
 
 
 <footer|layout|columns=1 1|gap=3rem|class_name=align-columns-center footer|
-
 
 <left|layout|columns=1 1|class_name=align-columns-center|
 

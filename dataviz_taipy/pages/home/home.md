@@ -4,7 +4,8 @@
 
 [//]: <> (header)
 <header|part|class_name=title|
-Multinationals under the spotlight
+Multinationals under the spotlight  
+
 |header>
 [//]: <> (end header)
 
@@ -22,12 +23,13 @@ difficult to analyze collectively. Our tool compiles
 this information into an accessible, user-friendly 
 format. Start exploring the tax footprints of major 
 multinationals today and unlock key insights into an 
-often opaque aspect of global business operations.
+often opaque aspect of global business operations.  
+
 |subheader>
 
 
 [//]: <> (layout card)
-<layoutcard|layout|columns=1 1 1|gap=5rem|
+<layoutcard|layout|columns=1 1 1|gap=2rem|
   <|card|
   <|part|class_name=cardtitle
   Explore companies
@@ -69,35 +71,34 @@ often opaque aspect of global business operations.
 
 <pagecontent|part|class_name=pagecontent|
 
-<|layout|columns=1 1fr 1|clas_name=align-columns-center|
+<|layout|columns=4 1|clas_name=align-columns-center|
 <|part|class_name=sectiontitle|
 Our database is growing 
-|>
-<|part|
 |>
 <|button|active|label=More on reporting trends ->|class_name=buttonsection|>
 |>
 
 
-
 [//]: <> (row viz)
-<viz_row|layout|columns=1 1 1|gap=4rem|clas_name=fr p6 align-columns-center|
+<|part pt2 pb2|
+<viz_row|layout|columns=1 1 1|gap=2rem|clas_name= align-columns-center|
 
-<first2viz|layout|columns=1|gap=4rem|clas_name=fr align-columns-center|
-
+<first2viz|layout|columns=1|gap=2rem|clas_name=fr align-columns-center|
 [//]: <> (a viz 1)
-<viz_card|part|class_name=viz|
-<headers|layout|columns=2fr 1|
-<title|part|
+<viz_card|part viz|
+<headers|layout|columns=5 1|
+<|part|
+<title|part|class_name=viz_title|
 <|{viz1.title}|>
 |title>
+<sub_title|class_name=viz_subtitle|
+<|{viz1.sub_title}|>
+|sub_title>
+|>
 <download_button|part|
 <|{download_icon_path}|image|class_name=download_button|on_action={viz1.on_action}|>
 |download_button>
 |headers>
-<sub_title|
-<|{viz1.sub_title}|>
-|sub_title>
 <data_viz|part|class_name=round|
 <|{viz1.data}|>
 |data_viz>
@@ -141,9 +142,6 @@ Our database is growing
 |>
 [//]: <> (end of a viz 2)
 
-
-<|part|
-Viz 24
 <viz_card|part|class_name=viz|
 <headers|layout|columns=2fr 1|
 <title|part|
@@ -160,43 +158,53 @@ Viz 24
 <|chart|figure={data_viz_24_fig}|>
 |data_viz>
 |viz_card>
-|>
 
 |viz_row>
+|>
 
 
-
-<rowheader|layout|columns=2 1fr 1|class_name=align-columns-stretch|
+<rowheader|layout|columns=5  1|class_name=pb2 align-columns-stretch|
 <|part|class_name=sectiontitle|
 And there are a lot of stories to tell
-|>
-<|part|
 |>
 <|button|label=More key stories|class_name=buttonsection|>
 |rowheader>
 
 
-<bluesection|layout|columns=1  1|clas_name=p4 align-columns-center|
+<bluesection|layout|columns=1  1|gap=5rem|clas_name=p4 align-columns-center|
 <firstblue|part|class_name=blue_section|
-European banks love tax havens
 
-Analysing 7 years of country-by-country data published 
-by European banks, we show that EU banks have been consistently present in tax havens with around 14% of their profits booked in tax havens annually. Implementing 
-a 15% minimum tax rate could generate EUR 3-5 billion annually for European countries.
+European banks love tax havens
+{: .cardtitle}
+
+Analysing 7 years of country-by-country data published by European 
+banks, we show that EU banks have been consistently present in tax 
+havens with around 14% of their profits booked in tax havens annually.  
+Implementing a 15% minimum tax rate could generate EUR 3-5 billion 
+annually for European countries.  
+{: .cardtext}
 
 Read more ->
+{: .pt4}
 |firstblue>
 
 
 <secondblue|part|class_name=blue_section|
 Tracking CbCR's Fragmented Uptake
+{: .cardtitle}
 
-Overall CbCR publishing rates are low (97 reports for 2020), 
-but increasing rapidly. CbCR publishing is concentrated in European countries and in the extractive sector. Last, there remains significant room for progress on the completion of the information provided 
-and the accessibility of these reports: 55% of the reports
-do not include all the recommended variables and reports are published in a wide variety of documents.
+Overall CbCR publishing rates are low (97 reports for 2020), but 
+increasing rapidly.  
+CbCR publishing is concentrated in European countries and in the 
+extractive sector. Last, there remains significant room for progress 
+on the completion of the information provided and the accessibility 
+of these reports: 55% of the reports do not include all the 
+recommended variables and reports are published in a wide variety 
+of documents.  
+{: .cardtext}
 
 Read more ->
+{: .pt4}
 |secondblue>
 
 |bluesection>

@@ -5,9 +5,9 @@ from taipy.gui import Markdown
 
 import plotly.graph_objects as go
 
-import algo
+import algo # from dataviz_taipy import algo
+from data.data import data #from dataviz_taipy.data.data import data
 
-from data.data import data
 
 colname_company = 'mnc'
 colname_sector = 'sector'

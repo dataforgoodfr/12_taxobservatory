@@ -4,8 +4,8 @@ from PIL import Image
 import io
 from taipy.gui import Markdown,Gui, download
 
-from dataviz_taipy import algo
-from dataviz_taipy.data.data import data
+import algo # from dataviz_taipy import algo
+from data.data import data #from dataviz_taipy.data.data import data
 
 original_image = "images/viz.png"
 layout = {'barmode':'stack', "hovermode":"x"}

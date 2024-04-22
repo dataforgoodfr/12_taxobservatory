@@ -3,8 +3,9 @@ import pandas as pd
 
 from taipy.gui import Markdown, download
 
-from dataviz_taipy import algo
-from dataviz_taipy.data.data import data
+import algo # from dataviz_taipy import algo
+from data.data import data #from dataviz_taipy.data.data import data
+
 import io
 
 header_right_image_path = 'images/pexels-ingo-joseph-1880351.png'

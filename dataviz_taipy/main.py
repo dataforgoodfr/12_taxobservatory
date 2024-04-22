@@ -18,7 +18,7 @@ from pages.contact.contact import contact_md
 
 
 from pages.root import root
-from dataviz_taipy.viz_library import VizLibrary
+# from dataviz_taipy.viz_library import VizLibrary
 from pages.country.country import selected_country, selector_country
 from pages.company.company import selected_company, selector_company
 
@@ -61,7 +61,7 @@ stylekit = {
 if __name__ == '__main__':
     tp.Core().run()
     gui_multi_pages.run(
-        # theme=my_theme,
+        dark_mode=False,
         stylekit=stylekit,
         title="taxobservatory"
     )
