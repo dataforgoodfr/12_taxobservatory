@@ -20,6 +20,12 @@ def set_algorithm_name(my_key: str) -> None:
 
 @st.cache_data
 def to_csv_file(df: pd.DataFrame) -> bytes:
+    # Populate the columns with the metadata
+    df = df.assign(company=st.session_state["metadata"]["company_name"])
+    df = df.assign(year=st.session_state["metadata"]["year"])
+    df = df.assign(currency=st.session_state["metadata"]["currency"])
+    df = df.assign(unit=st.session_state["metadata"]["unit"])
+    df = df.assign(headquarter=st.session_state["metadata"]["headquarter"])
     return df.to_csv(index=False).encode("utf-8")
 
 
