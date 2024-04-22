@@ -192,11 +192,17 @@
     flex: none;
     order: 1;
     flex-grow: 0;
+    padding-top:4%;
+    padding-bottom:2%;
 }
 
 .footer {
     background-color: #B8BEDB;
     -webkit-text-fill-color:#02198D;
+    padding-left:10%;
+    padding-top:5%;
+    padding-right:10%;
+    padding-bottom:5%;
     
 }
 
@@ -224,4 +230,10 @@
     text-align: center;
 }
 
-
+.mycontent {
+    width: 95%;
+    padding-top: 50px;
+    padding-right: 30px;
+    padding-bottom: 50px;
+    padding-left: 80px;
+}

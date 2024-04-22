@@ -16,39 +16,84 @@
 
 <|content|>
 
-<|layout|columns=1 1 1 1|gap=3rem||class_name=p4 align-columns-center footer|
 
-<|layout|columns=1|
 
-<| Company |>
+<footer|layout|columns=1 1|gap=3rem|class_name=align-columns-center footer|
 
-<| Company |>
+
+<left|layout|columns=1 1|class_name=align-columns-center|
+
+<|layout|columns=1|class_name=align-columns-center|
+<|{data4good_logo_path}|image|>
+## Data For Good
+
+<|layout|columns=1 1|
+<|
+Website
+|>
+<|{website_logo_path}|image|>
+|>
+<|layout|columns=1 1|
+<|
+Twitter
+|>
+<|{twitter_logo_path}|image|>
+|>
+<|layout|columns=1 1|
+<|
+Linkedin
+|>
+<|{linkedin_logo_path}|image|>
+|>
 |>
 
-
-<|layout|columns=1|
-
-<| Project |>
-
-<| 
-Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. 
+<|layout|columns=1|class_name=align-columns-center|
+<|{eutax_logo_path}|image|>
+## EU Tax Observatory  
+<|layout|columns=1 1|
+<|
+Website
+|>
+<|{website_logo_path}|image|>
+|>
+<|layout|columns=1 1|
+<|
+Twitter
+|>
+<|{twitter_logo_path}|image|>
+|>
+<|layout|columns=1 1|
+<|
+Linkedin
+|>
+<|{linkedin_logo_path}|image|>
 |>
 
 |>
 
-<|layout|columns=1|
+|left>
 
-<| Help & Informations |>
+<right|part m3|
 
-<| Methodology |>
+# A project led by the EU tax observatory and Data for Good
 
-<| Contact |>
+The EU Tax Observatory conducts innovative research on taxation, 
+contributes to a democratic and inclusive debate on the future of 
+taxation, and fosters a dialogue between the scientific community, 
+civil society, and policymakers in the European Union and worldwide.
+Data for Good is a community of 4 000 tech experts volunteering 
+for general interest projects.  
 
-<| © 2024 Privacy - Terms    |>
+<|layout|columns=3fr 1|class_name=pt3
+
+<|button|label=Discover our methodology|>
+
+<|button|label=Contact|>
 
 |>
 
+|right>
 
-<|button|active|label=download|>
+© 2024 Privacy — Terms
 
-|>
+|footer>
