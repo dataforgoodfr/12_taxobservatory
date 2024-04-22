@@ -245,9 +245,9 @@ if (
         "Save the table above",
     )
     if validated:
-        st.session_state.tables[st.session_state["algorithm_name"]] = (
-            dataframe_styler.data
-        )
+        st.session_state.tables[
+            st.session_state["algorithm_name"]
+        ] = dataframe_styler.data
         # This does not work
         # Update the csv file to download as well
         # print("clicked")
