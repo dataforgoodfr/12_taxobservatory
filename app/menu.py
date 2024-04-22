@@ -9,6 +9,11 @@ def display_pages_menu() -> None:
             st.session_state.clear()
             st.switch_page("index.py")
 
+        if "original_pdf_name" in st.session_state:
+            st.markdown(
+                f"Currently processing : {st.session_state['original_pdf_name']}",
+            )
+
         st.markdown("# Pipeline steps")
         st.page_link("pages/0_Import_File.py", label="Upload PDF")
         st.page_link("pages/1_Selected_Pages.py", label="Pages selection")
