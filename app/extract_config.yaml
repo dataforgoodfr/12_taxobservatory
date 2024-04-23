@@ -12,6 +12,3 @@ table_extraction:
   - type: Camelot
     params:
       flavor: stream
-  - type: Camelot
-    params:
-      flavor: lattice
