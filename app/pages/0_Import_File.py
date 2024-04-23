@@ -25,6 +25,7 @@ with st.sidebar:
 
     st.markdown("# Configuration")
 
+    st.markdown("## PDF Report to process")
     original_pdf = st.file_uploader(
         "Upload a pdf document containing financial table : ",
     )
@@ -39,6 +40,7 @@ with st.sidebar:
             "Already loaded file : " + st.session_state["original_pdf_name"],
         )
 
+    st.markdown("## Pipeline configuration")
     loaded_config = st.file_uploader(
         "Upload a config if the default config doesn't suit you :",
     )
