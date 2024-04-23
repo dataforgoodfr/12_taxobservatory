@@ -6,11 +6,14 @@ import streamlit as st
 import yaml
 from menu import display_pages_menu
 from pypdf import PdfReader
-from utils import get_pdf_iframe
+from utils import get_pdf_iframe, set_state
 
 from country_by_country.processor import ReportProcessor
 
 logging.basicConfig(stream=sys.stdout, level=logging.INFO, format="%(message)s")
+
+def set_extractors(value: list):
+    set_state(["config", "table_extraction"], value)
 
 st.set_page_config(layout="wide", page_title="Accueil - upload de PDF")
 st.title("Country by Country Tax Reporting analysis")
@@ -44,14 +47,28 @@ with st.sidebar:
     )
 
     with open("app/extract_config.yaml", "r") as f:
-        yaml_config=f.read()
+        default_config=f.read()
 
 
     if loaded_config is None:
-        st.session_state["config"] = yaml.safe_load(yaml_config)
+        config = yaml.safe_load(default_config)        
     else:
-        st.session_state["config"] = yaml.safe_load(loaded_config)
-    yaml_str = yaml.dump(st.session_state["config"], default_flow_style=False, indent=2)
+        config = yaml.safe_load(loaded_config)
+    
+    if st.session_state.get("first_time", True):
+        st.session_state["config"] = config
+
+    st.write("Config:\n\n")
+    page_filter_list = [pagefilter["type"] for pagefilter in config["pagefilter"]]
+    st.radio("Page filter", page_filter_list)
+    
+    #Set extractors
+    all_table_extractors = {extractor["type"]: extractor for extractor in config["table_extraction"]}
+    current_table_extractors = [extractor['type'] for extractor in st.session_state['config']['table_extraction']]
+    extractor_keys = st.multiselect("Extractors", options=all_table_extractors.keys(), default=current_table_extractors)
+    set_extractors([all_table_extractors[key] for key in extractor_keys])
+    
+    yaml_str = yaml.dump(st.session_state["config"], default_flow_style=False, sort_keys=False, indent=2)
     # Ajouter des backticks triples pour créer un bloc de code markdown
     markdown_str = f"The configuration is : \n\n```\n{yaml_str}\n```"
     st.write(markdown_str)
@@ -66,6 +83,8 @@ if "working_file_pdf" in st.session_state:
         get_pdf_iframe(st.session_state["working_file_pdf"].name),
         unsafe_allow_html=True,
     )
+
+
 
     if "first_time" not in st.session_state:
         st.session_state["first_time"] = False
@@ -95,3 +114,4 @@ if "working_file_pdf" in st.session_state:
             assets["pagefilter"]["selected_pages"] = list(range(number_pages))
         st.session_state["assets"] = assets
         st.switch_page("pages/1_Selected_Pages.py")
+
