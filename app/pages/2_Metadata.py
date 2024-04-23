@@ -1,7 +1,7 @@
 import streamlit as st
 from utils import set_algorithm_name, get_pdf_iframe
 from menu import display_pages_menu
-from country_by_country.utils.constants import JURIDICTIONS, CURRENCIES
+from country_by_country.utils.constants import JURIDICTIONS, CURRENCIES, SECTORS
 from Levenshtein import distance
 import sys
 import logging
@@ -30,6 +30,7 @@ if "pdf_after_page_validation" in st.session_state:
         with st.form("metadata_form"):
             if "metadata" in st.session_state:
                 company_name = st.session_state["metadata"]["company_name"]
+                sector = st.session_state["metadata"]["sector"]
                 year = st.session_state["metadata"]["year"]
                 currency = st.session_state["metadata"]["currency"]
                 unit = st.session_state["metadata"]["unit"]
@@ -37,12 +38,18 @@ if "pdf_after_page_validation" in st.session_state:
                 print(company_name, year, currency, unit, headquarter)
             else:
                 company_name = ""
+                sector = ""
                 year = ""
                 currency = ""
                 unit = None
                 headquarter = ""
 
             company_name = st.text_input("Company name", value=company_name)
+
+            sector = st.selectbox(
+                "Sector", SECTORS, index=SECTORS.index(sector) if sector else 0
+            )
+
             year = st.text_input("Year", value=year)
 
             currencies = {
@@ -76,6 +83,7 @@ if "pdf_after_page_validation" in st.session_state:
             if submitted:
                 st.session_state["metadata"] = {
                     "company_name": company_name,
+                    "sector": sector,
                     "year": year,
                     "currency": currency,
                     "unit": unit,
