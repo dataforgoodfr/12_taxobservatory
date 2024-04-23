@@ -118,7 +118,7 @@ you considered. Every algorithm provides the following assets :
 
 The following table extractors can be considered :
 
-- [ExtractTable][#extracttable]
+- [ExtractTable](#extracttable)
 - [Camelot](#camelot)
 - [Unstructured API](#unstructured-api)
 - [Unstructured](#unstructured)

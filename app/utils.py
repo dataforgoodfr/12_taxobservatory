@@ -27,9 +27,3 @@ def to_csv_file(df: pd.DataFrame) -> bytes:
     df = df.assign(unit=st.session_state["metadata"]["unit"])
     df = df.assign(headquarter=st.session_state["metadata"]["headquarter"])
     return df.to_csv(index=False).encode("utf-8")
-
-
-def update_df_csv_to_save() -> None:
-    st.session_state["df_csv_to_save"] = to_csv_file(
-        st.session_state.tables[st.session_state["algorithm_name"]],
-    )
