@@ -41,6 +41,15 @@ def save_merge(table_extractor: str) -> None:
     st.session_state["algorithm_name"] = table_extractor
 
 
+def remove_table(key: str) -> None:
+    del st.session_state["tables"][key]
+    if (
+        "algorithm_name" in st.session_state
+        and st.session_state["algorithm_name"] == key
+    ):
+        del st.session_state["algorithm_name"]
+
+
 st.set_page_config(layout="wide", page_title="Merge Tables")  # page_icon="📈"
 st.title("Country by Country Tax Reporting analysis : Headers")
 st.subheader(
@@ -88,11 +97,19 @@ if (
         if table_extractor is not None:
             for key, table in st.session_state["tables"].items():
                 if table_extractor in key:
-                    st.markdown("Table shape :" + str(table.shape))
-                    st.markdown("Table name : " + key)
-                    st.dataframe(
-                        table,
-                    )
+                    with st.container(border=True):
+                        st.markdown("Table shape :" + str(table.shape))
+                        st.markdown("Table name : " + key)
+                        st.dataframe(
+                            table,
+                        )
+                        st.button(
+                            "Remove this table",
+                            type="primary",
+                            on_click=remove_table,
+                            args=(key,),
+                            key=key,
+                        )
 
     with col2:
         st.markdown(
