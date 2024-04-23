@@ -16,6 +16,16 @@ python3 -m pip install git+https://github.com/dataforgoodfr/12_taxobservatory.gi
 
 To download the reports, you can use the script `collecte/pdf_downloader.py`. You will need a [Google API key](https://developers.google.com/custom-search/v1/introduction) as well as a search engine ID (or [CX code](https://www.google.com/cse/all)).  
 
+
+# Run the streamlit app
+To start the stremlit app and use the extractor streamlined version, start it locally by running
+
+`streamlit run app/index.py`
+
+The app comes with page detection and parsers default config but you can change it by providing a yaml file following the config.yaml format below. 
+
+
+
 ## Running the pipeline from the command line
 
 To run the pipeline from the command line, once installed, you can invoke the
@@ -75,6 +85,7 @@ Below is an example of the pipeline running on one of the reports, parsing the t
 
 
 # Avaiable blocks
+# Available blocks
 
 ## Page filter
 
