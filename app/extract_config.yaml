@@ -1,0 +1,17 @@
+pagefilter:
+  type: RFClassifier
+  params:
+    modelfile: random_forest_model_low_false_positive.joblib
+
+table_extraction:
+  - type: LlamaParse
+  - type: Unstructured
+    params:
+      hi_res_model_name: "yolox"
+      pdf_image_dpi: 300
+  - type: Camelot
+    params:
+      flavor: stream
+  - type: Camelot
+    params:
+      flavor: lattice

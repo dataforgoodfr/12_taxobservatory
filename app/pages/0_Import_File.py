@@ -43,19 +43,9 @@ with st.sidebar:
         "Upload a config if the default config doesn't suit you :",
     )
 
-    yaml_config = """
-pagefilter:
-  type: RFClassifier
-  params:
-    modelfile: random_forest_model_low_false_positive.joblib
+    with open("app/extract_config.yaml", "r") as f:
+        yaml_config=f.read()
 
-table_extraction:
-  - type: LlamaParse
-  - type: Unstructured
-    params:
-      hi_res_model_name: "yolox"
-      pdf_image_dpi: 300
-    """
 
     if loaded_config is None:
         st.session_state["config"] = yaml.safe_load(yaml_config)
