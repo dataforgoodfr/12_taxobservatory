@@ -1,7 +1,7 @@
 pagefilter:
-  type: RFClassifier
-  params:
-    modelfile: random_forest_model_low_false_positive.joblib
+  - type: RFClassifier
+    params:
+      modelfile: random_forest_model_low_false_positive.joblib
 
 table_extraction:
   - type: LlamaParse
