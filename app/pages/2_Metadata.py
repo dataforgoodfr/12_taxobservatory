@@ -1,7 +1,12 @@
 import streamlit as st
 from utils import set_algorithm_name, get_pdf_iframe
 from menu import display_pages_menu
-from country_by_country.utils.constants import JURIDICTIONS, CURRENCIES, SECTORS
+from country_by_country.utils.constants import (
+    JURIDICTIONS,
+    CURRENCIES,
+    SECTORS,
+    COMPANIES,
+)
 from Levenshtein import distance
 import sys
 import logging
@@ -19,6 +24,7 @@ st.subheader(
 )
 display_pages_menu()
 
+
 if "pdf_after_page_validation" in st.session_state:
     col1, col2 = st.columns(2)
     with col1:
@@ -35,7 +41,6 @@ if "pdf_after_page_validation" in st.session_state:
                 currency = st.session_state["metadata"]["currency"]
                 unit = st.session_state["metadata"]["unit"]
                 headquarter = st.session_state["metadata"]["headquarter"]
-                print(company_name, year, currency, unit, headquarter)
             else:
                 company_name = ""
                 sector = ""
@@ -43,8 +48,12 @@ if "pdf_after_page_validation" in st.session_state:
                 currency = ""
                 unit = None
                 headquarter = ""
-
-            company_name = st.text_input("Company name", value=company_name)
+            companies = list(COMPANIES.keys())
+            company_name = st.selectbox(
+                "Company name",
+                companies,
+                index=companies.index(company_name) if company_name else 0,
+            )
 
             sector = st.selectbox(
                 "Sector", SECTORS, index=SECTORS.index(sector) if sector else 0
