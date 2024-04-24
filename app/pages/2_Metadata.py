@@ -42,10 +42,10 @@ if "pdf_after_page_validation" in st.session_state:
                 unit = st.session_state["metadata"]["unit"]
                 headquarter = st.session_state["metadata"]["headquarter"]
             else:
-                company_name = ""
-                sector = ""
+                company_name = None
+                sector = None
                 year = ""
-                currency = ""
+                currency = None
                 unit = None
                 headquarter = ""
             companies = list(COMPANIES.keys())
