@@ -153,6 +153,6 @@ if __name__ == "__main__":
     with Path(filename).open("wb") as fh:
         pickle.dump(eval_assets, fh)
     logging.info(
-        "Assets dumped in assets.pkl. You can read then using : \n"
+        f"Assets dumped in '{filename}'. You can read then using : \n"
         + f"pickle.load(open('{filename}', 'rb'))",
     )

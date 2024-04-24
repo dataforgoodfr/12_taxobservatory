@@ -24,6 +24,8 @@
 import pathlib
 import tempfile
 
+import pandas as pd
+
 # External imports
 import pypdf
 
@@ -52,7 +54,6 @@ def keep_pages(pdf_filepath: str, selected_pages: list[int]) -> str:
         suffix=".pdf",
         delete=False,
     ).name
-    print(f"filename {filename}")
     writer.write(filename)
 
     return filename
@@ -64,10 +65,57 @@ def gather_tables(
     tables_by_name = {}
     for asset in assets["table_extractors"]:
         tables = asset["tables"]
-        if len(tables) == 1:
-            tables_by_name[asset["type"]] = tables[0]
-        elif len(tables) > 1:
-            for i in range(len(tables)):
-                tables_by_name[asset["type"] + "_" + str(i)] = tables[i]
+        for i in range(len(tables)):
+            for label, _content in tables[i].items():
+                if isinstance(tables[i][label], pd.DataFrame):
+                    tables[i].columns = [
+                        "No Extract " + str(i + 1) for i in range(tables[i].shape[1])
+                    ]
+                    break
+            for label, content in tables[i].items():
+                if (
+                    content.dtype == "object"
+                ):  # Check if the column contains string data
+                    tables[i][label] = tables[i][label].replace("", None)
+                    tables[i][label] = tables[i][label].str.replace(".", "")
+                    tables[i][label] = tables[i][label].str.replace(",", ".")
+            tables_by_name[asset["type"] + "_" + str(i)] = tables[i]
+
+    return tables_by_name
+
+
+def check_if_many(assets: dict) -> bool:
+    for asset in assets["table_extractors"]:
+        tables = asset["tables"]
+        if len(tables) > 1:
+            return True
+    return False
+
+
+def filled_table_extractors(assets: dict) -> list:
+    tables_by_name = []
+    for asset in assets["table_extractors"]:
+        tables = asset["tables"]
+        if len(tables) > 0:
+            tables_by_name.append(asset["type"])
+    return tables_by_name
+
+
+def gather_tables_with_merge(
+    assets: dict,
+    new_tables: pd.DataFrame,
+    table_extractor: str,
+) -> dict:
+    tables_by_name = {}
+    for asset in assets["table_extractors"]:
+        if asset["type"] == table_extractor:
+            tables_by_name[table_extractor] = new_tables
+        else:
+            tables = asset["tables"]
+            if len(tables) == 1:
+                tables_by_name[asset["type"]] = tables[0]
+            elif len(tables) > 1:
+                for i in range(len(tables)):
+                    tables_by_name[asset["type"] + "_" + str(i)] = tables[i]
 
     return tables_by_name

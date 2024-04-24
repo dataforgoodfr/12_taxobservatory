@@ -12,6 +12,7 @@ source venv/bin/activate
 python3 -m pip install git+https://github.com/dataforgoodfr/12_taxobservatory.git
 ```
 
+
 ## Running the PDF downloader
 
 To run the report downloader from the command line, you can invoke the `pdf_downloader` module:
@@ -91,6 +92,19 @@ This config file uses:
 - LangChain with GPT-4-turbo-preview for requesting the parsed tables to extract
   and re-order the necessary informations
 
+## Running the pipeline with the streamlit app
+
+You can also interact with the pipeline with a streamlit app :
+
+```
+streamlit run app/index.py
+```
+
+Below is an example of the pipeline running on one of the reports, parsing the tables with LlamaParse and Unstructured.
+
+[PipelineDemonstration.webm](https://github.com/dataforgoodfr/12_taxobservatory/assets/1128418/f9c64e83-9c15-4de2-a512-4f4b25f2f3ae)
+
+
 # Avaiable blocks
 
 ## Page filter
@@ -148,10 +162,33 @@ you considered. Every algorithm provides the following assets :
 
 The following table extractors can be considered :
 
+- [ExtractTable](#extracttable)
 - [Camelot](#camelot)
 - [Unstructured API](#unstructured-api)
 - [Unstructured](#unstructured)
 - [Llama parse API](#llama-parse-api)
+
+### ExtractTable
+
+ExtractTable is provided for legacy/benchmarking purpose. The
+[ExtractTable](https://github.com/ExtractTable/ExtractTable-py) python module is
+no more maintained but this was originally the package used to extract data from
+PDF tables.
+
+You can use by specifying in the `config.yaml`:
+
+```
+table_extraction:
+    - type: ExtractTableAPI
+```
+
+It requires an API key to be defined in your `.env` file :
+
+```
+# Required for table exctration with ExtractTable API
+EXTRACTABLE_API_KEY=CHANGE_ME
+
+```
 
 ### Camelot
 
