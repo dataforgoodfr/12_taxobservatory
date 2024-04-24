@@ -61,6 +61,19 @@ This config file uses:
 - LangChain with GPT-4-turbo-preview for requesting the parsed tables to extract
   and re-order the necessary informations
 
+## Running the pipeline with the streamlit app
+
+You can also interact with the pipeline with a streamlit app :
+
+```
+streamlit run app/index.py
+```
+
+Below is an example of the pipeline running on one of the reports, parsing the tables with LlamaParse and Unstructured.
+
+![](media/extraction_demo_bhp.webm)
+
+
 # Avaiable blocks
 
 ## Page filter
