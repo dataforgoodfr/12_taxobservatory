@@ -76,7 +76,14 @@ if "pdf_after_page_validation" in st.session_state:
                 index=currencies.index(currency) if currency else 0,
             )
 
-            units = ["thousands", "millions", "10 millions", "100 millions", "billions"]
+            units = [
+                "units",
+                "thousands",
+                "millions",
+                "10 millions",
+                "100 millions",
+                "billions",
+            ]
             unit = st.selectbox("Unit", units, index=units.index(unit) if unit else 0)
 
             headquarters = list(JURIDICTIONS.keys())
