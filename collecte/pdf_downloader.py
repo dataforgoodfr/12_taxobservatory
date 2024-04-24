@@ -1,4 +1,5 @@
 import logging
+import os
 import pickle
 import signal
 from argparse import ArgumentParser
@@ -10,7 +11,7 @@ from urllib.parse import urlparse
 
 import pandas as pd
 import requests
-import yaml
+from dotenv import load_dotenv
 from pypdf import PdfReader
 from pypdf.errors import PdfReadError, PdfStreamError
 from tqdm import tqdm
@@ -19,6 +20,9 @@ from .logger import FileLogger, StdoutLogger
 
 # default logger printing to stdout ; if run as main, a file+stdout logger is used instead
 logger = StdoutLogger()
+
+
+load_dotenv()
 
 
 def cbcr_finder(
@@ -71,11 +75,24 @@ def download_pdf(
     local_filename = Path(company_folder) / url.split("/")[-1]
     exception_status = None
 
+    # Used to mimic a browser request
+    query_headers = {
+        "User-Agent": (
+            "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 "
+            "(KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3"
+        ),
+    }
+
     if not Path.exists(local_filename):
 
         try:
             t_start = time()
-            with requests.get(url, stream=True, timeout=(3.05, 10)) as r:
+            with requests.get(
+                url,
+                stream=True,
+                timeout=(3.05, 10),
+                headers=query_headers,
+            ) as r:
                 r.raise_for_status()
 
                 with Path.open(local_filename, "wb") as f:
@@ -283,87 +300,6 @@ def fetch_pdf_urls(
 
     return all_urls, df_no_url
 
-    df_failed_downloads = pd.DataFrame(
-        failed_downloads,
-        columns=["company_name", "url", "exception"],
-    )
-    df_fail = pd.concat((df_no_url, df_failed_downloads))
-    missing_data_filepath = download_folder / "missing_data.csv"
-    if missing_data_filepath.exists():
-        df_fail = pd.concat(
-            (df_fail, pd.read_csv(missing_data_filepath)),
-        ).drop_duplicates(["company_name", "url"])
-    df_fail = df_fail.sort_values(["company_name", "url"])
-    df_fail.index = range(len(df_fail))
-    df_fail.to_csv(missing_data_filepath, index=False)
-
-
-def fetch_pdf_urls(
-    csv_path: Path,
-    api_key: str,
-    cse_id: str,
-    keywords: str,
-    url_cache_filepath: Path | None,
-) -> (list[tuple[str, str]], pd.DataFrame):
-
-    df_company = pd.read_csv(csv_path)
-    company_names = set(df_company["name_normalized"].unique())
-
-    query = Query(company_names, keywords)
-
-    # Cache URLs queried with the Google API to avoid excessive costly queries when debugging
-    if url_cache_filepath is None:
-        url_cache_filepath = Path("pdf_url_cache.pkl")
-
-    if url_cache_filepath.exists():
-        with url_cache_filepath.open("rb") as f:
-            cache_query, all_urls = pickle.load(f)
-
-    if url_cache_filepath.exists() and cache_query == query:
-        logger.logger.warning(
-            f"Loaded pdf URLs list from cache file' {url_cache_filepath}'",
-        )
-
-    else:
-        if url_cache_filepath.exists() and cache_query != query:
-
-            for (param_name, param_query), param_cache in zip(
-                asdict(query).items(),
-                asdict(cache_query).values(),
-                strict=True,
-            ):
-                if param_query != param_cache:
-                    logger.logger.warning(
-                        f"User input query value for '{param_name}' differs from cache query "
-                        f"value: '{param_query}' != '{param_cache}'",
-                    )
-            logger.logger.warning(
-                f"A new campaign of queries is launched, results will be cached to "
-                f"'{url_cache_filepath}'",
-            )
-
-        all_urls = []
-        n_queries = len(query.company_names)
-        logger.logger.warning(f"Starting a query campaign ({n_queries} queries)..")
-        pbar_query = tqdm(total=n_queries)
-
-        for company_name in query.company_names:
-            pdf_urls = cbcr_finder(company_name, query.keywords, api_key, cse_id)
-            for url in pdf_urls:
-                all_urls.append((company_name, url))
-            pbar_query.update(1)
-
-        with url_cache_filepath.open("wb") as f:
-            pickle.dump((query, all_urls), f)
-        logger.logger.warning(f"Cached pdf URLs list to file '{url_cache_filepath}'")
-
-    company_names_no_url = company_names.difference({result[0] for result in all_urls})
-    df_no_url = pd.DataFrame(company_names_no_url, columns=["company_name"])
-    df_no_url["url"] = "No URL found"
-    df_no_url["exception"] = None
-
-    return all_urls, df_no_url
-
 
 def get_content_length(r: requests.models.Response) -> int | None:
 
@@ -415,11 +351,6 @@ if __name__ == "__main__":
         help="The CSV file storing the company names to target",
     )
     parser.add_argument(
-        "googleapi_filepath",
-        type=Path,
-        help="The YAML-like file storing the Google JSON API credentials",
-    )
-    parser.add_argument(
         "--search_keywords",
         type=str,
         default="tax country by country reporting GRI 207-4",
@@ -457,9 +388,6 @@ if __name__ == "__main__":
     )
 
     args = parser.parse_args()
-    with args.googleapi_filepath.open("r") as f:
-        googleapi_credentials = yaml.full_load(f)
-        api_key, cx = googleapi_credentials["api_key"], googleapi_credentials["cse_id"]
 
     Path.mkdir(args.dest_dirpath, parents=True, exist_ok=True)
     logger = FileLogger(
@@ -477,8 +405,8 @@ if __name__ == "__main__":
 
     find_and_download_pdfs(
         csv_path=args.src_filepath,
-        api_key=api_key,
-        cse_id=cx,
+        api_key=os.getenv("GOOGLE_API_KEY"),
+        cse_id=os.getenv("GOOGLE_CX"),
         keywords=args.search_keywords,
         download_folder=args.dest_dirpath,
         url_cache_filepath=args.url_cache_filepath,

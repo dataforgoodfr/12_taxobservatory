@@ -31,7 +31,12 @@ A more complete example could be
 python3 -m collecte.pdf_downloader company_names.csv googleapi_credentials.yaml  --search_keywords "tax country by country reporting GRI 207-4" --dest_dirpath try_pdf_downloads --url_cache_filepath pdf_url_cache.pkl --fetch_timeout_s 60 --debug
 ```
 
-The execution of this module requires a Google JSON API key, provided in a YAML-like file contaning the following fields:
+The execution of this module requires a [Google JSON API key](https://developers.google.com/custom-search/v1/introduction) as well as a search engine ID (or [CX code](https://www.google.com/cse/all)). These must be specified in the `.env` file, a sample file being `.env.example` :
+
+```
+# Required for fetching URLs with the Google JSON API
+GOOGLE_API_KEY=CHANGE_ME
+GOOGLE_CX=CHANGE_ME
 ```
 # This is the content of my google JSON API file
 api_key: my_api_key
