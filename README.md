@@ -18,7 +18,7 @@ To download the reports, you can use the script `collecte/pdf_downloader.py`. Yo
 
 
 # Run the streamlit app
-To start the stremlit app and use the extractor streamlined version, start it locally by running
+To start the streamlit app and use the extractor streamlined version, start it locally by running
 
 `streamlit run app/index.py`
 
@@ -71,20 +71,6 @@ This config file uses:
 - LangChain with GPT-4-turbo-preview for requesting the parsed tables to extract
   and re-order the necessary informations
 
-## Running the pipeline with the streamlit app
-
-You can also interact with the pipeline with a streamlit app :
-
-```
-streamlit run app/index.py
-```
-
-Below is an example of the pipeline running on one of the reports, parsing the tables with LlamaParse and Unstructured.
-
-[PipelineDemonstration.webm](https://github.com/dataforgoodfr/12_taxobservatory/assets/1128418/f9c64e83-9c15-4de2-a512-4f4b25f2f3ae)
-
-
-# Avaiable blocks
 # Available blocks
 
 ## Page filter
