@@ -71,7 +71,7 @@ streamlit run app/index.py
 
 Below is an example of the pipeline running on one of the reports, parsing the tables with LlamaParse and Unstructured.
 
-![](https://github.com/dataforgoodfr/12_taxobservatory/raw/readme_demo_extract/media/extraction_demo_bhp.webm)
+https://github.com/dataforgoodfr/12_taxobservatory/raw/readme_demo_extract/media/extraction_demo_bhp.webm
 
 
 # Avaiable blocks
