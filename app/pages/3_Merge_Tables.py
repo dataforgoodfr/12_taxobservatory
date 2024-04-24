@@ -83,7 +83,7 @@ if (
 
         if "first_time_merge" not in st.session_state:
             st.session_state["first_time_merge"] = False
-            st.switch_page("pages/3_Clean_Headers.py")
+            st.switch_page("pages/4_Clean_Headers.py")
 
     col1, col2, col3 = st.columns([3, 1, 3])
     with col1:
@@ -127,7 +127,7 @@ if (
             args=(table_extractor,),
         )
         if validated:
-            st.switch_page("pages/3_Clean_Headers.py")
+            st.switch_page("pages/4_Clean_Headers.py")
 
     with col3:
         if merged is True:

@@ -109,7 +109,7 @@ if (
             )
 
             if submitted:
-                st.switch_page("pages/4_Clean_Tables.py")
+                st.switch_page("pages/5_Clean_Tables.py")
 
     st.markdown("# Current extraction")
     st.markdown("The extracted table is displaye below")
