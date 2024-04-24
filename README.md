@@ -38,10 +38,6 @@ The execution of this module requires a [Google JSON API key](https://developers
 GOOGLE_API_KEY=CHANGE_ME
 GOOGLE_CX=CHANGE_ME
 ```
-# This is the content of my google JSON API file
-api_key: my_api_key
-cse_id: my_cse_id
-```
 
 If the pipeline runs successfully, the results folder should contain the following elements:
 - a collection of company-named folders, each containing one or multiple PDFs
