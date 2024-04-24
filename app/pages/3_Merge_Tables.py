@@ -86,6 +86,7 @@ if (
             st.switch_page("pages/4_Clean_Headers.py")
 
     col1, col2, col3 = st.columns([3, 1, 3])
+    is_equal = True
     with col1:
         table_extractor = st.selectbox(
             "Choose an algorithm :",
@@ -94,10 +95,16 @@ if (
             key="selectbox2",
         )
 
+        number_column = None
         if table_extractor is not None:
             for key, table in st.session_state["tables"].items():
                 if table_extractor in key:
                     with st.container(border=True):
+                        if not number_column:
+                            number_column = table.shape[1]
+                        else:
+                            if number_column != table.shape[1]:
+                                is_equal = False
                         st.markdown("Table shape :" + str(table.shape))
                         st.markdown("Table name : " + key)
                         st.dataframe(
@@ -120,6 +127,7 @@ if (
             type="primary",
             on_click=merge_table,
             args=(table_extractor,),
+            disabled=(False if is_equal else True),
         )
         validated = st.button(
             "Sauver le merge",
