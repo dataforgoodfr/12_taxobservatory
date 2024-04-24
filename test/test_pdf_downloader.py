@@ -66,11 +66,23 @@ class TestCBCRScript(unittest.TestCase):
         )
 
         # Assert the calls and result
+        headers = {
+            "User-Agent": (
+                "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
+                "AppleWebKit/537.36 (KHTML, like Gecko) "
+                "Chrome/58.0.3029.110 Safari/537.3"
+            ),
+        }
         assert local_filename == expected_filename
         assert exception_status is None
         mock_file.assert_called_once_with(PosixPath(expected_filename), "wb")
         mock_exists.assert_any_call(PosixPath(expected_filename))
-        mock_get.assert_called_once_with(self.pdf_url, stream=True, timeout=(3.05, 10))
+        mock_get.assert_called_once_with(
+            self.pdf_url,
+            stream=True,
+            timeout=(3.05, 10),
+            headers=headers,
+        )
 
 
 if __name__ == "__main__":
