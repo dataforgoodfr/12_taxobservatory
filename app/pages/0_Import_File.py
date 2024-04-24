@@ -12,11 +12,14 @@ from country_by_country.processor import ReportProcessor
 
 logging.basicConfig(stream=sys.stdout, level=logging.INFO, format="%(message)s")
 
+
 def set_extractors(value: list):
     set_state(["config", "table_extraction"], value)
 
+
 def set_page_filter(value: dict):
     set_state(["config", "pagefilter"], value)
+
 
 st.set_page_config(layout="wide", page_title="Accueil - upload de PDF")
 st.title("Country by Country Tax Reporting analysis")
@@ -47,14 +50,14 @@ with st.sidebar:
         )
 
     st.markdown("# Configuration:\n")
-    #Upload personalized config if required
+    # Upload personalized config if required
     loaded_config = st.file_uploader(
         "Upload a config if the default config doesn't suit you :",
     )
 
-    #Default extract config
+    # Default extract config
     with open("app/extract_config.yaml", "r") as f:
-        default_config=f.read()
+        default_config = f.read()
 
     if bool(loaded_config):
         config = yaml.safe_load(loaded_config)
@@ -62,24 +65,33 @@ with st.sidebar:
         config = yaml.safe_load(default_config)
 
     if st.session_state.get("first_time", True):
-        st.session_state["config"] = config 
- 
-        
-    
-    
+        st.session_state["config"] = config
 
-    #Set page filter
-    page_filter_radio_dict = {pagefilter["type"]: pagefilter for pagefilter in config["pagefilter"]}
+    # Set page filter
+    page_filter_radio_dict = {
+        pagefilter["type"]: pagefilter for pagefilter in config["pagefilter"]
+    }
     selected_page_filter = st.radio("Page filter", page_filter_radio_dict.keys())
     set_page_filter(page_filter_radio_dict[selected_page_filter])
-    
-    #Set extractors
-    all_table_extractors = {extractor["type"]: extractor for extractor in config["table_extraction"]}
-    current_table_extractors = [extractor['type'] for extractor in st.session_state['config']['table_extraction']]
-    extractor_keys = st.multiselect("Extractors", options=all_table_extractors.keys(), default=current_table_extractors)
+
+    # Set extractors
+    all_table_extractors = {
+        extractor["type"]: extractor for extractor in config["table_extraction"]
+    }
+    current_table_extractors = [
+        extractor["type"]
+        for extractor in st.session_state["config"]["table_extraction"]
+    ]
+    extractor_keys = st.multiselect(
+        "Extractors",
+        options=all_table_extractors.keys(),
+        default=current_table_extractors,
+    )
     set_extractors([all_table_extractors[key] for key in extractor_keys])
-    
-    yaml_str = yaml.dump(st.session_state["config"], default_flow_style=False, sort_keys=False, indent=2)
+
+    yaml_str = yaml.dump(
+        st.session_state["config"], default_flow_style=False, sort_keys=False, indent=2
+    )
     # Ajouter des backticks triples pour créer un bloc de code markdown
     markdown_str = f"The configuration is : \n\n```\n{yaml_str}\n```"
     st.write(markdown_str)
@@ -108,7 +120,9 @@ with st.sidebar:
                 # No page has been automatically selected by the page filter
                 # Hence, we display the full pdf, letting the user select the pages
                 pdfreader = PdfReader(st.session_state["working_file_pdf"])
-                number_pages = len(PdfReader(st.session_state["working_file_pdf"]).pages)
+                number_pages = len(
+                    PdfReader(st.session_state["working_file_pdf"]).pages
+                )
                 assets["pagefilter"]["selected_pages"] = list(range(number_pages))
             st.session_state["assets"] = assets
             st.switch_page("pages/1_Selected_Pages.py")
@@ -124,8 +138,5 @@ if "working_file_pdf" in st.session_state:
         unsafe_allow_html=True,
     )
 
-
     if "first_time" not in st.session_state:
         st.session_state["first_time"] = False
-        
-

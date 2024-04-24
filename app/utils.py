@@ -1,5 +1,6 @@
 import base64
 from pathlib import Path
+from typing import Any
 
 import pandas as pd
 import streamlit as st
@@ -40,21 +41,23 @@ def to_csv_file(df: pd.DataFrame) -> bytes:
 
     return df.to_csv(index=False).encode("utf-8")
 
-def set_state(key, value):
+
+def set_state(key: Any, value: Any) -> None:
     """
-        Sets the session_state[key] to value.
-        key can be a list to reach nested values. Ex: ["key1", "key2"] to reach session_state["key1"]["key2"] value.
+    Sets the session_state[key] to value.
+    key can be a list to reach nested values.
+    Ex: ["key1", "key2"] to reach session_state["key1"]["key2"] value.
     """
     if isinstance(key, list):
         key_list = key
-        nested_key_string ="session_state"
+        nested_key_string = "session_state"
         nested_value = st.session_state
         for k in key_list[:-1]:
             try:
-                nested_key_string += f"['{k}']" 
+                nested_key_string += f"['{k}']"
                 nested_value = nested_value[k]
-            except KeyError:
-                raise KeyError(f"{nested_key_string} does not exist")
+            except KeyError as e:
+                raise KeyError(f"{nested_key_string} does not exist") from e
         nested_value[key_list[-1]] = value
-    else: 
+    else:
         st.session_state[key] = value
