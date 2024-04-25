@@ -10,12 +10,18 @@ import logging
 
 logging.basicConfig(stream=sys.stdout, level=logging.INFO, format="%(message)s")
 
+ALL_TABLE_EXTRACTORS = {
+            extractor["type"]: extractor for extractor in st.session_state["initial_config"]["table_extraction"]
+        }
 
 def set_validate() -> None:
     st.session_state["validate_selected_pages"] = True
 
-def set_extractors(value: list):
-    set_state(["config", "table_extraction"], value)
+def set_extractors() -> None:
+    if st.session_state.get('extractor_keys') is None:
+        return
+    selected_extractors_dict = [ALL_TABLE_EXTRACTORS[key] for key in st.session_state['extractor_keys']]
+    set_state(["config", "table_extraction"], selected_extractors_dict)
 
 
 st.set_page_config(layout="wide", page_title="Pages selection")  # page_icon="📈"
@@ -48,19 +54,18 @@ if "working_file_pdf" in st.session_state:
         )
 
         # Set extractors
-        all_table_extractors = {
-            extractor["type"]: extractor for extractor in st.session_state["initial_config"]["table_extraction"]
-        }
         current_table_extractors = [
             extractor["type"]
             for extractor in st.session_state["config"]["table_extraction"]
         ]
         extractor_keys = st.multiselect(
             "Extractors",
-            options=all_table_extractors.keys(),
+            key="extractor_keys",
+            options=ALL_TABLE_EXTRACTORS.keys(),
             default=current_table_extractors,
+            on_change=set_extractors,
         )
-        set_extractors([all_table_extractors[key] for key in extractor_keys])
+        
 
         submitted = st.button(
             label="Validate your selected pages",
