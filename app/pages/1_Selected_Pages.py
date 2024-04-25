@@ -1,4 +1,5 @@
 import streamlit as st
+from country_by_country.processor import ReportProcessor
 from utils import get_pdf_iframe, set_state
 from country_by_country.utils.utils import keep_pages
 from pypdf import PdfReader
@@ -22,6 +23,7 @@ def set_extractors() -> None:
         return
     selected_extractors_dict = [ALL_TABLE_EXTRACTORS[key] for key in st.session_state['extractor_keys']]
     set_state(["config", "table_extraction"], selected_extractors_dict)
+    st.session_state["proc"] = ReportProcessor(st.session_state["config"])
 
 
 st.set_page_config(layout="wide", page_title="Pages selection")  # page_icon="📈"
