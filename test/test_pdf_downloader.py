@@ -1,5 +1,5 @@
 import unittest
-from pathlib import PosixPath
+from pathlib import Path, PosixPath
 from unittest.mock import MagicMock, mock_open, patch
 
 from collecte import pdf_downloader
@@ -52,20 +52,37 @@ class TestCBCRScript(unittest.TestCase):
         mock_response.iter_content.return_value = [b"test data"]
 
         # Expected filename
-        expected_filename = "collecte/data/pdf_downloads/TestCompany/report.pdf"
+        expected_filename = Path(
+            "collecte_results/data/pdf_downloads/TestCompany/report.pdf",
+        )
 
         # Call the function
-        result = pdf_downloader.download_pdf(
+        local_filename, exception_status = pdf_downloader.download_pdf(
             self.pdf_url,
-            "collecte/data/pdf_downloads",
+            Path("collecte_results/data/pdf_downloads"),
             self.company_name,
+            fetch_timeout_s=60,
+            check_pdf_integrity=True,
         )
 
         # Assert the calls and result
-        assert result == expected_filename
+        headers = {
+            "User-Agent": (
+                "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
+                "AppleWebKit/537.36 (KHTML, like Gecko) "
+                "Chrome/58.0.3029.110 Safari/537.3"
+            ),
+        }
+        assert local_filename == expected_filename
+        assert exception_status is None
         mock_file.assert_called_once_with(PosixPath(expected_filename), "wb")
         mock_exists.assert_any_call(PosixPath(expected_filename))
-        mock_get.assert_called_once_with(self.pdf_url, stream=True)
+        mock_get.assert_called_once_with(
+            self.pdf_url,
+            stream=True,
+            timeout=(3.05, 10),
+            headers=headers,
+        )
 
 
 if __name__ == "__main__":
