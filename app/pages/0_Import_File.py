@@ -4,17 +4,13 @@ import tempfile
 
 import streamlit as st
 import yaml
-from menu import display_pages_menu
+from menu import display_pages_menu, display_config
 from pypdf import PdfReader
 from utils import get_pdf_iframe, set_state
 
 from country_by_country.processor import ReportProcessor
 
 logging.basicConfig(stream=sys.stdout, level=logging.INFO, format="%(message)s")
-
-
-def set_extractors(value: list):
-    set_state(["config", "table_extraction"], value)
 
 
 def set_page_filter(value: dict):
@@ -60,72 +56,24 @@ with st.sidebar:
         default_config = f.read()
 
     if bool(loaded_config):
-        config = yaml.safe_load(loaded_config)
+        st.session_state["initial_config"] = yaml.safe_load(loaded_config)
     else:
-        config = yaml.safe_load(default_config)
+        st.session_state["initial_config"] = yaml.safe_load(default_config)
 
     if st.session_state.get("first_time", True):
-        st.session_state["config"] = config
+        st.session_state["config"] = st.session_state["initial_config"]
 
     # Set page filter
     page_filter_radio_dict = {
-        pagefilter["type"]: pagefilter for pagefilter in config["pagefilter"]
+        pagefilter["type"]: pagefilter for pagefilter in st.session_state["initial_config"]["pagefilter"]
     }
     selected_page_filter = st.radio("Page filter", page_filter_radio_dict.keys())
     set_page_filter(page_filter_radio_dict[selected_page_filter])
 
-    # Set extractors
-    all_table_extractors = {
-        extractor["type"]: extractor for extractor in config["table_extraction"]
-    }
-    current_table_extractors = [
-        extractor["type"]
-        for extractor in st.session_state["config"]["table_extraction"]
-    ]
-    extractor_keys = st.multiselect(
-        "Extractors",
-        options=all_table_extractors.keys(),
-        default=current_table_extractors,
-    )
-    set_extractors([all_table_extractors[key] for key in extractor_keys])
+    display_config()
 
-    yaml_str = yaml.dump(
-        st.session_state["config"], default_flow_style=False, sort_keys=False, indent=2
-    )
-    # Ajouter des backticks triples pour créer un bloc de code markdown
-    markdown_str = f"The configuration is : \n\n```\n{yaml_str}\n```"
-    st.write(markdown_str)
-
-    if "working_file_pdf" in st.session_state:
-        if st.button("Extract tables", type="primary", use_container_width=True):
-            logging.info("Loading config and pdf")
-            st.session_state["proc"] = ReportProcessor(st.session_state["config"])
-
-            logging.info("Config and pdf loaded")
-
-            assets = {
-                "pagefilter": {},
-                "table_extractors": [],
-            }
-
-            # Filtering the pages
-            st.session_state["proc"].page_filter(
-                st.session_state["working_file_pdf"].name,
-                assets,
-            )
-
-            logging.info(f"Assets : {assets}")
-
-            if len(assets["pagefilter"]["selected_pages"]) == 0:
-                # No page has been automatically selected by the page filter
-                # Hence, we display the full pdf, letting the user select the pages
-                pdfreader = PdfReader(st.session_state["working_file_pdf"])
-                number_pages = len(
-                    PdfReader(st.session_state["working_file_pdf"]).pages
-                )
-                assets["pagefilter"]["selected_pages"] = list(range(number_pages))
-            st.session_state["assets"] = assets
-            st.switch_page("pages/1_Selected_Pages.py")
+    
+            
 
 if "working_file_pdf" in st.session_state:
     # Once a pdf has been uploaded, it will be stored as
@@ -140,3 +88,31 @@ if "working_file_pdf" in st.session_state:
 
     if "first_time" not in st.session_state:
         st.session_state["first_time"] = False
+        logging.info("Loading config and pdf")
+        st.session_state["proc"] = ReportProcessor(st.session_state["config"])
+
+        logging.info("Config and pdf loaded")
+
+        assets = {
+            "pagefilter": {},
+            "table_extractors": [],
+        }
+
+        # Filtering the pages
+        st.session_state["proc"].page_filter(
+            st.session_state["working_file_pdf"].name,
+            assets,
+        )
+
+        logging.info(f"Assets : {assets}")
+
+        if len(assets["pagefilter"]["selected_pages"]) == 0:
+            # No page has been automatically selected by the page filter
+            # Hence, we display the full pdf, letting the user select the pages
+            pdfreader = PdfReader(st.session_state["working_file_pdf"])
+            number_pages = len(
+                PdfReader(st.session_state["working_file_pdf"]).pages
+            )
+            assets["pagefilter"]["selected_pages"] = list(range(number_pages))
+        st.session_state["assets"] = assets
+        st.switch_page("pages/1_Selected_Pages.py")
