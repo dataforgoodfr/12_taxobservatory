@@ -4,6 +4,7 @@ import tempfile
 
 import streamlit as st
 import yaml
+import copy
 from menu import display_pages_menu, display_config
 from pypdf import PdfReader
 from utils import get_pdf_iframe, set_state
@@ -50,18 +51,36 @@ with st.sidebar:
     loaded_config = st.file_uploader(
         "Upload a config if the default config doesn't suit you :",
     )
+    if loaded_config is not None:
+        if not loaded_config.name.endswith(".yaml"):
+            st.error("Please upload a yaml file")
+            loaded_config = None
 
-    # Default extract config
+        try:
+            loaded_config_dict = yaml.safe_load(loaded_config)
+            if not (
+                loaded_config_dict.get("pagefilter", False)
+                and loaded_config_dict.get("table_extraction", False)
+            ):
+                st.error("Please upload a valid config file")
+                loaded_config = None
+        except yaml.YAMLError as e:
+            st.error("Unable to load yaml file config")
+            loaded_config = None
+
+    # Extract config
     with open("app/extract_config.yaml", "r") as f:
         default_config = f.read()
 
-    if bool(loaded_config):
-        st.session_state["initial_config"] = yaml.safe_load(loaded_config)
-    else:
+    if not st.session_state.get("config_is_set", False):
         st.session_state["initial_config"] = yaml.safe_load(default_config)
+        st.session_state["config"] = copy.deepcopy(st.session_state["initial_config"])
+        st.session_state["config_is_set"] = True
 
-    if st.session_state.get("first_time", True):
-        st.session_state["config"] = st.session_state["initial_config"]
+    if bool(loaded_config):
+        st.session_state["initial_config"] = loaded_config_dict
+        st.session_state["config"] = copy.deepcopy(st.session_state["initial_config"])
+        st.session_state["config_is_set"] = True
 
     # Set page filter
     page_filter_radio_dict = {
