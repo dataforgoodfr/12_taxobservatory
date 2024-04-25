@@ -65,15 +65,14 @@ with st.sidebar:
 
     # Set page filter
     page_filter_radio_dict = {
-        pagefilter["type"]: pagefilter for pagefilter in st.session_state["initial_config"]["pagefilter"]
+        pagefilter["type"]: pagefilter
+        for pagefilter in st.session_state["initial_config"]["pagefilter"]
     }
     selected_page_filter = st.radio("Page filter", page_filter_radio_dict.keys())
     set_page_filter(page_filter_radio_dict[selected_page_filter])
 
     display_config()
 
-    
-            
 
 if "working_file_pdf" in st.session_state:
     # Once a pdf has been uploaded, it will be stored as
@@ -110,9 +109,7 @@ if "working_file_pdf" in st.session_state:
             # No page has been automatically selected by the page filter
             # Hence, we display the full pdf, letting the user select the pages
             pdfreader = PdfReader(st.session_state["working_file_pdf"])
-            number_pages = len(
-                PdfReader(st.session_state["working_file_pdf"]).pages
-            )
+            number_pages = len(PdfReader(st.session_state["working_file_pdf"]).pages)
             assets["pagefilter"]["selected_pages"] = list(range(number_pages))
         st.session_state["assets"] = assets
         st.switch_page("pages/1_Selected_Pages.py")
