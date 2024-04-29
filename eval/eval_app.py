@@ -233,7 +233,7 @@ def process_pdf(pdf_file: str, asset_dict: dict) -> None:
         if not ss.pdf_downloaded:
             ss["pdf_downloaded"] = hf_hub_download(
                 repo_id="DataForGood/taxobservatory_data",
-                filename=ss.pdf_selected,
+                filename=f"pdf/{ss.pdf_selected}",
                 repo_type="dataset",
             )
 
