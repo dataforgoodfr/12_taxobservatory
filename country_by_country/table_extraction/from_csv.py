@@ -38,15 +38,10 @@ class FromCSV:
         Returns asset that contain:
 
         """
-        # Build the path to the csv of the tables
-        # we expect the csv to be defined as
-        # - given a report /path/to/my_report.pdf
-        # Tables are searched for as
-        # - csv_directory/my_report_1.csv, csv_directory/my_report_2.csv,
-        # csv_directory/my_report_2.csv, ...
-        tables_list = []
-        report_basename = Path(pdf_filepath).stem.split("____")[0]
-
+        # Load the tables from matching csv files
+        # Given a report /path/to/{company_name}_{year}*.pdf
+        # Tables are searched in /csv_directory/{company_name}_{year}*.csv
+        report_basename = "_".join(Path(pdf_filepath).stem.split("_")[0:2])
         tables_files = glob.glob(f"{self.csv_directory}/{report_basename}*.csv")
         tables_list = [pd.read_csv(f) for f in tables_files]
 
