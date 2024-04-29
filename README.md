@@ -49,6 +49,16 @@ If the pipeline runs successfully, the results folder should contain the followi
 A collection of company names is made available for user convenience at `test/data/company_names.csv`.
 
 
+
+# Run the streamlit app
+To start the streamlit app and use the extractor streamlined version, start it locally by running
+
+`streamlit run app/index.py`
+
+The app comes with page detection and parsers default config but you can change it by providing a yaml file following the config.yaml format below. 
+
+
+
 ## Running the pipeline from the command line
 
 To run the pipeline from the command line, once installed, you can invoke the

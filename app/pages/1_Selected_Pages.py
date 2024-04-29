@@ -1,8 +1,9 @@
 import streamlit as st
-from utils import get_pdf_iframe
+from country_by_country.processor import ReportProcessor
+from utils import get_pdf_iframe, set_state
 from country_by_country.utils.utils import keep_pages
 from pypdf import PdfReader
-from menu import display_pages_menu
+from menu import display_pages_menu, display_config
 
 import sys
 import copy
@@ -10,9 +11,24 @@ import logging
 
 logging.basicConfig(stream=sys.stdout, level=logging.INFO, format="%(message)s")
 
+ALL_TABLE_EXTRACTORS = {
+    extractor["type"]: extractor
+    for extractor in st.session_state["initial_config"]["table_extraction"]
+}
+
 
 def set_validate() -> None:
     st.session_state["validate_selected_pages"] = True
+
+
+def set_extractors() -> None:
+    if st.session_state.get("extractor_keys") is None:
+        return
+    selected_extractors_dict = [
+        ALL_TABLE_EXTRACTORS[key] for key in st.session_state["extractor_keys"]
+    ]
+    set_state(["config", "table_extraction"], selected_extractors_dict)
+    st.session_state["proc"] = ReportProcessor(st.session_state["config"])
 
 
 st.set_page_config(layout="wide", page_title="Pages selection")  # page_icon="📈"
@@ -21,6 +37,8 @@ st.subheader(
     "This page will allow you to select the pages containing your tables",
 )
 display_pages_menu()
+with st.sidebar:
+    display_config()
 
 if "working_file_pdf" in st.session_state:
 
@@ -41,6 +59,20 @@ if "working_file_pdf" in st.session_state:
             ],
             disabled=True if "validate_selected_pages" in st.session_state else False,
         )
+
+        # Set extractors
+        current_table_extractors = [
+            extractor["type"]
+            for extractor in st.session_state["config"]["table_extraction"]
+        ]
+        extractor_keys = st.multiselect(
+            "Extractors",
+            key="extractor_keys",
+            options=ALL_TABLE_EXTRACTORS.keys(),
+            default=current_table_extractors,
+            on_change=set_extractors,
+        )
+
         submitted = st.button(
             label="Validate your selected pages",
             on_click=set_validate,

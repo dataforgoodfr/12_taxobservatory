@@ -4,13 +4,19 @@ import tempfile
 
 import streamlit as st
 import yaml
-from menu import display_pages_menu
+import copy
+from menu import display_pages_menu, display_config
 from pypdf import PdfReader
-from utils import get_pdf_iframe
+from utils import get_pdf_iframe, set_state
 
 from country_by_country.processor import ReportProcessor
 
 logging.basicConfig(stream=sys.stdout, level=logging.INFO, format="%(message)s")
+
+
+def set_page_filter(value: dict):
+    set_state(["config", "pagefilter"], value)
+
 
 st.set_page_config(layout="wide", page_title="Accueil - upload de PDF")
 st.title("Country by Country Tax Reporting analysis")
@@ -23,7 +29,7 @@ mytmpfile = tempfile.NamedTemporaryFile(suffix=".pdf", delete=False)
 
 with st.sidebar:
 
-    st.markdown("# Configuration")
+    st.markdown("# PDF Upload")
 
     st.markdown("## PDF Report to process")
     original_pdf = st.file_uploader(
@@ -40,33 +46,52 @@ with st.sidebar:
             "Already loaded file : " + st.session_state["original_pdf_name"],
         )
 
-    st.markdown("## Pipeline configuration")
+    st.markdown("# Configuration:\n")
+    # Upload personalized config if required
     loaded_config = st.file_uploader(
         "Upload a config if the default config doesn't suit you :",
     )
+    if loaded_config is not None:
+        if not loaded_config.name.endswith(".yaml"):
+            st.error("Please upload a yaml file")
+            loaded_config = None
 
-    yaml_config = """
-pagefilter:
-  type: RFClassifier
-  params:
-    modelfile: random_forest_model_low_false_positive.joblib
+        try:
+            loaded_config_dict = yaml.safe_load(loaded_config)
+            if not (
+                loaded_config_dict.get("pagefilter", False)
+                and loaded_config_dict.get("table_extraction", False)
+            ):
+                st.error("Please upload a valid config file")
+                loaded_config = None
+        except yaml.YAMLError as e:
+            st.error("Unable to load yaml file config")
+            loaded_config = None
 
-table_extraction:
-  - type: LlamaParse
-  - type: Unstructured
-    params:
-      hi_res_model_name: "yolox"
-      pdf_image_dpi: 300
-    """
+    # Extract config
+    with open("app/extract_config.yaml", "r") as f:
+        default_config = f.read()
 
-    if loaded_config is None:
-        st.session_state["config"] = yaml.safe_load(yaml_config)
-    else:
-        st.session_state["config"] = yaml.safe_load(loaded_config)
-    yaml_str = yaml.dump(st.session_state["config"], default_flow_style=False, indent=2)
-    # Ajouter des backticks triples pour créer un bloc de code markdown
-    markdown_str = f"The configuration is : \n\n```\n{yaml_str}\n```"
-    st.write(markdown_str)
+    if not st.session_state.get("config_is_set", False):
+        st.session_state["initial_config"] = yaml.safe_load(default_config)
+        st.session_state["config"] = copy.deepcopy(st.session_state["initial_config"])
+        st.session_state["config_is_set"] = True
+
+    if bool(loaded_config):
+        st.session_state["initial_config"] = loaded_config_dict
+        st.session_state["config"] = copy.deepcopy(st.session_state["initial_config"])
+        st.session_state["config_is_set"] = True
+
+    # Set page filter
+    page_filter_radio_dict = {
+        pagefilter["type"]: pagefilter
+        for pagefilter in st.session_state["initial_config"]["pagefilter"]
+    }
+    selected_page_filter = st.radio("Page filter", page_filter_radio_dict.keys())
+    set_page_filter(page_filter_radio_dict[selected_page_filter])
+
+    display_config()
+
 
 if "working_file_pdf" in st.session_state:
     # Once a pdf has been uploaded, it will be stored as
