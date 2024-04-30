@@ -240,10 +240,19 @@ def process_pdf(pdf_file: str, asset_dict: dict) -> None:
                 )
                 selected_idx = dfs_str.index(selected) if selected in dfs_str else 0
 
-                # Display table
+                # Pull selected table
                 df = dfs[selected_idx]
 
-                # Fill any empty headers to prevent error when calling st.dataframe()
+                # Erase any "Unnamed" headers originating from html to df conversion
+                # Test with Unstructured detectron2_onnx applied to ACS_2019.pdf
+                clean_columns = []
+                for col in df.columns:
+                    clean_columns.append([item for item in col if "Unnamed" not in item])
+                # Convert any multi-row headers to single row to prevent st.dataframe error
+                # Test with Unstructured detectron2_onnx applied to ACS_2019.pdf
+                df.columns = [": ".join(set(col)) for col in clean_columns]
+                
+                # Fill any empty headers to prevent st.dataframe error
                 fill_df_empty_headers(df)
 
                 # Check if values in table are in tables of reference extraction
