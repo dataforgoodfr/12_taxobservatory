@@ -24,6 +24,8 @@
 import contextlib
 import re
 
+import pandas as pd
+
 
 def append_count_to_duplicates(strings: list[str]) -> list[str]:
     """Append count to duplicate strings in array"""
@@ -52,3 +54,14 @@ def reformat_str(el: any) -> str:
     Output string."""
     el = convert_to_str(el).replace(",", "")
     return re.sub(r"\((\d+)\)", r"-\1", el)
+
+
+def fill_df_empty_headers(df: pd) -> str:
+    if df.columns.duplicated().sum() > 0:
+        cols = pd.Series(df.columns)
+        for dup in set(df.columns[df.columns.duplicated()]):
+            if dup == "":
+                cols[df.columns.get_loc(dup)] = [
+                    "COL" + str(idx) for idx, dup in enumerate(df.columns.get_loc(dup))
+                ]
+        df.columns = cols
