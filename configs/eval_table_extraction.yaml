@@ -2,26 +2,23 @@ pagefilter:
   type: FromFilename
 
 table_extraction:
-  # - type: Camelot
-  #   params:
-  #     flavor: stream
-  # - type: Camelot
-  #   params:
-  #     flavor: lattice
-  - type: Unstructured
+  - type: FromCSV
     params:
-      hi_res_model_name: "yolox"
-  - type: Unstructured
-    params:
-      hi_res_model_name: "yolox"
-      pdf_image_dpi: 300
-  - type: Unstructured
-    params:
-      hi_res_model_name: "yolox"
-      pdf_image_dpi: 500
+      csv_directory: "data/extractions/extracttable"
+  - type: LLamaParse
   - type: UnstructuredAPI
     params:
       hi_res_model_name: "yolox"
-  - type: LLamaParse
+  - type: UnstructuredAPI
+    params:
+      hi_res_model_name: "detectron2_onnx"
+  - type: Unstructured
+    params:
+      hi_res_model_name: "yolox"
+      pdf_image_dpi: 400
+  - type: Unstructured
+    params:
+      hi_res_model_name: "detectron2_onnx"
+      pdf_image_dpi: 400
 
 # table_cleaning:

@@ -71,11 +71,20 @@ class UnstructuredAPI:
         except Exception as e:
             print(e)
         else:
-            tables_list = [
-                pd.read_html(StringIO(el["metadata"]["text_as_html"]))[0]
-                for el in resp.elements
-                if el["type"] == "Table"
-            ]
+            tables_list = []
+            for el in resp.elements:
+                if el["type"] == "Table":
+                    # Enclose in try block to ignore case where pandas can't read the table (html incorrectly formatted)
+                    try:
+                        table = pd.read_html(StringIO(el["metadata"]["text_as_html"]))[
+                            0
+                        ]
+                    except Exception:
+                        logging.info(
+                            "Html table discarded. Pandas couldn't read the table.",
+                        )
+                    else:
+                        tables_list.append(table)
 
             # Create asset
             new_asset = {
