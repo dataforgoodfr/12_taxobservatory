@@ -56,7 +56,21 @@ def reformat_str(el: any) -> str:
     return re.sub(r"\((\d+)\)", r"-\1", el)
 
 
-def fill_df_empty_headers(df: pd) -> str:
+def clean_headers(df: pd) -> str:
+
+    # Transform any multi-row headers to single row to prevent st.dataframe error
+    # Test with Unstructured detectron2_onnx applied to ACS_2019.pdf
+    if isinstance(df.columns, pd.MultiIndex):
+        # Erase first any "Unnamed" headers originating from html to df conversion
+        clean_columns = []
+        for col in df.columns:
+            clean_columns.append(
+                [item for item in col if "Unnamed" not in item],
+            )
+
+        df.columns = [": ".join(set(col)) for col in clean_columns]
+
+    # Fill any empty headers
     if df.columns.duplicated().sum() > 0:
         cols = pd.Series(df.columns)
         for dup in set(df.columns[df.columns.duplicated()]):

@@ -35,8 +35,8 @@ from streamlit import session_state as ss
 from streamlit_option_menu import option_menu
 from utils import (
     append_count_to_duplicates,
+    clean_headers,
     convert_to_str,
-    fill_df_empty_headers,
     reformat_str,
 )
 
@@ -243,17 +243,8 @@ def process_pdf(pdf_file: str, asset_dict: dict) -> None:
                 # Pull selected table
                 df = dfs[selected_idx]
 
-                # Erase any "Unnamed" headers originating from html to df conversion
-                # Test with Unstructured detectron2_onnx applied to ACS_2019.pdf
-                clean_columns = []
-                for col in df.columns:
-                    clean_columns.append([item for item in col if "Unnamed" not in item])
-                # Convert any multi-row headers to single row to prevent st.dataframe error
-                # Test with Unstructured detectron2_onnx applied to ACS_2019.pdf
-                df.columns = [": ".join(set(col)) for col in clean_columns]
-                
-                # Fill any empty headers to prevent st.dataframe error
-                fill_df_empty_headers(df)
+                # Clean headers to prevent any st.dataframe error
+                clean_headers(df)
 
                 # Check if values in table are in tables of reference extraction
                 refvalues = []
