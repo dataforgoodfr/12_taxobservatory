@@ -29,9 +29,7 @@ This will apply the pipeline for all the reports in the `./example_set/inputs` d
 
 ## Evaluation with a streamlit app
 
-To facilitate the evaluation of the extractions, you can run the streamlit app `eval/eval_app.py`. 
-
-To run the application, it is as simple as :
+To facilitate the evaluation of the extractions, you can run the streamlit app `eval/eval_app.py` as:
 
 ```
 streamlit run eval/eval_app.py eval/data/data_step2_before-currency-unit_eval.csv
