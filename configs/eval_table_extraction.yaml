@@ -5,7 +5,7 @@ table_extraction:
   - type: FromCSV
     params:
       csv_directory: "data/extractions/extracttable"
-  - type: LLamaParse
+  - type: LlamaParse
   - type: UnstructuredAPI
     params:
       hi_res_model_name: "yolox"
