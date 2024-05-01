@@ -166,6 +166,4 @@ cython_debug/
 
 # Pickle files
 *.pkl
-
-# Ref data file
-data_step2_before-currency-units.csv
+!eval/data/eval_20240408_200249.pkl

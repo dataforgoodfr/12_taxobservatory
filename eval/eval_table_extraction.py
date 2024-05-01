@@ -148,7 +148,7 @@ if __name__ == "__main__":
 
     # Save all assets to disk
     cur_datetime = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
-    filename = "eval_" + str(cur_datetime) + ".pkl"
+    filename = f"eval/data/eval_{str(cur_datetime)}.pkl"
 
     with Path(filename).open("wb") as fh:
         pickle.dump(eval_assets, fh)

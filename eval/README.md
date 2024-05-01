@@ -1,77 +1,42 @@
 # Evaluation of the table extraction
 
-## Setup
+## Perform the evaluation with the streamlit eval app
 
-To run the evaluation script, we need some additional requirements that are not
-listed in the project dependencies.
+The streamlit eval app allows you to visually compare tables extracted via multiples methodologies and for multiple reports. You can run it as:
+
+```
+streamlit run eval/eval_app.py eval/data/data_step2_before-currency-unit_eval.csv
+```
+
+It needs two input files (only one mandatory):
+- *[Mandatory]* At launch, the app will request you to provide a pickle file with extracted data. Select `eval_20240408_200249.plk` in the `eval/data/` directory to not have to generate evaluation data yourself and get started easily!
+- *[Optional]* The optional REF data file `data_step2_before-currency-unit_eval.csv` is a cleaned up version of `data_step2_before-currency-unit.csv`. The latter file contains reference data extracted and manually cleaned up by the TaxObservatory team and allows you to benchmark the extractions against it.
+
+## Use your own evaluation data
+
+You can instead generate and use your own evaluation data in a new picke file.
+
+### Setup
+
+Install the following package that is used to generate PDF output files.
 
 ```
 apt-get install wkhtmltopdf
-python3 -m pip install pdfkit streamlit_option_menu streamlit-pdf-viewer
 ```
 
-## Qualitative evaluation
+### Data generation
 
-The evaluation is performed with the `eval_table_extraction.py` script. This
-script will iterate through several reports and apply the set of table
-extraction algorithms you gave in your yaml configuration. 
+Run the `eval_table_extraction.py` script. This script will iterate through several reports and apply the set of table extraction algorithms you provided in your yaml configuration. Check out `configs/eval_table_extraction.yaml` for a suitable yaml configuration.
 
-As an example, you might consider selecting the pages in the report from their
-filename and then apply several table extraction algorithms :
-
-A suitable `config.yaml` script would be :
-
-```
-pagefilter:
-  type: FromFilename
-
-table_extraction:
-  - type: Unstructured
-    params:
-      hi_res_model_name: "yolox"
-  - type: Unstructured
-    params:
-      hi_res_model_name: "yolox"
-      pdf_image_dpi: 300
-  - type: Unstructured
-    params:
-      hi_res_model_name: "yolox"
-      pdf_image_dpi: 500
-  - type: UnstructuredAPI
-    params:
-      hi_res_model_name: "yolox"
-  - type: LLamaParse
-```
-
-You can then call the evaluation script as :
+You can run the script as:
 
 ```
 python eval/eval_table_extraction.py configs/eval_table_extraction.yaml
 ./example_set/inputs/ ./example_set/extractions
 ```
 
-This will apply the pipeline for all the reports in the `./example_set/inputs`
-directory and save :
+This will apply the pipeline for all the reports in the `./example_set/inputs` directory and save :
 
-- the extracted tables with all the algorithms in one file per report in the
+- the extracted tables with all the algorithms in one output PDF file per input report in the
   `./example_set/extractions` directory
-- all the extracted assets in a pickle file in the current directory `eval_xxxx.pkl`
-
-## Comparison with a streamlit app
-
-To facilitate the qualitative comparison of the extractions, you can use the
-streamlit app `eval/eval_app.py`. 
-
-To run the application, it is as simple as :
-
-```
-streamlit run eval/eval_app.py
-```
-
-If you have access to the `data_step2_before-currency-unit.csv` extraction of
-the tax observatory, you can give its path to the command line :
-
-
-```
-streamlit run eval/eval_app.py ./path/to/data_step2_before-currency-unit.csv
-```
+- all the extracted assets in a pickle file `eval_xxxx.pkl` located in the `eval/data/` directory

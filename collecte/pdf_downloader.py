@@ -72,7 +72,6 @@ def download_pdf(
     company_folder = download_folder / website_name
 
     Path.mkdir(company_folder, parents=True, exist_ok=True)
-    #local_filename = Path(company_folder) / url.split("/")[-1]
     local_filename = Path(company_folder) / (website_name + "___" + url.split("/")[-1])
 
     exception_status = None
