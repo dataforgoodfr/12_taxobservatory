@@ -1,6 +1,6 @@
 # Evaluation of the table extraction
 
-## Evaluate extractions with the streamlit eval app
+## Launch the streamlit eval app with sample evaluation data
 
 To get started, run the streamlit eval app as:
 
