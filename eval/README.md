@@ -31,8 +31,7 @@ Run the `eval_table_extraction.py` script. This script will iterate through seve
 You can run the script as:
 
 ```
-python eval/eval_table_extraction.py configs/eval_table_extraction.yaml
-./example_set/inputs/ ./example_set/extractions
+python3 eval/eval_table_extraction.py configs/eval_table_extraction.yaml ./example_set/inputs/ ./example_set/extractions/
 ```
 
 This will apply the pipeline for all the reports in the `./example_set/inputs` directory and save :
