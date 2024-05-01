@@ -2,76 +2,41 @@
 
 ## Setup
 
-To run the evaluation script, we need some additional requirements that are not
-listed in the project dependencies.
+To run the evaluation scripts, we need some additional requirements that are not listed in the project dependencies.
 
 ```
 apt-get install wkhtmltopdf
-python3 -m pip install pdfkit streamlit_option_menu streamlit-pdf-viewer
 ```
 
-## Qualitative evaluation
+## Generate evaluation data
 
-The evaluation is performed with the `eval_table_extraction.py` script. This
-script will iterate through several reports and apply the set of table
-extraction algorithms you gave in your yaml configuration. 
+First, you need to generate evaluation data with the `eval_table_extraction.py` script. This script will iterate through several reports and apply the set of table extraction algorithms you provided in your yaml configuration. 
 
-As an example, you might consider selecting the pages in the report from their
-filename and then apply several table extraction algorithms :
+As an example, you might select the pages in the report from their filename and then apply several table extraction algorithms. Check out `configs/eval_table_extraction.yaml` for a suitable evaluation script.
 
-A suitable `config.yaml` script would be :
-
-```
-pagefilter:
-  type: FromFilename
-
-table_extraction:
-  - type: Unstructured
-    params:
-      hi_res_model_name: "yolox"
-  - type: Unstructured
-    params:
-      hi_res_model_name: "yolox"
-      pdf_image_dpi: 300
-  - type: Unstructured
-    params:
-      hi_res_model_name: "yolox"
-      pdf_image_dpi: 500
-  - type: UnstructuredAPI
-    params:
-      hi_res_model_name: "yolox"
-  - type: LLamaParse
-```
-
-You can then call the evaluation script as :
+You can then call the script as :
 
 ```
 python eval/eval_table_extraction.py configs/eval_table_extraction.yaml
 ./example_set/inputs/ ./example_set/extractions
 ```
 
-This will apply the pipeline for all the reports in the `./example_set/inputs`
-directory and save :
+This will apply the pipeline for all the reports in the `./example_set/inputs` directory and save :
 
-- the extracted tables with all the algorithms in one file per report in the
+- the extracted tables with all the algorithms in one output PDF file per input report in the
   `./example_set/extractions` directory
-- all the extracted assets in a pickle file in the current directory `eval_xxxx.pkl`
+- all the extracted assets in a pickle file `eval_xxxx.pkl` located in the `eval/data/` directory
 
-## Comparison with a streamlit app
+## Evaluation with a streamlit app
 
-To facilitate the qualitative comparison of the extractions, you can use the
-streamlit app `eval/eval_app.py`. 
+To facilitate the evaluation of the extractions, you can run the streamlit app `eval/eval_app.py`. 
 
 To run the application, it is as simple as :
 
 ```
-streamlit run eval/eval_app.py
+streamlit run eval/eval_app.py eval/data/data_step2_before-currency-unit_eval.csv
 ```
 
-If you have access to the `data_step2_before-currency-unit.csv` extraction of
-the tax observatory, you can give its path to the command line :
+`data_step2_before-currency-unit_eval.csv` is a cleaned up version of the `data_step2_before-currency-unit.csv` file which contains reference data extracted and manually cleaned up by the team.
 
-
-```
-streamlit run eval/eval_app.py ./path/to/data_step2_before-currency-unit.csv
-```
+At launch, you will be requested to provide a pickle file with extracted data. You might select `eval_20240408_200249.plk` in the `eval/data/` directory. It contains extracted tables for multiple reports and extractions and is a great way to get started.

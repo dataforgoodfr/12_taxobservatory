@@ -45,6 +45,8 @@ langchain = "^0.1.13"
 fuzzywuzzy = "^0.18.0"
 tqdm = "^4.66.1"
 python-Levenshtein = "^0.24.0"
+pdfkit = "^1.0.0"
+streamlit-option-menu = "^0.3.12"
 
 [tool.poetry.group.dev.dependencies]
 pre-commit = "^2.20.0"

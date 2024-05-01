@@ -3851,6 +3851,19 @@ files = [
 pillow = "*"
 
 [[package]]
+name = "pdfkit"
+version = "1.0.0"
+description = "Wkhtmltopdf python wrapper to convert html to pdf using the webkit rendering engine and qt"
+category = "main"
+optional = false
+python-versions = "*"
+files = [
+    {file = "pdfkit-1.0.0-py2-none-any.whl", hash = "sha256:cc122e5aed594198ff7aaa566f2950d2163763576ab891c161bb1f6c630f5a8e"},
+    {file = "pdfkit-1.0.0-py3-none-any.whl", hash = "sha256:a7a4ca0d978e44fa8310c4909f087052430a6e8e0b1dd7ceef657f139789f96f"},
+    {file = "pdfkit-1.0.0.tar.gz", hash = "sha256:992f821e1e18fc8a0e701ecae24b51a2d598296a180caee0a24c0af181da02a9"},
+]
+
+[[package]]
 name = "pdfminer-six"
 version = "20231228"
 description = "PDF parser and analyzer"
@@ -5901,6 +5914,21 @@ st-theme = ">=1.1.0"
 streamlit = ">=1.30"
 
 [[package]]
+name = "streamlit-option-menu"
+version = "0.3.12"
+description = "streamlit-option-menu is a simple Streamlit component that allows users to select a single item from a list of options in a menu."
+category = "main"
+optional = false
+python-versions = ">=3.6"
+files = [
+    {file = "streamlit-option-menu-0.3.12.tar.gz", hash = "sha256:a954241cf188691f17072cf3ceb59e97f106f7492ddb5b79c4d42906758a5af2"},
+    {file = "streamlit_option_menu-0.3.12-py3-none-any.whl", hash = "sha256:f83045da205f83464e6606a80facfec2cde49fe750e1148eb275c88ddcca35b9"},
+]
+
+[package.dependencies]
+streamlit = ">=0.63"
+
+[[package]]
 name = "sympy"
 version = "1.12"
 description = "Computer algebra system (CAS) in Python"
@@ -7099,4 +7127,4 @@ multidict = ">=4.0"
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.10"
-content-hash = "d604c569a4f1e8787eff42cb39bdf53e8fc48d20a5d07bcb1a1781061aaaadb7"
+content-hash = "a18184966a471a5dd17cc82464cbf6bf58da7f17c7bbb16618666128884b56ae"
