@@ -2,19 +2,19 @@
 
 ## Launch the streamlit eval app with sample evaluation data
 
-To get started, run the streamlit eval app as:
+This app allows you to visually compare tables extracted via multiples methodologies and for multiple reports. To get started, run the app as:
 
 ```
 streamlit run eval/eval_app.py eval/data/data_step2_before-currency-unit_eval.csv
 ```
 
-This app allows you to visually compare tables extracted via multiples methodologies and for multiple reports. It needs two input files (only one mandatory):
+The app needs two input files (only one mandatory):
 - *[Optional]* The optional REF data file `data_step2_before-currency-unit_eval.csv` is a cleaned up version of `data_step2_before-currency-unit.csv`. The latter file contains reference data extracted and manually cleaned up by the TaxObservatory team and allows you to benchmark the extractions against it.
 - *[Mandatory]* At launch, the app will request you to provide a pickle file with extracted data. Select `eval_20240408_200249.plk` in the `eval/data/` directory to not have to generate evaluation data yourself and get started easily!
 
 ## Generate your own evaluation data
 
-You can instead generate your own picke file containing extracted data.
+You can instead generate your own evaluation data in a new picke file.
 
 ### Setup
 
