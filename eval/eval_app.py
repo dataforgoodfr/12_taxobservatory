@@ -49,7 +49,7 @@ def download_pdf() -> None:
     try:
         ss.pdf_downloaded = hf_hub_download(
             repo_id="DataForGood/taxobservatory_data",
-            filename=f"pdf/{ss.pdf_selected}",
+            filename=f"pdf/{pdf_file}",
             repo_type="dataset",
         )
     except Exception:

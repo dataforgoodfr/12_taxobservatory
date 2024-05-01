@@ -53,29 +53,43 @@ def reformat_str(el: any) -> str:
     - If enclosed in "()", convert to negative value
     Output string."""
     el = convert_to_str(el).replace(",", "")
-    return re.sub(r"\((\d+)\)", r"-\1", el)
+    return re.sub(r"^\((.*?)\)$", r"-\1", el)
 
 
-def clean_headers(df: pd) -> str:
+def clean_headers(df: pd) -> None:
 
-    # Transform any multi-row headers to single row to prevent st.dataframe error
-    # Test with Unstructured detectron2_onnx applied to ACS_2019.pdf
+    # Transform multi-row headers:
+    # - Occurs with ACS_2019_CbCR_3.pdf / unstructured / detectron2_onnx
     if isinstance(df.columns, pd.MultiIndex):
-        # Erase first any "Unnamed" headers originating from html to df conversion
+        # Erase first any "Unnamed" headers originating from the html to df conversion
         clean_columns = []
         for col in df.columns:
             clean_columns.append(
                 [item for item in col if "Unnamed" not in item],
             )
 
-        df.columns = [": ".join(set(col)) for col in clean_columns]
+        df.columns = [": ".join(list(dict.fromkeys(col))) for col in clean_columns]
 
-    # Fill any empty headers
+    # Deduplicate headers:
+    # - Multiple empty headers: ACS_2019_CbCR_3.pdf / unstructured / detectron2_onnx
+    # - Non-empty duplicated headers: AkerSolutions_2015_CbCR_16.pdf / llama_parse
     if df.columns.duplicated().sum() > 0:
         cols = pd.Series(df.columns)
         for dup in set(df.columns[df.columns.duplicated()]):
+            prefix = f"{dup}_"
             if dup == "":
-                cols[df.columns.get_loc(dup)] = [
-                    "COL" + str(idx) for idx, dup in enumerate(df.columns.get_loc(dup))
-                ]
+                prefix = "COL"
+            cols[df.columns.get_loc(dup)] = [
+                prefix + str(idx)
+                for idx, _ in enumerate(slice_to_mask(df.columns.get_loc(dup)))
+            ]
         df.columns = cols
+
+
+def slice_to_mask(s: pd) -> list:
+    if isinstance(s, slice):
+        start, stop, step = s.start, s.stop, s.step
+        if step is None:
+            step = 1
+        return [i in range(start, stop, step) for i in range(s.stop)]
+    return s
