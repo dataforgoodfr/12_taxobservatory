@@ -176,6 +176,3 @@ if "working_file_pdf" in st.session_state:
         get_pdf_iframe(st.session_state["working_file_pdf"].name),
         unsafe_allow_html=True,
     )
-
-# DEBUG
-st.write(st.session_state["proc"])
