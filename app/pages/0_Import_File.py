@@ -17,7 +17,6 @@ logging.basicConfig(stream=sys.stdout, level=logging.INFO, format="%(message)s")
 def set_page_filter(value: dict):
     set_state(["config", "pagefilter"], value)
 
-
 def initiate_configuration() -> None:
     st.session_state["config"] = copy.deepcopy(st.session_state["initial_config"])
     if isinstance(st.session_state["config"]["pagefilter"], list):
@@ -27,7 +26,7 @@ def initiate_configuration() -> None:
     st.session_state["selected_page_filter_name"] = st.session_state["config"][
         "pagefilter"
     ]["type"]
-
+    #debug
 
 def generate_assets() -> None:
     assets = {
@@ -51,7 +50,6 @@ def generate_assets() -> None:
         assets["pagefilter"]["selected_pages"] = list(range(number_pages))
     st.session_state["assets"] = assets
 
-
 def on_pdf_file_upload() -> None:
     # Change states related to the pdf file upload
     mytmpfile.write(st.session_state.original_pdf.read())
@@ -61,7 +59,8 @@ def on_pdf_file_upload() -> None:
     # Generate assets
     generate_assets()
 
-    st.switch_page("pages/1_Selected_Pages.py")
+    st.session_state["page_redirection"] = "pages/1_Selected_Pages.py"
+    #st.switch_page("pages/1_Selected_Pages.py")
 
 
 def on_config_file_upload() -> None:
@@ -70,8 +69,15 @@ def on_config_file_upload() -> None:
 
 
 def on_change_page_filter(name_to_filter_dict: dict) -> None:
+    st.session_state["selected_page_filter_name"] = st.session_state["radio_button_filter_selection"] #this 'buffer' is needed because selectors wipe their key on reload
     set_page_filter(name_to_filter_dict[st.session_state["selected_page_filter_name"]])
 
+# Check if a redirection was requested
+# Workaround because st.switch_page is not allowed in a callback function
+if st.session_state.get("page_redirection", False):
+    page_to_redirect_to = st.session_state["page_redirection"]
+    st.session_state["page_redirection"] = False
+    st.switch_page(page_to_redirect_to)
 
 st.set_page_config(layout="wide", page_title="Accueil - upload de PDF")
 st.title("Country by Country Tax Reporting analysis")
@@ -122,6 +128,7 @@ with st.sidebar:
         key="initial_uploaded_config",
         on_change=initiate_configuration,
     )
+
     if loaded_config is not None:
         if not loaded_config.name.endswith(".yaml"):
             st.error("Please upload a yaml file")
@@ -159,7 +166,7 @@ with st.sidebar:
         page_filter_list,
         index=current_selected_page_filter_index,
         on_change=on_change_page_filter,
-        key="selected_page_filter_name",
+        key="radio_button_filter_selection",
         args=(page_filter_name_to_config_mapping,),
     )
 
