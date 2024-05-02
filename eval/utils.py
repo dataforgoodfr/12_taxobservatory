@@ -53,7 +53,9 @@ def normalize_num_str(el: any) -> str:
     """Normalize numeric string:
     - Remove empty spaces
     - Add "negative" sign to str with enclosing parentheses
-    - Check if is a number"""
+    - Check if is a number
+    Test with: AXA_2021_CbCR_24-27.pdf / llama_parse / table 1
+    """
     out = el
     with contextlib.suppress(Exception):
         out = re.sub(r"^\((.*?)\)$", r"-\1", str(out).replace(" ", ""))
