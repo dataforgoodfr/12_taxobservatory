@@ -39,27 +39,35 @@ def append_count_to_duplicates(strings: list[str]) -> list[str]:
     return strings
 
 
-def convert_to_str(val: any) -> str:
-    """Convert input to str and remove any trailing zeros for floats"""
+def convert_num_to_str(val: any) -> str:
+    """Convert number to str and remove any trailing zeros for floats"""
+    out = val
     with contextlib.suppress(Exception):
-        return str(float(val)).rstrip("0").rstrip(".")
-    return str(val)
+        out = str(float(out)).rstrip("0").rstrip(".")
+
+    out = str(out)
+    return out
 
 
-def reformat_str(el: any) -> str:
-    """Normalize input value:
-    - If numerical, convert to string
-    - If contains comma, remove comma
-    - If enclosed in "()", convert to negative value
-    Output string."""
-    el = convert_to_str(el).replace(",", "")
-    return re.sub(r"^\((.*?)\)$", r"-\1", el)
+def normalize_num_str(el: any) -> str:
+    """Normalize numeric string:
+    - Remove empty spaces
+    - Add "negative" sign to str with enclosing parentheses
+    - Check if is a number"""
+    out = el
+    with contextlib.suppress(Exception):
+        out = re.sub(r"^\((.*?)\)$", r"-\1", str(out).replace(" ", ""))
+        out = str(float(out)).rstrip("0").rstrip(".")
+
+    out = out.replace(",", "")
+    return out
 
 
 def clean_headers(df: pd) -> None:
-
-    # Transform multi-row headers:
-    # - Occurs with ACS_2019_CbCR_3.pdf / unstructured / detectron2_onnx
+    """Transform multi-row headers to single-row and deduplicate
+    - Multi-row & empty headers: ACS_2019_CbCR_3.pdf / unstructured / detectron2_onnx
+    - Duplicated non-empty headers: AkerSolutions_2015_CbCR_16.pdf / llama_parse"""
+    # Transform multi-rown headers to single-row
     if isinstance(df.columns, pd.MultiIndex):
         # Erase first any "Unnamed" headers originating from the html to df conversion
         clean_columns = []
@@ -70,9 +78,7 @@ def clean_headers(df: pd) -> None:
 
         df.columns = [": ".join(list(dict.fromkeys(col))) for col in clean_columns]
 
-    # Deduplicate headers:
-    # - Multiple empty headers: ACS_2019_CbCR_3.pdf / unstructured / detectron2_onnx
-    # - Non-empty duplicated headers: AkerSolutions_2015_CbCR_16.pdf / llama_parse
+    # Deduplicate headers
     if df.columns.duplicated().sum() > 0:
         cols = pd.Series(df.columns)
         for dup in set(df.columns[df.columns.duplicated()]):
@@ -86,7 +92,7 @@ def clean_headers(df: pd) -> None:
         df.columns = cols
 
 
-def slice_to_mask(s: pd) -> list:
+def slice_to_mask(s: any) -> list:
     if isinstance(s, slice):
         start, stop, step = s.start, s.stop, s.step
         if step is None:
