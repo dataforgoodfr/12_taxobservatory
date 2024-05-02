@@ -36,8 +36,8 @@ from streamlit_option_menu import option_menu
 from utils import (
     append_count_to_duplicates,
     clean_headers,
-    convert_to_str,
-    reformat_str,
+    convert_num_to_str,
+    normalize_num_str,
 )
 
 from country_by_country import pagefilter
@@ -49,7 +49,7 @@ def download_pdf() -> None:
     try:
         ss.pdf_downloaded = hf_hub_download(
             repo_id="DataForGood/taxobservatory_data",
-            filename=f"pdf/{ss.pdf_selected}",
+            filename=f"pdf/{pdf_file}",
             repo_type="dataset",
         )
     except Exception:
@@ -193,7 +193,7 @@ def process_pdf(pdf_file: str, asset_dict: dict) -> None:
 
             # Embed content in HTML
             pdf_display = f"""<iframe src="data:application/pdf;base64,{base64_pdf}"
-            width="800" height="1000" type="application/pdf"></iframe>"""
+            width="800" height="600" type="application/pdf"></iframe>"""
 
             # Display content
             st.markdown(pdf_display, unsafe_allow_html=True)
@@ -208,7 +208,7 @@ def process_pdf(pdf_file: str, asset_dict: dict) -> None:
 
             # Pull tables from the extraction
             dfs = asset_dict[pdf_file]["table_extractors"][idx]["tables"]
-            dfs = [df.map(convert_to_str).replace("nan", "") for df in dfs]
+            dfs = [df.map(convert_num_to_str).replace("nan", "") for df in dfs]
             dfs_str = ["Table " + str(i) for i in range(len(dfs))]
 
             # Select table to display
@@ -251,8 +251,8 @@ def process_pdf(pdf_file: str, asset_dict: dict) -> None:
                 for dfref in asset_dict[pdf_file]["table_extractors"][
                     extractions.index(ref_extraction)
                 ]["tables"]:
-                    refvalues.extend(dfref.map(reformat_str).to_numpy().flatten())
-                mask = df.map(reformat_str).isin(refvalues)
+                    refvalues.extend(dfref.map(normalize_num_str).to_numpy().flatten())
+                mask = df.map(normalize_num_str).isin(refvalues)
 
                 # Apply font color (green vs red) based on above check
                 def color_mask(val: bool) -> None:
@@ -272,7 +272,7 @@ def process_pdf(pdf_file: str, asset_dict: dict) -> None:
                         dfst,
                         column_config=column_config,
                         use_container_width=False,
-                        height=round(35.5 * (len(dfst.index) + 1)),
+                        height=min(round(35.5 * (len(dfst.index) + 1)), 600),
                     )
                 except Exception as error:
                     st.error(error)
