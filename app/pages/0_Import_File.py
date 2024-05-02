@@ -18,6 +18,61 @@ def set_page_filter(value: dict):
     set_state(["config", "pagefilter"], value)
 
 
+def initiate_configuration() -> None:
+    st.session_state["config"] = copy.deepcopy(st.session_state["initial_config"])
+    if isinstance(st.session_state["config"]["pagefilter"], list):
+        st.session_state["config"]["pagefilter"] = st.session_state["initial_config"][
+            "pagefilter"
+        ][0]
+    st.session_state["selected_page_filter_name"] = st.session_state["config"][
+        "pagefilter"
+    ]["type"]
+
+
+def generate_assets() -> None:
+    assets = {
+        "pagefilter": {},
+        "table_extractors": [],
+    }
+
+    # Filtering the pages
+    st.session_state["proc"].page_filter(
+        st.session_state["working_file_pdf"].name,
+        assets,
+    )
+
+    logging.info(f"Assets : {assets}")
+
+    if len(assets["pagefilter"]["selected_pages"]) == 0:
+        # No page has been automatically selected by the page filter
+        # Hence, we display the full pdf, letting the user select the pages
+        pdfreader = PdfReader(st.session_state["working_file_pdf"])
+        number_pages = len(PdfReader(st.session_state["working_file_pdf"]).pages)
+        assets["pagefilter"]["selected_pages"] = list(range(number_pages))
+    st.session_state["assets"] = assets
+
+
+def on_pdf_file_upload() -> None:
+    # Change states related to the pdf file upload
+    mytmpfile.write(st.session_state.original_pdf.read())
+    st.session_state["working_file_pdf"] = mytmpfile
+    st.session_state["original_pdf_name"] = st.session_state.original_pdf.name
+
+    # Generate assets
+    generate_assets()
+
+    st.switch_page("pages/1_Selected_Pages.py")
+
+
+def on_config_file_upload() -> None:
+    st.session_state["initial_config"] = st.session_state["initial_uploaded_config"]
+    initiate_configuration()
+
+
+def on_change_page_filter(name_to_filter_dict: dict) -> None:
+    set_page_filter(name_to_filter_dict[st.session_state["selected_page_filter_name"]])
+
+
 st.set_page_config(layout="wide", page_title="Accueil - upload de PDF")
 st.title("Country by Country Tax Reporting analysis")
 st.subheader(
@@ -27,6 +82,23 @@ display_pages_menu()
 
 mytmpfile = tempfile.NamedTemporaryFile(suffix=".pdf", delete=False)
 
+# State initialization
+if "first_time" not in st.session_state:
+    logging.info("State initialization...")
+    st.session_state["first_time"] = False
+
+    logging.info("... loading default extract config")
+    with open("app/extract_config.yaml", "r") as f:
+        st.session_state["initial_config"] = yaml.safe_load(f.read())
+    initiate_configuration()
+
+    logging.info("... initializing processor and assets")
+    st.session_state["proc"] = ReportProcessor(st.session_state["config"])
+    st.session_state["assets"] = {
+        "pagefilter": {},
+        "table_extractors": [],
+    }
+
 with st.sidebar:
 
     st.markdown("# PDF Upload")
@@ -34,12 +106,9 @@ with st.sidebar:
     st.markdown("## PDF Report to process")
     original_pdf = st.file_uploader(
         "Upload a pdf document containing financial table : ",
+        key="original_pdf",
+        on_change=on_pdf_file_upload,
     )
-
-    if original_pdf is not None:
-        mytmpfile.write(original_pdf.read())
-        st.session_state["working_file_pdf"] = mytmpfile
-        st.session_state["original_pdf_name"] = original_pdf.name
 
     if "original_pdf_name" in st.session_state:
         st.markdown(
@@ -50,6 +119,8 @@ with st.sidebar:
     # Upload personalized config if required
     loaded_config = st.file_uploader(
         "Upload a config if the default config doesn't suit you :",
+        key="initial_uploaded_config",
+        on_change=initiate_configuration,
     )
     if loaded_config is not None:
         if not loaded_config.name.endswith(".yaml"):
@@ -69,26 +140,28 @@ with st.sidebar:
             loaded_config = None
 
     # Extract config
-    with open("app/extract_config.yaml", "r") as f:
-        default_config = f.read()
-
-    if not st.session_state.get("config_is_set", False):
-        st.session_state["initial_config"] = yaml.safe_load(default_config)
-        st.session_state["config"] = copy.deepcopy(st.session_state["initial_config"])
-        st.session_state["config_is_set"] = True
 
     if bool(loaded_config):
         st.session_state["initial_config"] = loaded_config_dict
         st.session_state["config"] = copy.deepcopy(st.session_state["initial_config"])
-        st.session_state["config_is_set"] = True
 
     # Set page filter
-    page_filter_radio_dict = {
+    page_filter_name_to_config_mapping = {
         pagefilter["type"]: pagefilter
         for pagefilter in st.session_state["initial_config"]["pagefilter"]
     }
-    selected_page_filter = st.radio("Page filter", page_filter_radio_dict.keys())
-    set_page_filter(page_filter_radio_dict[selected_page_filter])
+    page_filter_list = list(page_filter_name_to_config_mapping.keys())
+    current_selected_page_filter_index = page_filter_list.index(
+        st.session_state["selected_page_filter_name"]
+    )
+    selected_page_filter_name = st.radio(
+        "Page filter",
+        page_filter_list,
+        index=current_selected_page_filter_index,
+        on_change=on_change_page_filter,
+        key="selected_page_filter_name",
+        args=(page_filter_name_to_config_mapping,),
+    )
 
     display_config()
 
@@ -104,31 +177,5 @@ if "working_file_pdf" in st.session_state:
         unsafe_allow_html=True,
     )
 
-    if "first_time" not in st.session_state:
-        st.session_state["first_time"] = False
-        logging.info("Loading config and pdf")
-        st.session_state["proc"] = ReportProcessor(st.session_state["config"])
-
-        logging.info("Config and pdf loaded")
-
-        assets = {
-            "pagefilter": {},
-            "table_extractors": [],
-        }
-
-        # Filtering the pages
-        st.session_state["proc"].page_filter(
-            st.session_state["working_file_pdf"].name,
-            assets,
-        )
-
-        logging.info(f"Assets : {assets}")
-
-        if len(assets["pagefilter"]["selected_pages"]) == 0:
-            # No page has been automatically selected by the page filter
-            # Hence, we display the full pdf, letting the user select the pages
-            pdfreader = PdfReader(st.session_state["working_file_pdf"])
-            number_pages = len(PdfReader(st.session_state["working_file_pdf"]).pages)
-            assets["pagefilter"]["selected_pages"] = list(range(number_pages))
-        st.session_state["assets"] = assets
-        st.switch_page("pages/1_Selected_Pages.py")
+# DEBUG
+st.write(st.session_state["proc"])
