@@ -27,7 +27,6 @@ import pickle
 import sys
 from pathlib import Path
 
-# External imports
 import pandas as pd
 import streamlit as st
 from huggingface_hub import hf_hub_download
@@ -36,24 +35,16 @@ from streamlit_option_menu import option_menu
 from utils import (
     append_count_to_duplicates,
     clean_headers,
+    compute_recall_matrix,
     convert_num_to_str,
     normalize_num_str,
 )
 
+# External imports
 from country_by_country import pagefilter
 from country_by_country.utils.utils import keep_pages
 
-
-def download_pdf() -> None:
-    pdf_file = ss.pdf_selected.replace("'", "_")
-    try:
-        ss.pdf_downloaded = hf_hub_download(
-            repo_id="DataForGood/taxobservatory_data",
-            filename=f"pdf/{pdf_file}",
-            repo_type="dataset",
-        )
-    except Exception:
-        st.error("Couldn't download PDF: " + pdf_file)
+CHECK_ABS = True
 
 
 def main(ref_data_file: str = None) -> None:
@@ -79,13 +70,12 @@ def main(ref_data_file: str = None) -> None:
     # Display title
     st.title(
         "Table extraction benchmark",
-        help="""Drag and drop a pickle file containg evaluation results, select a PDF to see
-        the corresponding extracted tables and start comparing. Cells in the tables are
-        colored **:green[in green]** if they are present in the tables of the reference
-        extraction, and **:red[red]** otherwise. Note that the color only indicates if one
-        extracted value is present in the reference extraction, not if that value is at the
-        right location in the table. Change the reference extraction via the select box in the
-        left sidebar.""",
+        help="""Drag and drop a pickle file containg evaluation results, select a PDF and
+        compare the extracted tables. Cells in the tables are colored **:green[in green]**
+        if they are present in the tables of the reference extraction, **:red[red]**
+        otherwise. Note that the color only indicates if one extracted value is present in
+        the reference extraction, not if that value is at the right location in the table.
+        You can change the reference extraction via the select box in the left sidebar.""",
     )
 
     # Display sidebar
@@ -100,11 +90,17 @@ def main(ref_data_file: str = None) -> None:
         )
 
         if uploaded_file:
-            # Load pickle
-            assets = pickle.load(uploaded_file)
-
             # List PDFs and their extracted assets
+            assets = pickle.load(uploaded_file)
             asset_dict = {Path(asset[0]).name: asset[1] for asset in assets}
+
+            # Compute recall matrix
+            recall_matrix = compute_recall_matrix(
+                asset_dict,
+                ref_data=ss.ref_uploaded,
+                check_abs=CHECK_ABS,
+            )
+            print(recall_matrix)
 
             # Select PDF to load results
             pdf_file = st.selectbox(
@@ -118,35 +114,22 @@ def main(ref_data_file: str = None) -> None:
 
     # Display tabs containing PDF and extracted tables
     if pdf_file is not None:
-        process_pdf(pdf_file, asset_dict)
+        process_pdf(pdf_file, asset_dict, recall_matrix)
 
 
-def append_ref_data(pdf_file: str, asset_dict: dict) -> None:
-    company = pdf_file.split("_")[0]
-    year = pdf_file.split("_")[1]
-    cols = [2, *list(range(5, 10)), *list(range(15, 18))]
-    ref_df = (
-        ss.ref_uploaded.query(f'company=="{company}" and year=={year}')
-        .iloc[:, cols]
-        .reset_index(drop=True)
-        .dropna(axis="columns", how="all")
-    )
-    asset_dict[pdf_file]["table_extractors"].insert(
-        0,
-        {
-            "type": "REF",
-            "params": {"src_file": ref_data_file},
-            "tables": [ref_df],
-        },
-    )
+def download_pdf() -> None:
+    pdf_file = ss.pdf_selected.replace("'", "_")
+    try:
+        ss.pdf_downloaded = hf_hub_download(
+            repo_id="DataForGood/taxobservatory_data",
+            filename=f"pdf/{pdf_file}",
+            repo_type="dataset",
+        )
+    except Exception:
+        st.error("Couldn't download PDF: " + pdf_file)
 
 
-def select_table(key: str) -> None:
-    selected = ss[key]
-    ss.selected_idx = int(selected.split(" ", 1)[1])
-
-
-def process_pdf(pdf_file: str, asset_dict: dict) -> None:
+def process_pdf(pdf_file: str, asset_dict: dict, recall_matrix: pd) -> None:
     # Append REF data to extractions in assets
     if ss.ref_uploaded is not None:
         append_ref_data(pdf_file, asset_dict)
@@ -179,32 +162,21 @@ def process_pdf(pdf_file: str, asset_dict: dict) -> None:
             download_pdf()
 
         if ss.pdf_downloaded:
-            # Get pages to render
-            assets = {}
-            pagefilter.FromFilename()(ss.pdf_downloaded, assets=assets)
-            pages_to_render = list(assets["pagefilter"]["selected_pages"])
-
-            # Filter pages from PDF
-            pdf_fitered = keep_pages(ss.pdf_downloaded, pages_to_render)
-
-            # Get content of pages
-            with Path(pdf_fitered).open("rb") as f:
-                base64_pdf = base64.b64encode(f.read()).decode("utf-8")
-
-            # Embed content in HTML
-            pdf_display = f"""<iframe src="data:application/pdf;base64,{base64_pdf}"
-            width="800" height="600" type="application/pdf"></iframe>"""
-
-            # Display content
-            st.markdown(pdf_display, unsafe_allow_html=True)
+            render_pdf()
 
     # Tabs to display extractions
     for idx, tab in enumerate(tabs[1:]):
         with tab:
-            # Display parameters of the extraction
-            st.write(
-                json.dumps(asset_dict[pdf_file]["table_extractors"][idx]["params"]),
+            # Display extraction parameters and recall value
+            extraction_params = json.dumps(
+                asset_dict[pdf_file]["table_extractors"][idx]["params"],
             )
+            if idx > 0:
+                extraction_params = (
+                    f"{recall_matrix.loc[pdf_file, extractions[idx]]}% recall => "
+                    + extraction_params
+                )
+            st.write(extraction_params)
 
             # Pull tables from the extraction
             dfs = asset_dict[pdf_file]["table_extractors"][idx]["tables"]
@@ -251,8 +223,12 @@ def process_pdf(pdf_file: str, asset_dict: dict) -> None:
                 for dfref in asset_dict[pdf_file]["table_extractors"][
                     extractions.index(ref_extraction)
                 ]["tables"]:
-                    refvalues.extend(dfref.map(normalize_num_str).to_numpy().flatten())
-                mask = df.map(normalize_num_str).isin(refvalues)
+                    refvalues.extend(
+                        dfref.map(normalize_num_str, check_abs=CHECK_ABS)
+                        .to_numpy()
+                        .flatten(),
+                    )
+                mask = df.map(normalize_num_str, check_abs=CHECK_ABS).isin(refvalues)
 
                 # Apply font color (green vs red) based on above check
                 def color_mask(val: bool) -> None:
@@ -276,6 +252,52 @@ def process_pdf(pdf_file: str, asset_dict: dict) -> None:
                     )
                 except Exception as error:
                     st.error(error)
+
+
+def render_pdf() -> None:
+    # Get pages to render
+    assets = {}
+    pagefilter.FromFilename()(ss.pdf_downloaded, assets=assets)
+    pages_to_render = list(assets["pagefilter"]["selected_pages"])
+
+    # Filter pages from PDF
+    pdf_fitered = keep_pages(ss.pdf_downloaded, pages_to_render)
+
+    # Get content of pages
+    with Path(pdf_fitered).open("rb") as f:
+        base64_pdf = base64.b64encode(f.read()).decode("utf-8")
+
+    # Embed content in HTML
+    pdf_display = f"""<iframe src="data:application/pdf;base64,{base64_pdf}"
+        width="800" height="600" type="application/pdf"></iframe>"""
+
+    # Display content
+    st.markdown(pdf_display, unsafe_allow_html=True)
+
+
+def append_ref_data(pdf_file: str, asset_dict: dict) -> None:
+    company = pdf_file.split("_")[0]
+    year = pdf_file.split("_")[1]
+    cols = [2, *list(range(5, 10)), *list(range(15, 18))]
+    ref_df = (
+        ss.ref_uploaded.query(f'company=="{company}" and year=={year}')
+        .iloc[:, cols]
+        .reset_index(drop=True)
+        .dropna(axis="columns", how="all")
+    )
+    asset_dict[pdf_file]["table_extractors"].insert(
+        0,
+        {
+            "type": "REF",
+            "params": {"src_file": ref_data_file},
+            "tables": [ref_df],
+        },
+    )
+
+
+def select_table(key: str) -> None:
+    selected = ss[key]
+    ss.selected_idx = int(selected.split(" ", 1)[1])
 
 
 if __name__ == "__main__":
