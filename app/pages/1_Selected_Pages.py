@@ -31,6 +31,7 @@ def set_extractors() -> None:
     st.session_state["proc"] = ReportProcessor(st.session_state["config"])
     generate_assets()
 
+
 st.set_page_config(layout="wide", page_title="Pages selection")  # page_icon="📈"
 st.title("Country by Country Tax Reporting analysis : Selected Pages")
 st.subheader(

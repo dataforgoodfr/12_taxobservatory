@@ -4,8 +4,8 @@ from pathlib import Path
 from typing import Any
 
 import pandas as pd
-from pypdf import PdfReader
 import streamlit as st
+from pypdf import PdfReader
 
 
 def get_pdf_iframe(pdf_to_process: str) -> str:
@@ -43,6 +43,7 @@ def to_csv_file(df: pd.DataFrame) -> bytes:
 
     return df.to_csv(index=False).encode("utf-8")
 
+
 def set_state(key: Any, value: Any) -> None:
     """
     Sets the session_state[key] to value.
@@ -62,6 +63,7 @@ def set_state(key: Any, value: Any) -> None:
         nested_value[key_list[-1]] = value
     else:
         st.session_state[key] = value
+
 
 def generate_assets() -> None:
     assets = {

@@ -17,6 +17,7 @@ logging.basicConfig(stream=sys.stdout, level=logging.INFO, format="%(message)s")
 def set_page_filter(value: dict):
     set_state(["config", "pagefilter"], value)
 
+
 def initiate_configuration() -> None:
     st.session_state["config"] = copy.deepcopy(st.session_state["initial_config"])
     if isinstance(st.session_state["config"]["pagefilter"], list):
@@ -26,6 +27,7 @@ def initiate_configuration() -> None:
     st.session_state["selected_page_filter_name"] = st.session_state["config"][
         "pagefilter"
     ]["type"]
+
 
 def on_pdf_file_upload() -> None:
     # Change states related to the pdf file upload
@@ -45,8 +47,11 @@ def on_config_file_upload() -> None:
 
 
 def on_change_page_filter(name_to_filter_dict: dict) -> None:
-    st.session_state["selected_page_filter_name"] = st.session_state["radio_button_filter_selection"] #this 'buffer' is needed because selectors wipe their key on reload
+    st.session_state["selected_page_filter_name"] = st.session_state[
+        "radio_button_filter_selection"
+    ]  # this 'buffer' is needed because selectors wipe their key on reload
     set_page_filter(name_to_filter_dict[st.session_state["selected_page_filter_name"]])
+
 
 # Check if a redirection was requested
 # Workaround because st.switch_page is not allowed in a callback function
