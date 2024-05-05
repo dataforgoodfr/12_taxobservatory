@@ -73,7 +73,9 @@ if "pdf_after_page_validation" in st.session_state:
             currency = st.selectbox(
                 "Currency",
                 currencies,
-                index=currencies.index(currency) if currency else 0,
+                index=currencies.index(currency)
+                if currency
+                else currencies.index("EUR - Euro"),
             )
 
             units = [

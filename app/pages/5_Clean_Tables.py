@@ -172,7 +172,7 @@ if (
             ),
         )
 
-        st.data_editor(
+        st.session_state.tables[st.session_state["algorithm_name"]] = st.data_editor(
             st.session_state.tables[st.session_state["algorithm_name"]],
             num_rows="dynamic",
             on_change=update_df_csv_to_save,
