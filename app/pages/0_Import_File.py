@@ -7,7 +7,7 @@ import yaml
 import copy
 from menu import display_pages_menu, display_config
 from pypdf import PdfReader
-from utils import get_pdf_iframe, set_state
+from utils import get_pdf_iframe, set_state, generate_assets
 
 from country_by_country.processor import ReportProcessor
 
@@ -26,28 +26,6 @@ def initiate_configuration() -> None:
     st.session_state["selected_page_filter_name"] = st.session_state["config"][
         "pagefilter"
     ]["type"]
-
-def generate_assets() -> None:
-    assets = {
-        "pagefilter": {},
-        "table_extractors": [],
-    }
-
-    # Filtering the pages
-    st.session_state["proc"].page_filter(
-        st.session_state["working_file_pdf"].name,
-        assets,
-    )
-
-    logging.info(f"Assets : {assets}")
-
-    if len(assets["pagefilter"]["selected_pages"]) == 0:
-        # No page has been automatically selected by the page filter
-        # Hence, we display the full pdf, letting the user select the pages
-        pdfreader = PdfReader(st.session_state["working_file_pdf"])
-        number_pages = len(PdfReader(st.session_state["working_file_pdf"]).pages)
-        assets["pagefilter"]["selected_pages"] = list(range(number_pages))
-    st.session_state["assets"] = assets
 
 def on_pdf_file_upload() -> None:
     # Change states related to the pdf file upload
