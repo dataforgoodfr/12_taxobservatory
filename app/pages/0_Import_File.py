@@ -26,7 +26,6 @@ def initiate_configuration() -> None:
     st.session_state["selected_page_filter_name"] = st.session_state["config"][
         "pagefilter"
     ]["type"]
-    #debug
 
 def generate_assets() -> None:
     assets = {
@@ -60,7 +59,6 @@ def on_pdf_file_upload() -> None:
     generate_assets()
 
     st.session_state["page_redirection"] = "pages/1_Selected_Pages.py"
-    #st.switch_page("pages/1_Selected_Pages.py")
 
 
 def on_config_file_upload() -> None:
