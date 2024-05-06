@@ -79,12 +79,13 @@ if "first_time" not in st.session_state:
         st.session_state["initial_config"] = yaml.safe_load(f.read())
     initiate_configuration()
 
-    logging.info("... initializing processor and assets")
+    logging.info("... initializing processor")
     st.session_state["proc"] = ReportProcessor(st.session_state["config"])
     st.session_state["assets"] = {
         "pagefilter": {},
         "table_extractors": [],
     }
+
 
 with st.sidebar:
 
