@@ -173,7 +173,7 @@ def process_pdf(pdf_file: str, asset_dict: dict, recall_matrix: pd) -> None:
             )
             if idx > 0:
                 extraction_params = (
-                    f"{recall_matrix.loc[pdf_file, extractions[idx]]}% recall => "
+                    f"{recall_matrix.loc[pdf_file, extractions[idx]]}% recall --- "
                     + extraction_params
                 )
             st.write(extraction_params)
