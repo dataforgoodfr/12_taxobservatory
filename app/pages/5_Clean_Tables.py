@@ -49,7 +49,7 @@ def style_negative(v, props=""):
 def convert_dataframe(dataframe: pd.DataFrame) -> pd.DataFrame:
     for column_name in dataframe.columns:
         try:
-            dataframe[column_name] = dataframe[column_name].astype(float)
+            dataframe[column_name] = dataframe[column_name].astype(float).round(2)
         except Exception as e:
             pass
     return dataframe
