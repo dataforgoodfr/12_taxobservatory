@@ -12,15 +12,15 @@ streamlit run eval/eval_app.py eval/data/data_step2_before-currency-unit_eval.cs
 
 Right after launch, you'll need to select a pickle file to load. Luckily, we already generated one for you: select `eval_20240501_161202.pkl` in the `eval/data/` directory. This file contains tables from 15 PDF reports and extracted via 6 parsing methodologies (1 FromCSV/ExtractTable, 1 LlamaParse, 2 Unstructured API & Local).
 
-The app allows you to select a PDF report, see the pages of the PDF report containing the tables to be extracted and their extracted tables for each parsing methodology. Note the nice red/green colors allowing you to visually compare the tables.
+The app will then allow you to select a PDF report, see the pages of the PDF report containing the tables to be extracted and their extracted versions for each parsing methodology. Note the red/green colors allowing you to visually compare the tables.
 
-Note the `data_step2_before-currency-unit_eval.csv` argument in the above command line. This argument is optional and allows you to compare extracted tables against reference data manually produced by the TaxObservatory team.
+Note the `data_step2_before-currency-unit_eval.csv` argument on the above command line. This argument is optional and allows you to compare extracted tables against reference tables manually produced by the TaxObservatory team.
 
 ## Quantitative analysis (NEW!)
 
-In addition to visual comparison, the streamlit app computes a recall rate. For a given extraction methodology, we define the recall rate as the share of numeric values in the reference data that are present in the extracted tables. To compute the recall rate, reference data is required (see above).
+In addition to visual comparison, the streamlit app computes a recall rate. For a given extraction methodology, we define the recall rate as the share of numeric values in the reference table that are present in the extracted tables. To compute the recall rate, reference data is required (see above).
 
-The streamlit app also prints in the terminal a recall matrix, that is the recall rate (%) for all the PDF reports and all the extraction methodologies. See the recall matrix for `eval_20240501_161202.pkl`:
+The Streamlit app also prints in the terminal a recall matrix, that is the recall rate (%) for all the PDF reports and all the extraction methodologies. See the recall matrix for `eval_20240501_161202.pkl`:
 
 |                                        |   from_csv |   llama_parse |   unstructured_api |   unstructured_api_1 |   unstructured |   unstructured_1 |
 |:---------------------------------------|-----------:|--------------:|-------------------:|---------------------:|---------------:|-----------------:|
