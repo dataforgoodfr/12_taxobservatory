@@ -12,7 +12,7 @@ streamlit run eval/eval_app.py eval/data/data_step2_before-currency-unit_eval.cs
 
 Right after launch, you'll need to select a pickle file to load. Luckily, we already generated one for you: select `eval_20240501_161202.pkl` in the `eval/data/` directory. This file contains tables from 15 PDF reports and extracted via 6 parsing methodologies (1 FromCSV/ExtractTable, 1 LlamaParse, 2 Unstructured API & Local).
 
-The app will then allow you to select a PDF report, see the pages of the PDF report containing the tables to be extracted and their extracted versions for each parsing methodology. Note the red/green colors allowing you to visually compare the tables.
+The app will then allow you to select a PDF report, see the pages of the PDF report containing the tables to be extracted and their extracted versions. Note the red/green colors allowing you to visually compare the tables.
 
 Note the `data_step2_before-currency-unit_eval.csv` argument on the above command line. This argument is optional and allows you to compare extracted tables against reference tables manually produced by the TaxObservatory team.
 
