@@ -147,6 +147,13 @@ sudo a2ensite 002-taxobs-extract.conf
 
 ### Https certificates
 
+We will use certbot to create the http certificates for the public website.
+
+```
+sudo apt update && sudo apt install snapd
+```
+
+TBD
 
 ## Installing a cron task for automatic update of the repository
 
