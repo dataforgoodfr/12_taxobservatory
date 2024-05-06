@@ -34,8 +34,42 @@ git clone https://github.com/dataforgoodfr/12_taxobservatory.git /opt/d4g/12_tax
 As `d4gtaxobs` user :
 
 ```
+sudo su d4gtaxobs
 python3 -m venv /opt/d4g/venv
 source /opt/d4g/venv/bin/activate
 python -m pip install poetry==1.4.0
 cd /opt/d4g/12_taxobservatory && poetry install
 ```
+
+## Test the running code
+
+If you want to test the code is correctly running, you can :
+
+```
+sudo su d4gtaxobs
+source /opt/d4g/venv/bin/activate
+cd /opt/d4g/12_taxobservatory/dataviz
+streamlit run data4good.py --server.port 8090
+```
+
+And then connect your browser to `http://localhost:8090`.
+
+If the access to the remote server is limited, you may need to use a ssh tunnel :
+
+```
+ssh -L 8090:localhost:8090  YOUR_LOGIN@THE_IP_OF_THE_MACHINE
+```
+
+## Seting up the apache2 servers with https certificates
+
+TBD
+
+## Installing a cron task for automatic update of the repository
+
+TBD
+
+## Setting up service files 
+
+TBD
+
+
