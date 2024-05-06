@@ -41,6 +41,7 @@ if "pdf_after_page_validation" in st.session_state:
                 currency = st.session_state["metadata"]["currency"]
                 unit = st.session_state["metadata"]["unit"]
                 headquarter = st.session_state["metadata"]["headquarter"]
+                decimal_separator = st.session_state["metadata"]["separator"]
             else:
                 company_name = None
                 sector = None
@@ -48,6 +49,15 @@ if "pdf_after_page_validation" in st.session_state:
                 currency = None
                 unit = None
                 headquarter = ""
+                decimal_separator = ","
+
+            separator_list = [",", "."]
+            decimal_separator = st.selectbox(
+                "Decimal separator",
+                separator_list,
+                index=separator_list.index(decimal_separator),
+            )
+
             companies = list(COMPANIES.keys())
             company_name = st.selectbox(
                 "Company name",
@@ -100,6 +110,7 @@ if "pdf_after_page_validation" in st.session_state:
             )
             if submitted:
                 st.session_state["metadata"] = {
+                    "separator": decimal_separator,
                     "company_name": company_name,
                     "sector": sector,
                     "year": year,
