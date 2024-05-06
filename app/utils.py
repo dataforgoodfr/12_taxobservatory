@@ -1,9 +1,11 @@
 import base64
+import logging
 from pathlib import Path
 from typing import Any
 
 import pandas as pd
 import streamlit as st
+from pypdf import PdfReader
 
 
 def get_pdf_iframe(pdf_to_process: str) -> str:
@@ -61,3 +63,25 @@ def set_state(key: Any, value: Any) -> None:
         nested_value[key_list[-1]] = value
     else:
         st.session_state[key] = value
+
+
+def generate_assets() -> None:
+    assets = {
+        "pagefilter": {},
+        "table_extractors": [],
+    }
+
+    # Filtering the pages
+    st.session_state["proc"].page_filter(
+        st.session_state["working_file_pdf"].name,
+        assets,
+    )
+
+    logging.info(f"Assets : {assets}")
+
+    if len(assets["pagefilter"]["selected_pages"]) == 0:
+        # No page has been automatically selected by the page filter
+        # Hence, we display the full pdf, letting the user select the pages
+        number_pages = len(PdfReader(st.session_state["working_file_pdf"]).pages)
+        assets["pagefilter"]["selected_pages"] = list(range(number_pages))
+    st.session_state["assets"] = assets
