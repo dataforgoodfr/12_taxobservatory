@@ -72,13 +72,6 @@ def gather_tables(
                         "No Extract " + str(i + 1) for i in range(tables[i].shape[1])
                     ]
                     break
-            for label, content in tables[i].items():
-                if (
-                    content.dtype == "object"
-                ):  # Check if the column contains string data
-                    tables[i][label] = tables[i][label].replace("", None)
-                    tables[i][label] = tables[i][label].str.replace(".", "")
-                    tables[i][label] = tables[i][label].str.replace(",", ".")
             tables_by_name[asset["type"] + "_" + str(i)] = tables[i]
 
     return tables_by_name

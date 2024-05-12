@@ -49,13 +49,13 @@ def style_negative(v, props=""):
 def convert_dataframe(dataframe: pd.DataFrame) -> pd.DataFrame:
     for column_name in dataframe.columns:
         try:
-            dataframe[column_name] = dataframe[column_name].astype(float)
-        except Exception:
+            dataframe[column_name] = dataframe[column_name].astype(float).round(2)
+        except Exception as e:
             pass
     return dataframe
 
 
-special_characters = "#&()[]@©"
+special_characters = "#&()[]@©€$'R¹³²"
 
 
 def style_symbol(v, props=""):
@@ -172,7 +172,7 @@ if (
             ),
         )
 
-        st.data_editor(
+        st.session_state.tables[st.session_state["algorithm_name"]] = st.data_editor(
             st.session_state.tables[st.session_state["algorithm_name"]],
             num_rows="dynamic",
             on_change=update_df_csv_to_save,
@@ -181,25 +181,52 @@ if (
             height=900,
         )
 
+    st.subheader(
+        "Filters : ",
+    )
+
     col7, col8, col9 = st.columns([1, 1, 1])
     with col7:
         total = st.checkbox(
             "Calculate the Total of each columns, excluding the last row", value=True
         )
         country = st.checkbox("Activate the country filter", value=True)
+        decimal_cleanup = st.checkbox("Apply decimal cleanup")
 
     with col8:
         negativ = st.checkbox(
             "Show the negative numbers, for each columns detected as a numerical type"
         )
+
+        with st.container(border=True):
+            cleanup_rules = st.checkbox(
+                "Apply clean up rules : (number) mean a negative number, o-> 0, homogenization NA, ect ect "
+            )
+            if cleanup_rules:
+                cleanup_excluded = st.multiselect(
+                    "exclude from filtering",
+                    st.session_state.tables[st.session_state["algorithm_name"]].columns,
+                    key="cleanup",
+                )
+
     with col9:
-        symbol = st.checkbox(
-            "Show the cells that contain a special symbol : " + special_characters,
-            value=True,
-        )
-        remove_symbols = st.checkbox("Remove the special symbols")
+        with st.container(border=True):
+            symbol = st.checkbox(
+                "Show the cells that contain a special symbol : " + special_characters,
+                value=True,
+            )
+            remove_symbols = st.checkbox(
+                "Remove the special symbols on numeric columns"
+            )
+            if remove_symbols:
+                rm_symbol_excluded = st.multiselect(
+                    "exclude from filtering",
+                    st.session_state.tables[st.session_state["algorithm_name"]].columns,
+                    key="rm_symbol",
+                )
 
     dataframe = st.session_state.tables[st.session_state["algorithm_name"]].copy()
+    dataframe = convert_dataframe(dataframe)
 
     if country:
         dataframe.iloc[:-2, 0] = dataframe.iloc[:-2, 0].apply(
@@ -207,12 +234,73 @@ if (
         )
 
     if remove_symbols:
-        pattern = "\(.*?\)" + "|[" + re.escape(special_characters) + "]"
-        for column in dataframe.columns:
-            dataframe[column] = dataframe[column].apply(
-                lambda x: re.sub(pattern, "", str(x))
-            )
+        pattern = "[" + re.escape(special_characters) + "]"
+        for column, dtype in dataframe.dtypes.items():
+            if column not in rm_symbol_excluded:
+                dataframe[column] = dataframe[column].apply(
+                    lambda x: re.sub(pattern, "", str(x))
+                )
         dataframe = convert_dataframe(dataframe)
+
+    if cleanup_rules:
+        for column, dtype in dataframe.dtypes.items():
+            if column not in cleanup_excluded:
+                # this is a code translated by chatgpt from Kane's R code
+                dataframe[column] = dataframe[column].replace(
+                    {"^-$|^$|^ $|^N/I$|^- -$|^N/A$|^n\\.a\\.$": None}, regex=True
+                )
+                dataframe[column] = dataframe[column].replace(
+                    {"^o$|^O$|^\\(o\\)$|^\\(O\\)$|^\\(0\\)$": "0"}, regex=True
+                )
+
+                if dtype == object:
+                    dataframe[column] = dataframe[column].str.replace(
+                        "(\\(.*\\))[:alnum:]+", "\\1", regex=True
+                    )
+                    dataframe[column] = dataframe[column].str.replace(
+                        "\\([:alnum:]+$|\\)[:alnum:]+$", "", regex=True
+                    )
+                    dataframe[column] = dataframe[column].str.replace(
+                        "\\([:alpha:]+\\)", "", regex=True
+                    )
+                    dataframe[column] = dataframe[column].str.replace(
+                        "(.+)\\(.+\\)$", "\\1", regex=True
+                    )
+                    dataframe[column] = dataframe[column].str.replace(
+                        "^\\(-(.*)\\)", "-\\1", regex=True
+                    )
+                    dataframe[column] = dataframe[column].str.replace(
+                        "^\\((.*)\\)", "-\\1", regex=True
+                    )
+                    dataframe[column] = dataframe[column].str.replace(
+                        "\\(.*\\)| |\\*|^-$|\\[.*\\]|^-€$", "", regex=True
+                    )
+        dataframe = convert_dataframe(dataframe)
+    if decimal_cleanup:
+        decimal_separator = (
+            st.session_state["metadata"]["separator"]
+            if st.session_state["metadata"]["separator"]
+            else ","
+        )
+        for column, dtype in dataframe.dtypes.items():
+            if dtype == object:
+                if decimal_separator == ",":
+                    dataframe[column] = dataframe[column].str.replace(
+                        "\\.", "", regex=False
+                    )
+                    dataframe[column] = dataframe[column].str.replace(
+                        ",", ".", regex=False
+                    )
+                else:
+                    dataframe[column] = dataframe[column].str.replace(
+                        ",(.{1,2})$", ".\\1", regex=True
+                    )
+                    dataframe[column] = dataframe[column].str.replace(
+                        "\\.([0-9]{3})", ",\\1", regex=True
+                    )
+                    dataframe[column] = dataframe[column].str.replace(
+                        ",", "", regex=False
+                    )
 
     if total:
         dataframe = convert_dataframe(dataframe)
