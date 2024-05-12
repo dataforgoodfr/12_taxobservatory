@@ -5,6 +5,7 @@ pagefilter:
 
 table_extraction:
   - type: ExtractTableAPI
+  - type: LlamaParse
   - type: Unstructured
     params:
       hi_res_model_name: "yolox"

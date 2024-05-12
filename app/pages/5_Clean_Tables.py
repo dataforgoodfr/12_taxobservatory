@@ -344,7 +344,7 @@ if (
             lambda x: style_specific_cells(x, index_list), axis=None
         )
 
-    st.dataframe(dataframe_styler, use_container_width=True, height=1000)
+    st.dataframe(dataframe_styler, use_container_width=True, height=300)
 
     st.button(
         "Save the table above",
