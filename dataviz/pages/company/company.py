@@ -3,8 +3,8 @@ import pandas as pd
 import io
 from taipy.gui import Markdown,Gui, download
 
-import algo # from dataviz_taipy import algo
-from data.data import data #from dataviz_taipy.data.data import data
+import algo # from dataviz import algo
+from data.data import data #from dataviz.data.data import data
 
 
 header_right_image_path = 'images/pexels-ingo-joseph-1880351.png'
@@ -71,12 +71,17 @@ viz5 = {
     'on_action': download_viz5
 }
 
-def download_viz6(state): download_el(state,viz6)
-viz6 = {
-    'data': df_selected_company,
-    'title': "More on transparency (tbd)",
+
+
+
+# Viz 26
+data_viz_26 = algo.compute_transparency_score(data, selected_company)
+def download_viz_26(state): download_el(state,viz_26)
+viz_26 = {
+    'data': data_viz_26,
+    'title': "Transparency score over time ",
     'sub_title': "",
-    'on_action': download_viz6
+    'on_action': download_viz_26
 }
 
 # Viz 13
@@ -231,6 +236,9 @@ viz_21 = {
     'sub_title': "domestic vs. havens vs. non havens, selected fiscal year",
     'on_action': download_viz_21,
 }
+
+
+
 
 def on_change_company(state):
     print("Chosen company: ", state.selected_company)

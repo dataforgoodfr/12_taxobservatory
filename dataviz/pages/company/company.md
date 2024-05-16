@@ -132,17 +132,17 @@ Tax transparency
 <viz_card|part|class_name=viz|
 <headers|layout|columns=2fr 1|
 <title|part|
-<|{viz6.title}|>
+<|{viz_26.title}|>
 |title>
 <download_button|part|
-<|{download_icon_path}|image|class_name=download_button|on_action={viz6.on_action}|>
+<|{download_icon_path}|image|class_name=download_button|on_action={viz_26.on_action}|>
 |download_button>
 |headers>
 <sub_title|
-<|{viz6.sub_title}|>
+<|{viz_26.sub_title}|>
 |sub_title>
-<data_viz|part|class_name=round|
-<|{viz6.data}|>
+<data_viz|part|
+<|{viz_26.data}|table|>
 |data_viz>
 |viz_card>
 

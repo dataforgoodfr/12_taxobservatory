@@ -3,8 +3,8 @@ import pandas as pd
 
 from taipy.gui import Markdown, download
 
-import algo # from dataviz_taipy import algo
-from data.data import data #from dataviz_taipy.data.data import data
+import algo # from dataviz import algo
+from data.data import data #from dataviz.data.data import data
 
 import io
 
@@ -126,3 +126,15 @@ viz_24 = {
     'sub_title': "with 1+ report tracked",
     'on_action': download_viz_24
 }
+
+
+# data_viz_27 = algo.viz_24_compute_data(data)
+# data_viz_27_fig = algo.viz_24_viz(data_viz_24)
+# def download_viz_27(state):download_el(state,viz_27)
+# viz_27 = {
+#     'fig': data_viz_27_fig,
+#     'data': data_viz_27,
+#     'title': "Number of reports and transparency score by multinational",
+#     'sub_title': "",
+#     'on_action': download_viz_27
+# }

@@ -38,7 +38,7 @@ def show_home():
                 - Cloud of available companies with sector color  
             - Example of analysis it unlocks  
                 - See where companies declare profits and how much tax 
-                they pay : fake dataviz  
+                they pay : fake dataviz_streamlit_old  
                 - Detect suspicious behavior by looking at countries 
                 with high profits but few employees / high profit per employee : fake data viz  
                 - Analyze presence in countries considered tax havens : 
