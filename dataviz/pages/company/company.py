@@ -1,3 +1,5 @@
+from mimetypes import init
+
 import numpy as np
 import pandas as pd
 import io
@@ -5,7 +7,6 @@ from taipy.gui import Markdown,Gui, download
 
 import algo # from dataviz import algo
 from data.data import data #from dataviz.data.data import data
-
 
 header_right_image_path = 'images/pexels-ingo-joseph-1880351.png'
 download_icon_path = 'images/Vector.svg'
@@ -30,14 +31,17 @@ company_sector = list(df_selected_company["sector"].unique())[0]
 company_upe_code = df_selected_company['upe_code'].unique()[0]
 number_of_tracked_reports_company = algo.number_of_tracked_reports_company(df_selected_company)
 
-
 def download_viz1(state): download_el(state,viz1)
+def update_viz1(state):
+    state.viz1['data'] = state.company_sector
+
 viz1 = {
     'data': company_sector,
     'title': "Sector",
     'sub_title': "",
     'on_action': download_viz1
 }
+
 
 def download_viz2(state): download_el(state,viz2)
 viz2 = {
@@ -46,6 +50,8 @@ viz2 = {
     'sub_title': "",
     'on_action': download_viz2
 }
+def update_viz2(state):
+    state.viz2['data'] = state.company_upe_code
 
 def download_viz3(state): download_el(state,viz3)
 viz3 = {
@@ -54,6 +60,8 @@ viz3 = {
     'sub_title': "CbC reports tracked",
     'on_action': download_viz3
 }
+def update_viz3(state):
+    state.viz3['data'] = state.number_of_tracked_reports_company
 
 def download_viz4(state): download_el(state,viz4)
 viz4 = {
@@ -62,6 +70,9 @@ viz4 = {
     'sub_title': "average over all reports",
     'on_action': download_viz4
 }
+def update_viz4(state):
+    state.viz4['data'] = state.number_of_tracked_reports_company
+
 
 def download_viz5(state): download_el(state,viz5)
 viz5 = {
@@ -70,7 +81,8 @@ viz5 = {
     'sub_title': "selected fiscal year",
     'on_action': download_viz5
 }
-
+def update_viz5(state):
+    state.viz5['data'] = state.number_of_tracked_reports_company
 
 
 
@@ -83,6 +95,10 @@ viz_26 = {
     'sub_title': "",
     'on_action': download_viz_26
 }
+def update_viz26(state):
+    data_viz_26 = algo.compute_transparency_score(state.data, state.selected_company)
+    state.viz_26['data'] = data_viz_26
+
 
 # Viz 13
 data_key_metric = algo.compute_company_key_financials_kpis(
@@ -92,9 +108,16 @@ def download_viz_13_key_metric(state): download_el(state,viz_13_key_metric)
 viz_13_key_metric = {
     'data': data_viz_13,
     'title': "Key metrics",
-    'sub_title': "Selected fiscal year",
+    'sub_title': f"Selected fiscal year ({selected_year})",
     'on_action': download_viz_13_key_metric
 }
+def update_viz_13(state):
+    data_key_metric = algo.compute_company_key_financials_kpis(
+        state.data, state.selected_company, int(state.selected_year))
+    data_viz_13 = pd.DataFrame.from_dict(data_key_metric)
+    state.viz_13_key_metric['data'] = data_viz_13
+    state.viz_13_key_metric['sub_title'] = \
+        f"Selected fiscal year ({int(state.selected_year)})"
 
 # Viz 14
 data_viz_14 = algo.compute_top_jurisdictions_revenue(
@@ -108,9 +131,18 @@ viz_14 = {
     'fig': fig_viz_14,
     'data': data_viz_14,
     'title': "Distribution of revenues across partner jurisdictions",
-    'sub_title': "Selected fiscal year",
+    'sub_title': f"Selected fiscal year{selected_year}",
     'on_action': download_viz_14
 }
+def update_viz_14(state):
+    data_viz_14 = algo.compute_top_jurisdictions_revenue(
+    state.data, state.selected_company, int(state.selected_year))
+    fig_viz_14 = algo.display_jurisdictions_top_revenue(
+        state.data, state.selected_company, int(state.selected_year)
+    )
+    state.viz_14['fig'] = fig_viz_14
+    state.viz_14['data'] = data_viz_14
+    state.viz_14['sub_title'] = f"Selected fiscal year {selected_year}"
 
 data_viz_15 = algo.compute_pretax_profit_and_employees_rank(
         data, selected_company, int(selected_year))
@@ -251,15 +283,8 @@ def on_change_company(state):
     state.number_of_tracked_reports_company = (
         algo.number_of_tracked_reports_company(state.df_selected_company))
 
-    data_key_metric = algo.compute_company_key_financials_kpis(
-        state.data, state.selected_company, int(state.selected_year))
-    data_viz_13 = pd.DataFrame.from_dict(data_key_metric)
-
-    data_viz_14 = algo.compute_top_jurisdictions_revenue(
-        state.data, state.selected_company, int(state.selected_year))
-    fig_viz_14 = algo.display_jurisdictions_top_revenue(
-        state.data, state.selected_company, int(state.selected_year)
-    )
+    update_viz_13(state)
+    update_viz_14(state)
 
     data_viz_15 = algo.compute_pretax_profit_and_employees_rank(
         state.data, state.selected_company, int(state.selected_year))
@@ -281,15 +306,16 @@ def on_change_company(state):
         df=state.data, company=state.selected_company)
     data_viz_21 = pd.DataFrame.from_dict(data_viz_21_dict)
 
-    state.viz1['data'] = state.company_sector
+    data_viz_26 = algo.compute_transparency_score(state.data, state.selected_company)
+    state.viz_26['data'] = data_viz_26
+
+    update_viz1(state)
+    # state.viz1['data'] = state.company_sector
     state.viz2['data'] = state.company_upe_code
     state.viz3['data'] = state.number_of_tracked_reports_company
     state.viz4['data'] = state.number_of_tracked_reports_company
     state.viz5['data'] = state.number_of_tracked_reports_company
-    state.viz6['data'] = state.number_of_tracked_reports_company
-    state.viz_13_key_metric['data'] = data_viz_13
-    state.viz_14['fig'] = fig_viz_14
-    state.viz_14['data'] = data_viz_14
+
     state.viz_15['fig'] = fig_viz_15
     state.viz_15['data'] = data_viz_15
     state.viz_18['fig'] = fig_viz_18
@@ -299,24 +325,11 @@ def on_change_company(state):
 
 
 
+
 def on_change_year(state):
     print("Chosen year: ", state.selected_year)
-
-    data_key_metric = algo.compute_company_key_financials_kpis(
-        state.data, state.selected_company, int(state.selected_year))
-    data_viz_13 = pd.DataFrame.from_dict(data_key_metric).reset_index()
-    state.viz_13_key_metric['data'] = data_viz_13
-
-    data_viz_14 = algo.compute_top_jurisdictions_revenue(
-        state.data, state.selected_company, int(state.selected_year))
-    print('data_viz_14')
-    print(data_viz_14)
-    fig_viz_14 = algo.display_jurisdictions_top_revenue(
-        state.data, state.selected_company, int(state.selected_year)
-    )
-    state.viz_14['fig'] = fig_viz_14
-    state.viz_14['data'] = data_viz_14
-
+    update_viz_13(state)
+    update_viz_14(state)
     data_viz_15 = algo.compute_pretax_profit_and_employees_rank(
         state.data, state.selected_company, int(state.selected_year))
     fig_viz_15 = algo.display_pretax_profit_and_employees_rank(

@@ -107,18 +107,38 @@ def tax_haven_used_by_company(df_selected_company):
     pc_list = ['employees', 'profit_before_tax', 'related_revenues']
     # grouper = df_selected_company.groupby('jur_name')
 
-    df_domestic_company = df_selected_company[df_selected_company['jur_code']==company_upe_code]
+    df_domestic_company = df_selected_company[df_selected_company['jur_code'] == company_upe_code]
     df_selected_company_th = df_selected_company[df_selected_company['jur_tax_haven'] != 'not.TH']
     df_selected_company_nth = df_selected_company[df_selected_company['jur_tax_haven'] == 'not.TH']
 
 
     for col in pc_list:
-        df_selected_company[col + '_domestic_sum'] = df_domestic_company[col].sum()
-        df_selected_company[col + '_th_sum'] = df_selected_company_th[col].sum()
-        df_selected_company[col + '_nth_sum'] = df_selected_company_nth[col].sum()
 
-        df_selected_company[col+'_sum'] = df_selected_company[col].sum()
-        df_selected_company[col + '_pc'] = 100 * df_selected_company[col] / df_selected_company[col+'_sum']
+        df_selected_company.insert(
+            len(df_selected_company.columns),
+            col + '_domestic_sum',
+            df_domestic_company[col].sum())
+
+        df_selected_company.insert(
+            len(df_selected_company.columns),
+            col + '_th_sum',
+            df_selected_company_th[col].sum())
+
+        df_selected_company.insert(
+            len(df_selected_company.columns),
+            col + '_nth_sum',
+            df_selected_company_nth[col].sum())
+
+        df_selected_company.insert(
+            len(df_selected_company.columns),
+            col + '_sum',
+            df_selected_company[col].sum())
+
+        df_selected_company.insert(
+            len(df_selected_company.columns),
+            col + '_pc',
+            100 * df_selected_company[col] / df_selected_company[col+'_sum'])
+        # df_selected_company[col + '_pc'] = 100 * df_selected_company[col] / df_selected_company[col+'_sum']
 
 
 
@@ -142,19 +162,20 @@ def tax_haven_used_by_company(df_selected_company):
 def company_table(df_selected_company):
     company_upe_code = df_selected_company['upe_code'].unique()[0]
     pc_list = ['employees', 'profit_before_tax', 'unrelated_revenues', 'related_revenues', 'total_revenues', 'tax_paid']
-    # grouper = df_selected_company.groupby('jur_name')
-
-    # df_domestic_company = df_selected_company[df_selected_company['jur_code'] == company_upe_code]
-    # df_selected_company_th = df_selected_company[df_selected_company['jur_tax_haven'] != 'not.TH']
-    # df_selected_company_nth = df_selected_company[df_selected_company['jur_tax_haven'] == 'not.TH']
 
     for col in pc_list:
-        # df_selected_company[col + '_domestic_sum'] = df_domestic_company[col].sum()
-        # df_selected_company[col + '_th_sum'] = df_selected_company_th[col].sum()
-        # df_selected_company[col + '_nth_sum'] = df_selected_company_nth[col].sum()
+        if col + '_sum' not in df_selected_company.columns:
+            df_selected_company.insert(
+                len(df_selected_company.columns),
+                col + '_sum',
+                df_selected_company[col].sum())
 
-        df_selected_company[col + '_sum'] = df_selected_company[col].sum()
-        df_selected_company[col + '_pc'] = 100 * df_selected_company[col] / df_selected_company[col + '_sum']
+            df_selected_company.insert(
+                len(df_selected_company.columns),
+                col + '_pc',
+                100 * df_selected_company[col] / df_selected_company[col + '_sum'])
+            # f_selected_company[col + '_sum'] = df_selected_company[col].sum()
+            # df_selected_company[col + '_pc'] = 100 * df_selected_company[col] / df_selected_company[col + '_sum']
 
     # complete table table showing for all jurisdictions revenues, profits, employees, taxes with % of total for each (color code for tax havens)
     df_selected_company_by_jur = df_selected_company.groupby(['mnc', 'jur_name']).agg(
