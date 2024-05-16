@@ -323,9 +323,6 @@ def on_change_company(state):
     state.viz_19['data'] = data_viz_19
     state.viz_21['data'] = data_viz_21
 
-
-
-
 def on_change_year(state):
     print("Chosen year: ", state.selected_year)
     update_viz_13(state)
