@@ -1,0 +1,6 @@
+pandas~=2.2.0
+numpy~=1.26.4
+taipy~=3.1.0
+humanize
+plotly
+wordcloud

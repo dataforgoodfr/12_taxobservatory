@@ -18,11 +18,12 @@ def show_company():
         "*objectives : analyze CBCR data from a given company e.g., analyze data from Shell*"
     )
 
-    data_root_path = "./data/"
-    df = pd.read_csv(
-        data_root_path + "dataset_multi_years_cleaned_completed.tab", sep="\t"
-    )
-    df["year"] = df["year"].astype(int)
+    # data_root_path = "./data/"
+    # df = pd.read_csv(
+    #     data_root_path + "dataset_multi_years_cleaned_completed.tab", sep="\t"
+    # )
+    # df["year"] = df["year"].astype(int)
+    df = st.session_state.dataset
 
     row = st.columns(3)
     row[0].markdown("#### raw data - Cleaned CBCR data")
@@ -34,16 +35,16 @@ def show_company():
     row[1].markdown("drop len " + str(len(df_dropna)))
 
     row[2].markdown("#### map")
-    df_map = pd.read_csv(data_root_path + "average-latitude-longitude-countries.csv")
+    df_map = pd.read_csv(st.session_state.data_root_path + "average-latitude-longitude-countries.csv")
     df = df.merge(df_map, left_on="jur_name", right_on="Country")
-    row[2].map(
-        df,
-        latitude="Latitude",
-        longitude="Longitude",
-        size="taxe_paid",
-        # color='sector'
-    )
+    row[2].map(df,
+           latitude="Latitude",
+           longitude="Longitude",
+           size="taxe_paid",
+           # color='sector'
+           )
     row[1].caption("Plot of all records on a map.")
+
 
     st.markdown(
         """    
